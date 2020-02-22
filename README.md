@@ -3,7 +3,9 @@
 
 fork from：https://github.com/miaoerduo/cartoon-cat-server.git
 
-#使用说明：
+# 使用说明：
+node install
+
 node http.js
 
 浏览器访问： http://192.168.31.111:8089/

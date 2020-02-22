@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>漫画喵</title>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/util.js"></script>
+
+</head>
+
+<body>
+
+<body class="bg-grayLighter">
+	<h1 id="file-title" style="margin: 20px auto 20px 20px"> DIR LIST </h1>
+	
+	<h4> DIR LIST </h4>
+	<div class="listview list-type-tiles"  id='dir_list'> </div>
+
+	<h4> FILE LIST </h4>
+	<div class="listview list-type-tiles"  id='file_list'>  </div>
+</body>
+
+<script>
+$(function() {
+	var file_dir = getQueryString('file_dir');
+    document.title = file_dir;
+	$('#file-title').html(file_dir);
+	var host = window.location.host;
+	$.getJSON('http://' + host + '/get_file_list?file_dir=' + file_dir, function(data) {
+		if (data['code'] != 0 &&  data['code'] != 1) {
+		    $('#wrong-content').text(JSON.stringify(data));
+            metroDialog.open('#dialog');
+            return;
+		}
+		var file_list = data['dir_list'];
+		var list = $('#dir_list');
+		file_list.forEach(function(data) {
+			list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + file_dir + '/' + data + '" target="_blank"><span class="list-title">' + data + '</span></a></div>')
+		});
+	
+		file_list = data['file_list'];
+		var list = $('#file_list');
+		file_list.forEach(function(data) {
+			list.append('<div class="list bg-grayLight"><a href="store/' + file_dir + '/' + data + '" target="_blank"><span class="list-title">' + data + '</span></a></div>')
+		});
+	});
+
+});
+
+</script>
+</html>

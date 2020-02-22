@@ -1,0 +1,38 @@
+<html>
+<title>漫画喵</title>
+<script src="js/jquery.min.js"></script>
+
+<body>
+<h4> DIR LIST </h4>
+<div class="listview list-type-tiles"  id='dir_list'> </div>
+
+<h4> FILE LIST </h4>
+<div class="listview list-type-tiles"  id='file_list'>  </div>
+
+</body>
+
+<script>
+	$(function () {
+	    var host = window.location.host;
+		$.getJSON('http://'+ host + '/get_file_list', function (data) {
+		    if (data['code'] != 0) {
+                metroDialog.open('#dialog');
+                return;
+			}
+			var file_list = data['dir_list'];
+			var list = $('#dir_list');
+			file_list.forEach(function(data) {
+				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '" target="_blank"><span class="list-title">'+ data +'</span></a></div>');
+			});
+	
+			file_list = data['file_list'];
+			list = $('#file_list');
+			file_list.forEach(function(data) {
+				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '" target="_blank"><span class="list-title">'+ data +'</span></a></div>');
+			});
+		});
+	});
+</script>
+
+</html>
+
