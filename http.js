@@ -84,25 +84,42 @@ app.get('/get_file_list', function (req, res) {
 			return console.error(err);
         }
 		var dir_list = new Array();
-		var file_list = new Array();
+        var file_list = new Array();
+        var pic_list = new Array();
 		files.forEach(function(data) {
 			var stats = fs.statSync(dir + "/" + data);
 			if (stats.isFile()) {
-				file_list.push(data)
+                var suffixIndex = data.lastIndexOf(".");
+                var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                if(suffix!="BMP"&&suffix!="JPG"&&suffix!="JPEG"&&suffix!="PNG"&&suffix!="GIF") {
+                    file_list.push(data)
+                } else {
+                    pic_list.push(data)
+                }
 			} else if (stats.isDirectory()) {
 				dir_list.push(data)
 			}
-		});
-
-		dir_list.sort(function (lhs, rhs) {
-			return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-		});
-
-		file_list.sort(function (lhs, rhs) {
-			return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-		});
-
-        res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+        });  
+        console.log("dir_list.length %d", dir_list.length);
+        console.log("file_list.length %d", file_list.length);
+        console.log("pic_list.length %d", pic_list.length);
+        if (dir_list.length == 0) {
+            dir_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+        }
+        if (file_list.length == 0){
+            file_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+        }
+        if (pic_list.length == 0){
+            pic_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+            console.log("pic_list.length %d", pic_list.length);
+        }
+        res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
     });
 });
 

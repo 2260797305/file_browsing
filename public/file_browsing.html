@@ -1,30 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>漫画喵</title>
+	<meta charset="UTF-8" name="File Browsing" content="简单的本地文件浏览器" http-equiv="refresh" content="30">
+
+	<base href="http://192.168.31.111:8089">
+	<link rel="shortcut icon" href="/img/title.png">
+	<title>File Browsing</title>
+	<link href="css/metro.min.css" rel="stylesheet" media="screen">
 	<script src="js/jquery.min.js"></script>
+	<script src="js/metro.min.js"></script>
 	<script src="js/util.js"></script>
+	<style>
+		.list a {
+			color: black;
+			font-size: 16px;
+		}
+	</style>
 
 </head>
+<body style="background-color:bisque;">
+	<h1 id="file-title" style="margin: 20px auto 20px 20px"></h1>
 
-<body>
+	<button id="shwo_pic" type="button" onclick="pic_show_function()" style="margin: auto auto auto 20px";>图片浏览模式</button>
 
-<body class="bg-grayLighter">
-	<h1 id="file-title" style="margin: 20px auto 20px 20px"> DIR LIST </h1>
-	
-	<h4> DIR LIST </h4>
+	<h3 style="margin: 20px auto 20px 20px"> 目录 </h3>
+
 	<div class="listview list-type-tiles"  id='dir_list'> </div>
 
-	<h4> FILE LIST </h4>
+	<h3 style="margin: 20px auto 20px 20px"> 文件 </h3>
 	<div class="listview list-type-tiles"  id='file_list'>  </div>
+
+	<div class="listview list-type-tiles"  id='pic_list'>  </div>
+	<p>
+		<img src="img/back.gif" alt="Smiley face" style="float:left"> 
+	</p>
 </body>
 
 <script>
+function pic_show_function()
+{
+	$("#shwo_pic").attr("style","display:none;");
+}
+
 $(function() {
 	var file_dir = getQueryString('file_dir');
-    document.title = file_dir;
-	$('#file-title').html(file_dir);
+	var dir_path = "home/" + file_dir;
+
+	/*为标题添加各级目录链接*/
+	var list = list = $('#file-title');
+	var dir_link =  dir_path .split("/");
+	var pre_dir = new String();
+	var home_dir = 1;
+	dir_link.forEach(function(data) {
+		var url = new String();
+		if (home_dir == 1) {
+			url = "/index.html"
+			home_dir = 0;
+		} else {
+			if (data == "/") {
+				url.length = 0;
+			} else {
+				pre_dir = pre_dir + data;
+				url = "file_browsing.html?file_dir=" + pre_dir;
+				pre_dir = pre_dir + "/";
+			}
+		}
+		if (url.length != 0) {
+			list.append('<a  style="text-decoration:none" href=' + url + '>' + data + '/</a>')
+		}
+		
+	});
+
+	//$('#file-title').html(dir_path);
 	var host = window.location.host;
 	$.getJSON('http://' + host + '/get_file_list?file_dir=' + file_dir, function(data) {
 		if (data['code'] != 0 &&  data['code'] != 1) {
@@ -35,14 +82,26 @@ $(function() {
 		var file_list = data['dir_list'];
 		var list = $('#dir_list');
 		file_list.forEach(function(data) {
-			list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + file_dir + '/' + data + '" target="_blank"><span class="list-title">' + data + '</span></a></div>')
+			list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + file_dir + '/' + data + '" style="text-decoration:none;margin: auto auto auto 40px;"><span class="list-title">' + data + '/</span></a></div>')
 		});
 	
 		file_list = data['file_list'];
-		var list = $('#file_list');
+		list = $('#file_list');
 		file_list.forEach(function(data) {
-			list.append('<div class="list bg-grayLight"><a href="store/' + file_dir + '/' + data + '" target="_blank"><span class="list-title">' + data + '</span></a></div>')
+			list.append('<div class="list bg-grayLight"><a href="store/' + file_dir + '/' + data + '" style="text-decoration:none;margin: auto auto auto 40px;"><span class="list-title">' + data + '</span></a></div>')
 		});
+
+		file_list = data['pic_list'];	
+		if (file_list.length == 0) {
+			$("#shwo_pic").attr("style","display:none;");
+		} else {
+			list = $('#pic_list');
+			file_list.forEach(function(data) {
+				list.append('<div class="list bg-grayLight"><a href="store/' + file_dir + '/' + data + '" style="text-decoration:none;margin: auto auto auto 40px;"><span class="list-title">' + data + '</span></a></div>')
+			});
+		}
+		//var s = len.toString();
+		//alert(s); //将输出 String
 	});
 
 });
