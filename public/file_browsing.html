@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8" name="File Browsing" content="简单的本地文件浏览器" http-equiv="refresh" content="30">
-
+    <meta http-equiv="Expirse" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+	
 	<base href="http://192.168.31.111:8089">
 	<link rel="shortcut icon" href="/img/title.png">
 	<title>File Browsing</title>
 	<link href="css/metro.min.css" rel="stylesheet" media="screen">
 	<script src="js/jquery.min.js"></script>
 	<script src="js/metro.min.js"></script>
+	<script src="js/lazeload.js"></script>
 	<script src="js/util.js"></script>
 	<style>
 		.img_land_prev{
@@ -45,6 +50,10 @@
 		h3 {
 			color:red;
 		}
+		p {
+			font-size:35px;
+			color:red;
+		}
 		#dir_list {
 			font-size:25px;
 			text-decoration:none;
@@ -77,11 +86,10 @@
 </head>
 
 <body style="background-color:bisque;">
-	<h1 id="file-title" style="margin: 20px auto 20px 20px"></h1>
+	<h1 id="file-title" style="margin: 20px auto 20px 20px;"></h1>
+	<button id="shwo_pic" type="button" onclick="button_show()" style="margin: 20px auto 20px 20px; font-size:20px;">图片浏览</button>
 
-	<button id="shwo_pic" type="button" onclick="pic_show_function()" style="margin: 20px auto 20px 20px; font-size:20px;">图片浏览</button>
-
-	<div class="comic_wraCon autoHeight" style="width: 1471px;display:none;" id = "center_box">
+	<div class="comic_wraCon autoHeight" style="width: 1471px;display:none;" id = "center_box"">
 		<a class="img_land_prev" onclick="prev_img()"></a>
 		<a class="img_land_next" onclick="next_img()"></a>
 		<img src="img/loading.png">
@@ -101,11 +109,21 @@
 </body>
 
 <script>
-
 var pic_list = new Array();
 var cur_page = 0;
+var is_show_pic = 0;
 
-function pic_show_function()
+function shwo_cur_pic(page) {
+	var file_dir = getQueryString('file_dir');
+	var imgStr = '<p>' + pic_list[page] + '</p><img style="width: 1471px;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + pic_list[page] + '">';
+	$("#center_box").find("p").remove();
+	$("#center_box").find("img").remove();
+	$("#center_box").append(imgStr);
+	new LazyLoad().init();
+	javascript:scroll(0,0);
+}
+
+function button_show()
 {
 	//$("#shwo_pic").attr["style"].append("display:none;");
 	var obj = document.getElementById("shwo_pic");
@@ -117,12 +135,8 @@ function pic_show_function()
 	$("#dir_list").attr("style","display:none;");
 	$("#back_gf").attr("style","display:none;");
 	$("#center_box").attr("style","display:;");
-
-	var obj_img_src = $("#center_box").find("img").attr("src");
-	var file_dir = getQueryString('file_dir');
-	var imgStr = '<img style="width: 1471px;" src="store/' + file_dir + "/" + pic_list[cur_page] + '"/>';
-	$("#center_box").find("img").remove();
-	$("#center_box").append(imgStr);
+	is_show_pic = 1;
+	shwo_cur_pic(cur_page);
 }
 
 function prev_img(obj) {
@@ -135,11 +149,7 @@ function prev_img(obj) {
 	} else {
 		cur_page -= 1;
 	}
-	
-	var file_dir = getQueryString('file_dir');
-	var imgStr = '<img style="width: 1471px;" src="store/' + file_dir + "/" + pic_list[cur_page] + '"/>';
-	$("#center_box").find("img").remove();
-	$("#center_box").append(imgStr);
+	shwo_cur_pic(cur_page);
 }
 
 function next_img(obj){
@@ -152,19 +162,24 @@ function next_img(obj){
 	} else {
 		cur_page += 1;
 	}
-	var file_dir = getQueryString('file_dir');
-	var imgStr = '<img style="width: 1471px;" src="store/' + file_dir + "/" + pic_list[cur_page] + '"/>';
-	$("#center_box").find("img").remove();
-	$("#center_box").append(imgStr);
+	shwo_cur_pic(cur_page);
 }
 
-$(function() {
-	var file_dir = getQueryString('file_dir');
-	var dir_path = "home/" + file_dir;
+$(document).keydown(function(event){
+	if (is_show_pic == 0) {
+		return;
+	}
+	if (event.keyCode == 37 /*←*/) {
+		prev_img(null);
+	} else if (event.keyCode == 39 /*→*/) {
+		next_img(null);
+	}
+});
 
+function add_title_link(title) {
 	/*为标题添加各级目录链接*/
-	var list = list = $('#file-title');
-	var dir_link =  dir_path .split("/");
+	var list = $('#file-title');
+	var dir_link =  title .split("/");
 	var pre_dir = new String();
 	var home_dir = 1;
 
@@ -183,9 +198,16 @@ $(function() {
 			}
 		}
 		if (url.length != 0) {
-			list.append('<a  style="text-decoration:none" href="' + url + '">' + data + '/</a>')
+			list.append('<a  style="text-decoration:none" href="' + url + '">' + data + '/</>')
 		}
 	});
+}
+
+$(function() {
+	var file_dir = getQueryString('file_dir');
+	var title_string = "home/" + file_dir;
+
+	add_title_link(title_string);
 
 	//$('#file-title').html(dir_path);
 	var host = window.location.host;
