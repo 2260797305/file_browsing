@@ -8,16 +8,24 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/metro.min.js"></script>
 	<style>
-		.list a {
-			color: rgb(20, 2, 2);
-			font-size: 16px;
+		#dir_list {
+			font-size:25px;
+			text-decoration:none;
+			margin: auto auto auto 40px;
+			color:rgb(104, 13, 13);
+		}
+		#file_list {
+			font-size:25px;
+			text-decoration:none;
+			margin: auto auto auto 40px;
+			color:rgb(19, 11, 11);
 		}
 	</style>
 </head>
 
 <body style="background-color:bisque;">
 
-	<h1 style="margin: 20px auto 20px 20px">home</h1>
+	<h1 style="margin: 20px auto 20px 20px; ">home</h1>
 
 	<h3 style="margin: 20px auto 20px 20px"> 目录 </h3>
 
@@ -43,13 +51,13 @@
 			var file_list = data['dir_list'];
 			var list = $('#dir_list');
 			file_list.forEach(function(data) {
-				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '" style="text-decoration:none;margin: auto auto auto 40px;"><span class="list-title">'+ data +'</span></a></div>');
+				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '"><span class="list-title">'+ data +'</span></a></div>');
 			});
 	
 			file_list = data['file_list'];
 			list = $('#file_list');
 			file_list.forEach(function(data) {
-				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '" style="text-decoration:none;margin: auto auto auto 40px;"><span class="list-title">'+ data +'</span></a></div>');
+				list.append('<div class="list bg-grayLight"><a href="file_browsing.html?file_dir=' + data + '" ><span class="list-title">'+ data +'</span></a></div>');
 			});
 		});
 	});
