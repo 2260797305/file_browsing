@@ -2,6 +2,8 @@ echo "kill old process"
 ps -efww|grep -w 'node http.js'|grep -v grep|cut -c 9-15 |xargs kill -9
 
 echo "start process"
-node http.js &
+a=`date "+%Y-%m-%d_%H_%M_%S"`
+echo  log file: ./log/$a.log
+node http.js  1>./log/$a.log 2>&1 &
 
 

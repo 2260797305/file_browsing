@@ -67,6 +67,115 @@ app.get('/process_get', function (req, res) {
 });
 
 /**
+ * 获取指定章节的url
+ * 0: 上一章节
+ * 1: 下一章节
+ */
+
+function Traversing_the_directory(dir, dir_list, file_list, pic_list) {
+    files = fs.readdirSync(dir)
+
+    if (files.length != 0) {
+        files.forEach(function(data) {
+			var stats = fs.statSync(dir + "/" + data);
+			if (stats.isFile()) {
+                var suffixIndex = data.lastIndexOf(".");
+                var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                if(suffix!="BMP"&&suffix!="JPG"&&suffix!="JPEG"&&suffix!="PNG"&&suffix!="GIF") {
+                    file_list.push(data)
+                } else {
+                    pic_list.push(data)
+                }
+			} else if (stats.isDirectory()) {
+				dir_list.push(data)
+			}
+        }); 
+        console.log("dir_list.length %d", dir_list.length);
+        console.log("file_list.length %d", file_list.length);
+        console.log("pic_list.length %d", pic_list.length);
+        /*
+        if (dir_list.length != 0) {
+            dir_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+        }
+        */
+        if (file_list.length != 0){
+            file_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+        }
+        if (pic_list.length != 0){
+            pic_list.sort(function (lhs, rhs) {
+                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+            });
+            console.log("pic_list.length %d", pic_list.length);
+        }
+    };
+};
+
+function get_select_dir(old_dir, dirct) {
+    console.log("olddir %s", old_dir);
+    var index = old_dir .lastIndexOf("\/");  
+    var parent_dir = old_dir.substring(0, index);
+    var sub_dir = old_dir.substring(index+1, old_dir.length);
+
+    var dir_list = new Array();
+    var file_list = new Array();
+    var pic_list = new Array();
+
+    var dir =  __dirname + '/public/store/' + parent_dir;
+    var cur_dir_idx = 0;
+    Traversing_the_directory(dir, dir_list, file_list, pic_list);
+    for (var i = 0;  i < dir_list.length; i++) {
+        var name = dir_list[i];
+        if (name == sub_dir) {
+            cur_dir_idx = i;
+            break;
+        }
+    }
+
+    if (dirct == 0) {
+        if (cur_dir_idx == 0) {
+            sub_dir = parent_dir;
+        } else {
+            sub_dir = parent_dir + "/" + dir_list[cur_dir_idx - 1];
+        }
+    } else if (dirct == 1) {
+        if (cur_dir_idx == (dir_list.length - 1)) {
+            sub_dir = parent_dir;
+        } else {
+            sub_dir = parent_dir + "/" + dir_list[cur_dir_idx + 1];
+        }
+    }
+    console.log("find dir %s", sub_dir);
+    return sub_dir;
+};
+
+/**
+ * 获取漫画的上一章节
+ */
+app.get('/get_prev_dir', function (req, res) {
+    console.log("获取上一个章节");
+    var file_name = req.query.file_dir;
+
+    var new_dir = get_select_dir(file_name, 0);
+    res.jsonp({'find_dir': new_dir, 'code': 0});
+});
+
+
+/**
+ * 获取漫画的下一章节
+ */
+app.get('/get_next_dir', function (req, res) {
+    var file_name = req.query.file_dir;
+    console.log("获取下一个章节");
+
+    var new_dir = get_select_dir(file_name, 1);
+    res.jsonp({'find_dir': new_dir, 'code': 0});
+});
+
+/**
  * 获取漫画列表
  */
 app.get('/get_file_list', function (req, res) {
@@ -77,7 +186,18 @@ app.get('/get_file_list', function (req, res) {
 		file_name = ""
     }
 	var dir = __dirname + '/public/store/' + file_name
-	console.log("dir %s", dir);
+    console.log("dir %s", dir);
+    
+    var dir_list = new Array();
+    var file_list = new Array();
+    var pic_list = new Array();
+    Traversing_the_directory(dir, dir_list, file_list, pic_list);
+    console.log("dir_list.length %d", dir_list.length);
+    console.log("file_list.length %d", file_list.length);
+    console.log("pic_list.length %d", pic_list.length);
+
+    res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
+    /*
     fs.readdir(dir, function (err , files) {
         if (err) {
 			console.log("读取目录失败");
@@ -103,13 +223,7 @@ app.get('/get_file_list', function (req, res) {
         console.log("dir_list.length %d", dir_list.length);
         console.log("file_list.length %d", file_list.length);
         console.log("pic_list.length %d", pic_list.length);
-        /*
-        if (dir_list.length != 0) {
-            dir_list.sort(function (lhs, rhs) {
-                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-            });
-        }
-        */
+
         if (file_list.length != 0){
             file_list.sort(function (lhs, rhs) {
                 return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
@@ -122,7 +236,7 @@ app.get('/get_file_list', function (req, res) {
             console.log("pic_list.length %d", pic_list.length);
         }
         res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
-    });
+    });*/
 });
 
 var server = app.listen(PORT, HOST, function () {

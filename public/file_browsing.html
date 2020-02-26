@@ -139,13 +139,31 @@ function button_show()
 	shwo_cur_pic(cur_page);
 }
 
-function prev_img(obj) {
-	if (cur_page == 0) {
-		if(confirm("已经是此章节第1页了，跳到最后一页吗？")==true){
-			cur_page== (pic_list.length - 1);
-		} else {
+function jump_chapter(dirct) {
+	var file_dir = getQueryString('file_dir');
+	var request_url = new String();
+	var host = window.location.host;
+	if (dirct == 0) {
+		request_url = 'http://' + host + '/get_prev_dir?file_dir=' + file_dir;
+	} else {
+		request_url = 'http://' + host + '/get_next_dir?file_dir=' + file_dir;
+	}
+	var host = window.location.host;
+	$.getJSON(request_url, function(data) {
+		if (data["code"] != 0) {
+			alert("寻找上、下级目录错误");
 			return;
 		}
+		location.href = "file_browsing.html?file_dir=" + data["find_dir"];
+	});
+}
+
+function prev_img(obj) {
+	if (cur_page == 0) {
+		if(confirm("已经是此章节第1页了，要打开上一个章节吗？")==true){
+			jump_chapter(0);
+		}
+		return;
 	} else {
 		cur_page -= 1;
 	}
@@ -154,11 +172,10 @@ function prev_img(obj) {
 
 function next_img(obj){
 	if (cur_page == (pic_list.length - 1)) {
-		if(confirm("已经是此章节最后一页了，跳到第一页吗？")==true){
-			cur_page = 0;
-		} else {
-			return;
+		if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
+			jump_chapter(1);
 		}
+		return;
 	} else {
 		cur_page += 1;
 	}
