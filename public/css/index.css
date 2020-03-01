@@ -1,0 +1,79 @@
+.img_land_prev{
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 5;
+    cursor: url("../img/pre.cur"),auto;
+}
+.img_land_next{
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 5;
+    cursor: url("../img/next.cur"),auto;
+}
+.comic_wraCon {
+    *zoom: 1;
+    *display: inline;
+    width: auto;
+    vertical-align: middle;
+    text-align: center;
+    position: relative;
+}
+.comic_wraCon img {
+    border: 1px solid #e6e6e6;
+    padding: 20px;
+    margin-top: 20px;
+}
+h3 {
+    color:red;
+}
+p {
+    /*font-size:35px;*/
+    font: normal 150% Helvetica, Arial, sans-serif;
+    color:red;
+}
+#dir_list {
+    font: normal 150% Helvetica, Arial, sans-serif;
+    /*font-size:25px;*/
+    text-decoration:none;
+    margin: auto auto auto auto;
+    color:red;
+}
+#file_list {
+    font: normal 150% Helvetica, Arial, sans-serif;
+    /*font-size:25px;*/
+    text-decoration:none;
+    margin: auto auto auto auto;
+    color:rgb(0, 38, 255);
+}
+#pic_list {
+    font-size:25px;
+    text-decoration:none;
+    margin: auto auto auto auto;
+    color:red;
+}
+body {
+    /*background: rgb(185, 246, 246);*//*设置颜色背景*/
+    
+    /*background-image: url("../img/background.png");/*设置背景图片;*/
+    background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
+    background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/
+    background-origin: border-box;/*从边框区域显示*/
+    background-size:cover;/*指定图片大小，此时会保持图像的纵横比并将图像缩放成将完全覆盖背景定位区域的最小大小*/
+}
+b {
+    position: absolute;     /* 相对定位或绝对定位均可 */
+    width:auto;
+    font: normal 150% Helvetica, Arial, sans-serif;
+    height:auto;
+    /*top: 50%;*/
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color:red;
+    /*background-color: rgb(8, 8, 19);*/
+}

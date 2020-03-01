@@ -1,13 +1,32 @@
+
 var fs = require("fs");
 var express = require('express');
 var app = express();
-
+var SqliteDB = require('./data/sqlite.js').SqliteDB;
 var HOST = "192.168.31.111"; // 请改成实际的ip地址
                         // 后面的图片的URL会使用这个变量来构造
 var PORT = 8089;
+var db_file = "./data/FileB.db";
+
+var sqliteDB = new SqliteDB(db_file)
+
+var createTableSql = "create table if not exists favorite_list(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
+
+createFTableSql = "create table if not exists history_list(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
+/*
+var insertFavSql = "insert into favorite_list(url) values(?)";
+var tileData = [["aaaa"], ["bbbb"], ["cccc"], ["dddd"]];
+sqliteDB.insertData(insertFavSql, tileData);
+*/
+var querySql = 'select * from favorite_list';
+sqliteDB.queryData(querySql, dataDeal);
+
 
 app.use('/', express.static('public'));
-
 
 /**
  * 错误提示
@@ -197,46 +216,6 @@ app.get('/get_file_list', function (req, res) {
     console.log("pic_list.length %d", pic_list.length);
 
     res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
-    /*
-    fs.readdir(dir, function (err , files) {
-        if (err) {
-			console.log("读取目录失败");
-			return console.error(err);
-        }
-		var dir_list = new Array();
-        var file_list = new Array();
-        var pic_list = new Array();
-		files.forEach(function(data) {
-			var stats = fs.statSync(dir + "/" + data);
-			if (stats.isFile()) {
-                var suffixIndex = data.lastIndexOf(".");
-                var suffix = data.substring(suffixIndex+1).toUpperCase(); 
-                if(suffix!="BMP"&&suffix!="JPG"&&suffix!="JPEG"&&suffix!="PNG"&&suffix!="GIF") {
-                    file_list.push(data)
-                } else {
-                    pic_list.push(data)
-                }
-			} else if (stats.isDirectory()) {
-				dir_list.push(data)
-			}
-        });  
-        console.log("dir_list.length %d", dir_list.length);
-        console.log("file_list.length %d", file_list.length);
-        console.log("pic_list.length %d", pic_list.length);
-
-        if (file_list.length != 0){
-            file_list.sort(function (lhs, rhs) {
-                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-            });
-        }
-        if (pic_list.length != 0){
-            pic_list.sort(function (lhs, rhs) {
-                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-            });
-            console.log("pic_list.length %d", pic_list.length);
-        }
-        res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
-    });*/
 });
 
 var server = app.listen(PORT, HOST, function () {
@@ -245,10 +224,8 @@ var server = app.listen(PORT, HOST, function () {
 
 
 
-/*var fs = require("fs");
-
-var data = fs.readFileSync('input.txt');
-
-console.log(data.toString());
-console.log("程序执行结束!");
-*/
+function dataDeal(objects){
+    for(var i = 0; i < objects.length; ++i){
+        console.log(objects[i]);
+    }
+}
