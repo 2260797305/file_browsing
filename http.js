@@ -89,21 +89,44 @@ app.get('/process_get', function (req, res) {
  * 获取指定章节的url
  * 0: 上一章节
  * 1: 下一章节
+ * browsing_mode: 
+ * -1： 只遍历目录
+ *  0： 遍历文件、目录
+ *  1： 遍历图片
+ *  2： 遍历视频
+ *  3： 遍历音频
  */
 
-function Traversing_the_directory(dir, dir_list, file_list, pic_list) {
+function Traversing_the_directory(dir, dir_list, file_list, browsing_mode) {
     files = fs.readdirSync(dir)
 
     if (files.length != 0) {
         files.forEach(function(data) {
 			var stats = fs.statSync(dir + "/" + data);
 			if (stats.isFile()) {
-                var suffixIndex = data.lastIndexOf(".");
-                var suffix = data.substring(suffixIndex+1).toUpperCase(); 
-                if(suffix!="BMP"&&suffix!="JPG"&&suffix!="JPEG"&&suffix!="PNG"&&suffix!="GIF") {
+                if (browsing_mode == 0) {
                     file_list.push(data)
-                } else {
-                    pic_list.push(data)
+                } else if (browsing_mode == 1) {
+                    console.log('find pic')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="BMP"||suffix=="JPG"||suffix=="JPEG"||suffix=="PNG"||suffix=="GIF") {
+                        file_list.push(data)
+                    }
+                } else if (browsing_mode == 2) {
+                    console.log('find video')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="MP4") {
+                        file_list.push(data)
+                    }
+                } else if (browsing_mode == 3) {
+                    console.log('find audio')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="MP3") {
+                        file_list.push(data)
+                    }
                 }
 			} else if (stats.isDirectory()) {
 				dir_list.push(data)
@@ -111,7 +134,7 @@ function Traversing_the_directory(dir, dir_list, file_list, pic_list) {
         }); 
         console.log("dir_list.length %d", dir_list.length);
         console.log("file_list.length %d", file_list.length);
-        console.log("pic_list.length %d", pic_list.length);
+    
         /*
         if (dir_list.length != 0) {
             dir_list.sort(function (lhs, rhs) {
@@ -123,12 +146,7 @@ function Traversing_the_directory(dir, dir_list, file_list, pic_list) {
             file_list.sort(function (lhs, rhs) {
                 return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
             });
-        }
-        if (pic_list.length != 0){
-            pic_list.sort(function (lhs, rhs) {
-                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
-            });
-            console.log("pic_list.length %d", pic_list.length);
+            console.log("pic_list.length %d", file_list.length);
         }
     };
 };
@@ -145,7 +163,7 @@ function get_select_dir(old_dir, dirct) {
 
     var dir =  __dirname + '/public/store/' + parent_dir;
     var cur_dir_idx = 0;
-    Traversing_the_directory(dir, dir_list, file_list, pic_list);
+    Traversing_the_directory(dir, dir_list, file_list, -1);
     for (var i = 0;  i < dir_list.length; i++) {
         var name = dir_list[i];
         if (name == sub_dir) {
@@ -177,8 +195,7 @@ function get_select_dir(old_dir, dirct) {
 app.get('/get_prev_dir', function (req, res) {
     console.log("获取上一个章节");
     var file_name = req.query.file_dir;
-
-    var new_dir = get_select_dir(file_name, 0);
+     var new_dir = get_select_dir(file_name, 0);
     res.jsonp({'find_dir': new_dir, 'code': 0});
 });
 
@@ -188,8 +205,6 @@ app.get('/get_prev_dir', function (req, res) {
  */
 app.get('/get_next_dir', function (req, res) {
     var file_name = req.query.file_dir;
-    console.log("获取下一个章节");
-
     var new_dir = get_select_dir(file_name, 1);
     res.jsonp({'find_dir': new_dir, 'code': 0});
 });
@@ -200,9 +215,16 @@ app.get('/get_next_dir', function (req, res) {
 app.get('/get_file_list', function (req, res) {
 
     var file_name = req.query.file_dir;
-	
+	var browsing_mode = req.query.browsing_mode;
     if (!file_name) {
 		file_name = ""
+    }
+    console.log(browsing_mode)
+    if (!browsing_mode) {
+        console.log("no mode set????");
+        browsing_mode = 0;
+    } else {
+        console.log("browsing_mode = " + browsing_mode)
     }
 	var dir = __dirname + '/public/store/' + file_name
     console.log("dir %s", dir);
@@ -210,12 +232,10 @@ app.get('/get_file_list', function (req, res) {
     var dir_list = new Array();
     var file_list = new Array();
     var pic_list = new Array();
-    Traversing_the_directory(dir, dir_list, file_list, pic_list);
+    Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
     console.log("dir_list.length %d", dir_list.length);
     console.log("file_list.length %d", file_list.length);
-    console.log("pic_list.length %d", pic_list.length);
-
-    res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'pic_list': pic_list, 'code': 0});
+    res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
 });
 
 var server = app.listen(PORT, HOST, function () {

@@ -1,17 +1,17 @@
 .img_land_prev{
-    width: 50%;
+    width: 40%;
     height: 100%;
     position: absolute;
-    left: 0;
+    left: 7%;
     top: 0;
     z-index: 5;
     cursor: url("../img/pre.cur"),auto;
 }
 .img_land_next{
-    width: 50%;
+    width: 40%;
     height: 100%;
     position: absolute;
-    right: 0;
+    right: 2%;
     top: 0;
     z-index: 5;
     cursor: url("../img/next.cur"),auto;
