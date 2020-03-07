@@ -148,7 +148,7 @@ $(document).keydown(function(event){
 	}
 });
 
-function add_title_link(title) {
+function add_title_link(title, browsing_mode) {
 	/*为标题添加各级目录链接*/
 	var list = $('#file-title');
 	var dir_link =  title .split("/");
@@ -165,7 +165,7 @@ function add_title_link(title) {
 				url.length = 0;
 			} else {
 				pre_dir = pre_dir + data;
-				url = "index.html?file_dir=/" + pre_dir;
+				url = "index.html?file_dir=/" + pre_dir + "&browsing_mode=" + browsing_mode;
 				pre_dir = pre_dir + "/";
 			}
 		}
@@ -209,7 +209,7 @@ $(function() {
 	}
 	add_menu_url(file_dir, browsing_mode);
 	var title_string = "home" + file_dir;
-	add_title_link(title_string);
+	add_title_link(title_string, browsing_mode);
 	
 	//$('#file-title').html(dir_path);
 	var host = window.location.host;
@@ -224,7 +224,7 @@ $(function() {
 		if (file_list.length != 0) {
 			var list = $('#dir_list');
 			file_list.forEach(function(data) {
-				list.append('<li class="list bg-grayLight"><a href="index.html?file_dir=' + file_dir + '/' + data + '" ><span class="list-title">' + data + '/</span></a></li>')
+				list.append('<li class="list bg-grayLight"><a href="index.html?file_dir=' + file_dir + '/' + data + '&browsing_mode=' + browsing_mode + '" ><span class="list-title">' + data + '/</span></a></li>')
 			});
 		} else {
 			$("#dir_contex").remove()

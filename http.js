@@ -135,13 +135,15 @@ function Traversing_the_directory(dir, dir_list, file_list, browsing_mode) {
         console.log("dir_list.length %d", dir_list.length);
         console.log("file_list.length %d", file_list.length);
     
-        /*
+        
         if (dir_list.length != 0) {
             dir_list.sort(function (lhs, rhs) {
-                return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+                //按照时间排序
+                return fs.statSync(dir + "/" + lhs).mtime.getTime() - fs.statSync(dir + "/" + rhs).mtime.getTime()
+                //return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
             });
         }
-        */
+        
         if (file_list.length != 0){
             file_list.sort(function (lhs, rhs) {
                 return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
