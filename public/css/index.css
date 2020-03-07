@@ -17,9 +17,6 @@
     cursor: url("../img/next.cur"),auto;
 }
 .comic_wraCon {
-    *zoom: 1;
-    *display: inline;
-    width: auto;
     vertical-align: middle;
     text-align: center;
     position: relative;
@@ -29,6 +26,7 @@
     padding: 20px;
     margin-top: 20px;
 }
+
 h3 {
     color:red;
 }
@@ -51,15 +49,9 @@ p {
     margin: auto auto auto auto;
     color:rgb(0, 38, 255);
 }
-#pic_list {
-    font-size:25px;
-    text-decoration:none;
-    margin: auto auto auto auto;
-    color:red;
-}
+
 body {
     /*background: rgb(185, 246, 246);*//*设置颜色背景*/
-    
     /*background-image: url("../img/background.png");/*设置背景图片;*/
     background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
     background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/

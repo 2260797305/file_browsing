@@ -95,7 +95,81 @@ app.get('/process_get', function (req, res) {
  *  1： 遍历图片
  *  2： 遍历视频
  *  3： 遍历音频
+ *  4:  遍历漫画
  */
+
+function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_list, file_list) {
+    if (Recursive_cnt <= 0) {
+        return;
+    }
+
+    Recursive_cnt = Recursive_cnt - 1;
+    if (pre_dir.length != 0) {
+        pre_dir = pre_dir + "/"
+    }
+
+    files = fs.readdirSync(search_dir)
+    if (files.length != 0) { 
+        files.forEach(function(data) {
+            //console.log(data)
+			var stats = fs.statSync(search_dir + "/" + data);
+			if (stats.isFile()) {
+                if (browsing_mode == 0) {
+                    file_list.push(pre_dir + data)
+                } else if (browsing_mode == 1) {
+                    //console.log('find pic')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="BMP"||suffix=="JPG"||suffix=="JPEG"||suffix=="PNG"||suffix=="GIF") {
+                        file_list.push(pre_dir + data)
+                    }
+                } else if (browsing_mode == 2) {
+                    //console.log('find video')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="MP4") {
+                        file_list.push(pre_dir + data)
+                    }
+                } else if (browsing_mode == 3) {
+                    //console.log('find audio')
+                    var suffixIndex = data.lastIndexOf(".");
+                    var suffix = data.substring(suffixIndex+1).toUpperCase(); 
+                    if(suffix=="MP3") {
+                        file_list.push(pre_dir + data)
+                    }
+                } else if (browsing_mode == 4) {
+                    //console.log('find cartoon')
+                    /*todo*/
+                } 
+			} else if (stats.isDirectory()) {
+                if (Recursive_cnt > 0) {
+                    Recursive_dir(Recursive_cnt, search_dir + "/" + data, pre_dir + "/" + data, browsing_mode, dir_list, file_list);
+                } else {
+                    dir_list.push(pre_dir + data)
+                }
+			}
+        }); 
+        //console.log("dir_list.length %d", dir_list.length);
+        //console.log("file_list.length %d", file_list.length);
+    
+        if (pre_dir.length == 0) {
+            if (dir_list.length != 0) {
+                dir_list.sort(function (lhs, rhs) {
+                    //按照时间排序
+                    return fs.statSync(search_dir + "/" + lhs).mtime.getTime() - fs.statSync(search_dir + "/" + rhs).mtime.getTime()
+                    //return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+                });
+            }
+            
+            if (file_list.length != 0){
+                file_list.sort(function (lhs, rhs) {
+                    return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+                });
+                //console.log("pic_list.length %d", file_list.length);
+            }
+        }
+    }
+}
 
 function Traversing_the_directory(dir, dir_list, file_list, browsing_mode) {
     files = fs.readdirSync(dir)
@@ -165,7 +239,11 @@ function get_select_dir(old_dir, dirct) {
 
     var dir =  __dirname + '/public/store/' + parent_dir;
     var cur_dir_idx = 0;
-    Traversing_the_directory(dir, dir_list, file_list, -1);
+    
+    var Recursive_cnt = 1;
+    Recursive_dir(Recursive_cnt, dir, "", -1, dir_list,file_list)
+    
+    //Traversing_the_directory(dir, dir_list, file_list, -1);
     for (var i = 0;  i < dir_list.length; i++) {
         var name = dir_list[i];
         if (name == sub_dir) {
@@ -234,7 +312,12 @@ app.get('/get_file_list', function (req, res) {
     var dir_list = new Array();
     var file_list = new Array();
     var pic_list = new Array();
-    Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
+    var Recursive_cnt = 1;
+    if (browsing_mode == 2) {
+        Recursive_cnt = 3;
+    }
+    Recursive_dir(Recursive_cnt, dir, "", browsing_mode, dir_list, file_list)
+    //Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
     console.log("dir_list.length %d", dir_list.length);
     console.log("file_list.length %d", file_list.length);
     res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});

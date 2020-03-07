@@ -30,21 +30,22 @@
 		<a id="cartoon_menu">漫画模式</a><br><br>
 	</div>
 	
-	<div class="picinfo" id = "picinfo" style="display:none; "> 
-		<b>0/0</b>
+	<div class="picinfo" id = "picinfo" style="display:none;">
+		<input id = "page_input" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}">
+		<b></b><b>/0</b>
 	</div>
 	<br><br>
-	<div class="comic_wraCon autoHeight" style="width: 1571px;display:none;" id = "center_box"">
-		<a class="img_land_prev" onclick="prev_img()"></a>
-		<a class="img_land_next" onclick="next_img()"></a>
+	<div class="comic_wraCon autoHeight" style="width: 1371px;" id="center_box"">
+		<a id = "pre_evt" class="img_land_prev" onclick="prev_img()"></a>
+		<a id = "nxt_evt" class="img_land_next" onclick="next_img()"></a>
 	</div>
 	
-	<div style="margin: 1% auto auto 7%;width:30%;background-color:rgb(231, 184, 43)" id="dir_contex">
+	<div style="margin: 1% auto auto 7%;width:auto;background-color:rgb(231, 184, 43)" id="dir_contex">
 	<p> 目录</p>
 	<ul class="listview list-type-tiles"  id='dir_list'> </ul>
 	</div>
 
-	<div style="margin: 1% auto auto 7%;width:30%;background-color:rgb(253, 225, 141)" id="file_contex">
+	<div style="margin: 1% auto auto 7%;width:auto; background-color:rgb(253, 225, 141)" id="file_contex">
 	<p> 文件</p>
 	<ul class="listview list-type-tiles"  id='file_list'>  </ul>
 	</div>
@@ -61,18 +62,39 @@ var show_list = new Array();
 var cur_page = 0;
 var is_show_pic = 0;
 var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
+var golbol_volume = 1;
 
 function shwo_cur_pic(page) {
 	var file_dir = getQueryString('file_dir');
-
 	var pic_info = '<b style="margin: 20px auto auto auto";>' + (cur_page+1) + "/" + show_list.length + "<br>" + show_list[page] + "</b>"
 	$("#picinfo").find("b").remove();
 	$("#picinfo").append(pic_info);
 
-	var imgStr = '<img style="width: 90%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
-	$("#center_box").find("img").remove();
-	$("#center_box").append(imgStr);
-	new LazyLoad().init();
+	input = document.getElementById("page_input")
+	input.value = page + 1
+
+	if (browsing_mode == 1) {
+		var imgStr = '<img style="width: 90%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
+		$("#center_box").find("img").remove();
+		$("#center_box").append(imgStr);
+		new LazyLoad().init();
+	} else if (browsing_mode == 2) {
+		myVid=document.getElementById("video1");
+		if (myVid) {
+			golbol_volume = myVid.volume;
+		}
+		var vidstr = '<video id = "video1" controls style="width: 75%;"> <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
+		$("#center_box").find("video").remove();
+		$("#pre_evt").attr("style","height:50%;");//remove();
+		$("#nxt_evt").attr("style","height:50%;");//remove();
+
+		$("#center_box").append(vidstr);
+		myVid=document.getElementById("video1");
+		myVid.volume=golbol_volume;
+		myVid.focus()
+		//alert(myVid.volume)
+		//$("#center_box").find("video").volume=0.2
+	}
 	javascript:scroll(0,0);
 }
 
@@ -125,7 +147,7 @@ function prev_img(obj) {
 	shwo_cur_pic(cur_page);
 }
 
-function next_img(obj){
+function next_img(obj) {
 	if (cur_page == (show_list.length - 1)) {
 		if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
 			jump_chapter(1);
@@ -138,7 +160,7 @@ function next_img(obj){
 }
 
 $(document).keydown(function(event){
-	if (is_show_pic == 0) {
+	if (is_show_pic == 0 || browsing_mode != 1) {
 		return;
 	}
 	if (event.keyCode == 37 /*←*/) {
@@ -147,6 +169,18 @@ $(document).keydown(function(event){
 		next_img(null);
 	}
 });
+
+function page_select() {
+	input = document.getElementById("page_input")
+	var page = input.value
+	if (is_show_pic != 0 && cur_page != page) {
+		if (page <= 0 && page >= show_list.length) {
+			return;
+		}
+		cur_page = parseInt(page) - 1;
+		shwo_cur_pic(cur_page);
+	}
+}
 
 function add_title_link(title, browsing_mode) {
 	/*为标题添加各级目录链接*/
