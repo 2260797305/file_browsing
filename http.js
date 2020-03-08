@@ -156,8 +156,9 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
             if (dir_list.length != 0) {
                 dir_list.sort(function (lhs, rhs) {
                     //按照时间排序
-                    return fs.statSync(search_dir + "/" + lhs).mtime.getTime() - fs.statSync(search_dir + "/" + rhs).mtime.getTime()
-                    //return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+                    /** 
+                    return fs.statSync(search_dir + "/" + lhs).mtime.getTime() - fs.statSync(search_dir + "/" + rhs).mtime.getTime()*/
+                    return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
                 });
             }
             
