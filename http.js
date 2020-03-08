@@ -270,6 +270,134 @@ function get_select_dir(old_dir, dirct) {
 };
 
 /**
+ * 获取收藏的目录
+ */
+app.get('/get_favorite_list', function (req, res) {
+    console.log("获取收藏的路径");
+    var dir_list = new Array()
+    var file_list = new Array()
+
+    var a = "//jwioq/e/j////f/q//o//efjqo/";
+    while (1) {
+        var b = a.replace(/\/\//, "/");
+        if (b == a) {
+            if (b[0] == "/") {
+                a = b.substring(1);
+            }
+            break;
+        }
+        a = b;
+    }
+    console.log(a);
+
+    var querySql = 'select * from favorite_list';
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        for(var i = 0; i < objects.length; ++i){
+            //console.log(objects[i]);
+            dir_list.push(objects[i]["url"])
+        }
+        console.log(dir_list.length)
+    
+        //dir_list.push("windows/miku/f/download")
+        res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+    });
+});
+
+
+function dir_is_start(file_name) {
+    /**规范路径 */
+    while (1) {
+        var b = file_name.replace(/\/\//, "/");
+        if (b == file_name) {
+            file_name = b;
+            break;
+        }
+    }
+    if (file_name[0] == "/") {
+        file_name = file_name.substring(1);
+    }
+
+    var querySql = "select * from favorite_list where url='" + file_name + "'";
+    console.log(querySql)
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        console.log(objects.length)
+        if (objects.length == 0) {
+            return 0;
+        } else {
+            return 1;
+        }
+    });
+}
+
+/**
+ * 添加收藏目录
+ */
+app.get('/set_favorite_list', function (req, res) {
+    var file_name = req.query.file_dir;
+ 
+    if (file_name.length == 0 || file_name == "/") {
+        res.jsonp({'code': 0});
+    }
+    console.log("获添加的收藏路径: " + file_name);
+    /**规范路径 */
+    while (1) {
+        var b = file_name.replace(/\/\//, "/");
+        if (b == file_name) {
+            file_name = b;
+            break;
+        }
+    }
+    if (file_name[0] == "/") {
+        file_name = file_name.substring(1);
+    }
+    console.log("获添加的收藏路径: " + file_name);
+
+    var querySql = "select * from favorite_list where url='" + file_name + "'";
+    console.log(querySql)
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        console.log(objects.length)
+        if (objects.length == 0) {
+            var inquirytFavSql = "insert into favorite_list(url) values(?)";
+            var tileData = [[file_name]];
+            sqliteDB.insertData(inquirytFavSql, tileData);
+            res.jsonp({'code': 0});
+        } else {
+            res.jsonp({'code': -1});
+        }
+    });
+
+
+});
+
+/**
+ * 删除收藏目录
+ */
+app.get('/del_favorite_list', function (req, res) {
+    var file_name = req.query.file_dir;
+ 
+    if (file_name.length == 0) {
+        file_name = "/"
+    }
+    console.log("删除的收藏路径: " + file_name);
+    /**规范路径 */
+    while (1) {
+        var b = file_name.replace(/\/\//, "/");
+        if (b == file_name) {
+            file_name = b;
+            break;
+        }
+    }
+    if (file_name[0] == "/") {
+        file_name = file_name.substring(1);
+    }
+    console.log("删除的收藏路径: " + file_name);
+    var delFavSql = "delete from favorite_list where url='" + file_name + "'";
+    //var tileData = [[file_name]];
+    sqliteDB.executeSql(delFavSql);
+    res.jsonp({'code': 0});
+});
+
+/**
  * 获取漫画的上一章节
  */
 app.get('/get_prev_dir', function (req, res) {
@@ -320,7 +448,30 @@ app.get('/get_file_list', function (req, res) {
     //Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
     console.log("dir_list.length %d", dir_list.length);
     console.log("file_list.length %d", file_list.length);
-    res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+
+    /**规范路径 */
+    while (1) {
+        var b = file_name.replace(/\/\//, "/");
+        if (b == file_name) {
+            file_name = b;
+            break;
+        }
+    }
+    if (file_name[0] == "/") {
+        file_name = file_name.substring(1);
+    }
+    var querySql = "select * from favorite_list where url='" + file_name + "'";
+    console.log(querySql)
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        console.log(objects.length)
+        if (objects.length == 0) {
+            /**not start */
+            res.jsonp({'is_star':0, 'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+        } else {
+            res.jsonp({'is_star':1, 'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+        }
+    });
+    //res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
 });
 
 var server = app.listen(PORT, HOST, function () {

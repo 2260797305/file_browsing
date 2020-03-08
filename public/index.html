@@ -19,7 +19,14 @@
 </head>
 
 <body style="background-color:bisque;">
-	<h1 id="file-title" style="margin: 20px auto 20px 20px;"></h1>
+	<h1 id="file-title" style="margin: 20px auto 20px 20px;">
+		<a>
+			<img alt="收藏" id="star" src="img/unstar.png" style="cursor: pointer;" onclick="javascript:dir_start();">
+		</a>
+	</h1>
+	<h2 style="margin: 20px auto 20px 20px;">
+		<a style="text-decoration:none" href="favorite.html"> 收藏的网址 </a>
+    </h2>
 
 	<div id="menu" style="margin: 1% auto auto 1%;font-size:20px;background-color:rgb(251, 238, 177);height:auto;width:auto;float:left;">
 		<p>菜单</p>
@@ -63,6 +70,41 @@ var cur_page = 0;
 var is_show_pic = 0;
 var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
 var golbol_volume = 1;
+var is_star = 0
+
+function dir_start() {
+	var file_dir = getQueryString('file_dir');
+	if (file_dir == null) {
+        file_dir = "/"
+    }
+	var request_url = new String();
+	var host = window.location.host;
+	if (is_star == 0) {
+		request_url = 'http://' + host + '/set_favorite_list?file_dir=' + file_dir;
+		$.getJSON(request_url, function(data) {
+			if (data["code"] != 0) {
+				alert("收藏失败");
+				return;
+			}
+			
+			is_star = 1;
+			$("#star").attr("src","img/star.png");
+			alert("收藏成功")
+		});
+	} else  {
+		request_url = 'http://' + host + '/del_favorite_list?file_dir=' + file_dir;
+		$.getJSON(request_url, function(data) {
+			if (data["code"] != 0) {
+				alert("取消收藏失败");
+				return;
+			}
+			
+			is_star = 0;
+			$("#star").attr("src","img/unstar.png");
+			alert("取消收藏成功")
+		});
+	}
+ }
 
 function shwo_cur_pic(page) {
 	var file_dir = getQueryString('file_dir');
@@ -109,7 +151,6 @@ function start_show()
 	$("#picinfo").attr("style","display:;")
 	is_show_pic = 1;
 	shwo_cur_pic(cur_page);
-	
 }
 
 function jump_chapter(dirct) {
@@ -125,7 +166,6 @@ function jump_chapter(dirct) {
 	} else {
 		request_url = 'http://' + host + '/get_next_dir?file_dir=' + file_dir;
 	}
-	var host = window.location.host;
 	$.getJSON(request_url, function(data) {
 		if (data["code"] != 0) {
 			alert("寻找上、下级目录错误");
@@ -204,7 +244,7 @@ function add_title_link(title, browsing_mode) {
 			}
 		}
 		if (url.length != 0) {
-			list.append('<a  style="text-decoration:none" href="' + url + '">' + data + '/</a>')
+			list.append('<a  style="text-decoration:none" href="' + url + '">' + data + '/</style="text-decoration:none">')
 		}
 	});
 }
@@ -252,6 +292,10 @@ $(function() {
 		    $('#wrong-content').text(JSON.stringify(data));
             metroDialog.open('#dialog');
             return;
+		}
+		is_star = data['is_star']
+		if (is_star == 1) {
+			$("#star").attr("src","img/star.png");
 		}
 		/*目录显示，一直都在*/
 		var file_list = data['dir_list'];
