@@ -2,8 +2,7 @@
     width: 40%;
     height: 100%;
     position: absolute;
-    left: 7%;
-    top: 0;
+    left:0
     z-index: 5;
     cursor: url("../img/pre.cur"),auto;
 }
@@ -11,7 +10,8 @@
     width: 40%;
     height: 100%;
     position: absolute;
-    right: 2%;
+    right:0;
+    float: right;
     top: 0;
     z-index: 5;
     cursor: url("../img/next.cur"),auto;
@@ -46,7 +46,7 @@ p {
     font: normal 150% Helvetica, Arial, sans-serif;
     /*font-size:25px;*/
     text-decoration:none;
-    margin: auto auto auto auto;
+    /*margin: auto auto auto auto;*/
     color:rgb(0, 38, 255);
 }
 
@@ -68,4 +68,14 @@ b {
     transform: translate(-50%, -50%);
     color:red;
     /*background-color: rgb(8, 8, 19);*/
+}
+
+.max_div {
+    display: flex;
+    padding-top: 20;
+    justify-content: space-between;
+}
+
+a {
+    text-decoration:none
 }

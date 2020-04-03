@@ -24,24 +24,15 @@
 		 <a style="text-decoration:none" href="favorite.html"> 收藏的网址 </a>
 	</h2>
 
-	<div id="menu" style="margin: 1% auto auto 1%;font-size:20px;background-color:rgb(251, 238, 177);height:auto;width:auto;float:left;">
-		<p>菜单</p>
-		<a id="file_menu">文件模式</a><br><br>
-		<a id="pic_menu">图片模式</a><br><br>
-		<a id="video_menu">视频模式</a><br><br>
-		<a id="music_menu">音乐模式</a><br><br>
-		<a id="cartoon_menu">漫画模式</a><br><br>
-	</div>
-	
-	<div class="picinfo" id = "picinfo" style="display:none;">
-		<input id = "page_input" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}">
-		<b></b><b>/0</b>
-	</div>
-	<br><br>
-	<div class="comic_wraCon autoHeight" style="width: 1371px;" id="center_box"">
-		<a id = "pre_evt" class="img_land_prev" onclick="prev_img()"></a>
-		<a id = "nxt_evt" class="img_land_next" onclick="next_img()"></a>
-	</div>
+	<div class = "max_div" padding>
+		<div id="menu" style="font-size:20px;background-color:rgb(251, 238, 177);width:110px;height:360px;">
+			<p>菜单</p>
+			<a id="file_menu">&nbsp&nbsp文件模式</a><br><br>
+			<a id="pic_menu">&nbsp&nbsp图片模式</a><br><br>
+			<a id="video_menu">&nbsp&nbsp视频模式</a><br><br>
+			<a id="music_menu">&nbsp&nbsp音乐模式</a><br><br>
+			<a id="cartoon_menu">&nbsp&nbsp漫画模式</a><br><br>
+		</div>
 	
 	<div style="margin: 1% auto auto 7%;width:auto;background-color:rgb(231, 184, 43)" id="dir_contex">
 	<p> 目录</p>
@@ -53,10 +44,7 @@
 	<ul class="listview list-type-tiles"  id='file_list'>  </ul>
 	</div>
 
-	<div id="back_gf" style="margin: 1% auto auto 2%">
-		<hr>
-		<img src="img/back.gif" alt="Smiley face"> 
-	</div>
+</div>
 
 </body>
 
@@ -67,123 +55,6 @@ var is_show_pic = 0;
 var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
 var golbol_volume = 1;
 
-function shwo_cur_pic(page) {
-	var file_dir = getQueryString('file_dir');
-	var pic_info = '<b style="margin: 20px auto auto auto";>' + (cur_page+1) + "/" + show_list.length + "<br>" + show_list[page] + "</b>"
-	$("#picinfo").find("b").remove();
-	$("#picinfo").append(pic_info);
-
-	input = document.getElementById("page_input")
-	input.value = page + 1
-
-	if (browsing_mode == 1) {
-		var imgStr = '<img style="width: 90%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
-		$("#center_box").find("img").remove();
-		$("#center_box").append(imgStr);
-		new LazyLoad().init();
-	} else if (browsing_mode == 2) {
-		myVid=document.getElementById("video1");
-		if (myVid) {
-			golbol_volume = myVid.volume;
-		}
-		var vidstr = '<video id = "video1" controls style="width: 75%;"> <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
-		$("#center_box").find("video").remove();
-		$("#pre_evt").attr("style","height:50%;");//remove();
-		$("#nxt_evt").attr("style","height:50%;");//remove();
-
-		$("#center_box").append(vidstr);
-		myVid=document.getElementById("video1");
-		myVid.volume=golbol_volume;
-		myVid.focus()
-		//alert(myVid.volume)
-		//$("#center_box").find("video").volume=0.2
-	}
-	javascript:scroll(0,0);
-}
-
-function start_show()
-{
-	//$("#shwo_pic").attr["style"].append("display:none;");
-	//$("#dir_contex").attr("style","display:none;");
-	//$("#file_contex").attr("style","display:none;");
-	$("#back_gf").attr("style","display:none;");
-
-	$("#center_box").attr("style","display:;");
-	$("#picinfo").attr("style","display:;")
-	is_show_pic = 1;
-	shwo_cur_pic(cur_page);
-	
-}
-
-function jump_chapter(dirct) {
-	var file_dir = getQueryString('file_dir');
-	var browsing_mode = getQueryString('browsing_mode');
-	if (!browsing_mode) {
-		browsing_mode = 0;
-	}
-	var request_url = new String();
-	var host = window.location.host;
-	if (dirct == 0) {
-		request_url = 'http://' + host + '/get_prev_dir?file_dir=' + file_dir;
-	} else {
-		request_url = 'http://' + host + '/get_next_dir?file_dir=' + file_dir;
-	}
-	var host = window.location.host;
-	$.getJSON(request_url, function(data) {
-		if (data["code"] != 0) {
-			alert("寻找上、下级目录错误");
-			return;
-		}
-		location.href = "index.html?file_dir=" + data["find_dir"] + "&browsing_mode=" + browsing_mode;
-	});
-}
-
-function prev_img(obj) {
-	if (cur_page == 0) {
-		if(confirm("已经是此章节第1页了，要打开上一个章节吗？")==true){
-			jump_chapter(0);
-		}
-		return;
-	} else {
-		cur_page -= 1;
-	}
-	shwo_cur_pic(cur_page);
-}
-
-function next_img(obj) {
-	if (cur_page == (show_list.length - 1)) {
-		if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
-			jump_chapter(1);
-		}
-		return;
-	} else {
-		cur_page += 1;
-	}
-	shwo_cur_pic(cur_page);
-}
-
-$(document).keydown(function(event){
-	if (is_show_pic == 0 || browsing_mode != 1) {
-		return;
-	}
-	if (event.keyCode == 37 /*←*/) {
-		prev_img(null);
-	} else if (event.keyCode == 39 /*→*/) {
-		next_img(null);
-	}
-});
-
-function page_select() {
-	input = document.getElementById("page_input")
-	var page = input.value
-	if (is_show_pic != 0 && cur_page != page) {
-		if (page <= 0 && page >= show_list.length) {
-			return;
-		}
-		cur_page = parseInt(page) - 1;
-		shwo_cur_pic(cur_page);
-	}
-}
 
 function add_title_link(title) {
 	/*为标题添加各级目录链接*/
@@ -192,29 +63,7 @@ function add_title_link(title) {
 	list.append('<a  style="text-decoration:none" href="' + url + '">' + title  + '</a>');
 }
 
-function add_menu_url(title_string, browsing_mode) {
-	var url = "index.html?file_dir=" + title_string;
-
-	$('#file_menu').attr("href",url + "&browsing_mode=0");
-	$('#pic_menu').attr("href",url + "&browsing_mode=1");
-	$('#video_menu').attr("href",url + "&browsing_mode=2");
-	$('#music_menu').attr("href",url + "&browsing_mode=3");
-	$('#cartoon_menu').attr("href",url + "&browsing_mode=1");
-	if (browsing_mode == 0) {
-		$("#file_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 1) {
-		$("#pic_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 2) {
-		$("#video_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 3) {
-		$("#music_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 3) {
-		$("#cartoon_menu").attr("style","background-color:rgb(173, 173, 172);");
-	}
-}
-
 $(function() {
-	//add_menu_url(file_dir, browsing_mode);
 	var title_string = "home";
 	add_title_link(title_string);
 
@@ -247,6 +96,7 @@ $(function() {
 			});
 		} else {
 			$("#file_contex").remove()
+			$("#dir_contex").attr("style","width:90%;background-color:rgb(231, 184, 43)");
 		}
 		//var s = len.toString();
 		//alert(s); //将输出 String
