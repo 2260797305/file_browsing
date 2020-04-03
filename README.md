@@ -8,4 +8,4 @@ node install
 
 node http.js
 
-浏览器访问： http://192.168.31.111:8089/
+浏览器访问： http://localhost:8089/
