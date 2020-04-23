@@ -101,6 +101,10 @@ function dir_start() {
 	}
  }
 
+function play_next_by_end_or_error(obj) {
+	next_img(obj)
+}
+
 function shwo_cur_pic(page) {
 	var file_dir = getQueryString('file_dir');
 	var pic_info = (cur_page+1) + "/" + show_list.length + "<br>" + show_list[page]
@@ -122,11 +126,15 @@ function shwo_cur_pic(page) {
 		if (myVid) {
 			golbol_volume = myVid.volume;
 		}
-		var vidstr = '<video id = "video1" controls style="width: 100%;"> <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
+		var vidstr = '<video id = "video1" controls style="width: 100%;" autoplay="autoplay" onpause="play_next_by_end_or_error()"> <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
 		$("#center_box").find("video").remove();
 
 		$("#center_box").append(vidstr);
 		myVid=document.getElementById("video1");
+
+		myVid.addEventListener("onplay",function(){
+			alert("结束"); //
+		}, true)
 		myVid.volume=golbol_volume;
 		myVid.focus()
 		//alert(myVid.volume)

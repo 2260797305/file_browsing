@@ -2,7 +2,7 @@
     width: 40%;
     height: 100%;
     position: absolute;
-    left:0
+    left:0;
     z-index: 5;
     cursor: url("../img/pre.cur"),auto;
 }
