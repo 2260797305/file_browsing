@@ -65,7 +65,8 @@ var cur_page = 0;
 var is_show_pic = 0;
 var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
 var golbol_volume = 1;
-var is_star = 0
+var is_star = 0;
+var need_play_next = 0;
 
 function dir_start() {
 	var file_dir = getQueryString('file_dir');
@@ -101,8 +102,22 @@ function dir_start() {
 	}
  }
 
+function jujed_play_next(ojb) {
+	if (need_play_next == 1) {
+		next_img()
+		need_play_next = 0;
+	}
+}
+
 function play_next_by_end_or_error(obj) {
-	next_img(obj)
+	need_play_next = 1;
+	setTimeout("jujed_play_next()",3400);
+	//next_img(obj)
+}
+
+function playe__vent() {
+	//alert("start play");
+	need_play_next = 0;
 }
 
 function shwo_cur_pic(page) {
@@ -126,17 +141,16 @@ function shwo_cur_pic(page) {
 		if (myVid) {
 			golbol_volume = myVid.volume;
 		}
-		var vidstr = '<video id = "video1" controls style="width: 100%;" autoplay="autoplay" onpause="play_next_by_end_or_error()"> <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
+		need_play_next = 0;
+		var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" > <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
 		$("#center_box").find("video").remove();
 
 		$("#center_box").append(vidstr);
 		myVid=document.getElementById("video1");
-
-		myVid.addEventListener("onplay",function(){
-			alert("结束"); //
-		}, true)
 		myVid.volume=golbol_volume;
 		myVid.focus()
+		myVid.requestFullScreen()
+		
 		//alert(myVid.volume)
 		//$("#center_box").find("video").volume=0.2
 	}

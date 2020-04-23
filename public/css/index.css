@@ -50,6 +50,11 @@ p {
     color:rgb(0, 38, 255);
 }
 
+#video1 {
+    width: 100%;
+    autoplay:autoplay;
+}
+
 body {
     /*background: rgb(185, 246, 246);*//*设置颜色背景*/
     /*background-image: url("../img/background.png");/*设置背景图片;*/
