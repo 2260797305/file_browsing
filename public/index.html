@@ -137,25 +137,25 @@ function shwo_cur_pic(page) {
 		$("#center_box").append(imgStr);
 		new LazyLoad().init();
 	} else if (browsing_mode == 2) {
+		var new_src = "store/" + file_dir + "/" + show_list[page];
 		myVid=document.getElementById("video1");
+		need_play_next = 0;
 		if (myVid) {
 			golbol_volume = myVid.volume;
+			myVid.src = new_src;
+			myVid.play()
+			//return
+		} else {
+			var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" > <source src="' + new_src + '" type="video/mp4"> </video>';
+			$("#center_box").append(vidstr);
+			myVid = document.getElementById("video1");
+			myVid.focus()
 		}
-		need_play_next = 0;
-		var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" > <source src="store/' + file_dir + "/" + show_list[page] + '" type="video/mp4"> </video>';
-		$("#center_box").find("video").remove();
-
-		$("#center_box").append(vidstr);
-		myVid=document.getElementById("video1");
-		myVid.volume=golbol_volume;
-		myVid.focus()
-		myVid.requestFullScreen()
-		
-		//alert(myVid.volume)
-		//$("#center_box").find("video").volume=0.2
 	}
 	javascript:scroll(0,0);
 }
+
+
 
 function start_show()
 {
@@ -226,13 +226,40 @@ function next_img(obj) {
 }
 
 $(document).keydown(function(event){
-	if (is_show_pic == 0 || browsing_mode != 1) {
+
+	if (is_show_pic == 0) {
 		return;
 	}
-	if (event.keyCode == 37 /*←*/) {
+	//alert(event.keyCode)
+//	return
+	if (event.keyCode == 65 /*a*/) {
 		prev_img(null);
-	} else if (event.keyCode == 39 /*→*/) {
+		return
+	} else if (event.keyCode == 68 /*d*/) {
 		next_img(null);
+		return
+	}
+	if (browsing_mode == 2) {
+		myVid=document.getElementById("video1");
+		golbol_volume = myVid.volume;
+		if (event.keyCode == 87 /*w*/) {
+			if (golbol_volume + 0.1 <= 0.99) {
+				golbol_volume += 0.1;
+			} else  {
+				golbol_volume = 1;
+			}
+			myVid.volume = golbol_volume;
+		} else if (event.keyCode == 83 /*s*/) {
+			if (golbol_volume - 0.1 >= 0.01) {
+				golbol_volume -= 0.1;
+			} else  {
+				golbol_volume = 0;
+			}
+			myVid.volume = golbol_volume;
+		}
+		return
+	} else if (browsing_mode == 1) {
+		//javascript:scroll(0,200);
 	}
 });
 
