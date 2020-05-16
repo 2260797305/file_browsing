@@ -21,7 +21,7 @@
 <body style="background-color:bisque;">
 	<h1 id="file-title" style="margin: 20px auto 20px 20px;">
 		<a>
-			<img alt="收藏" id="star" src="img/unstar.png" style="cursor: pointer;" onclick="javascript:dir_start();">
+			<img alt="收藏" id="star" src="img/unstar.png" style="cursor: pointer;" onclick="javascript:dir_star();">
 		</a>
 	</h1>
 	<h2 style="margin: 20px auto 20px 20px;">
@@ -67,8 +67,9 @@ var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音�
 var golbol_volume = 1;
 var is_star = 0;
 var need_play_next = 0;
+var storage;
 
-function dir_start() {
+function dir_star() {
 	var file_dir = getQueryString('file_dir');
 	if (file_dir == null) {
         file_dir = "/"
@@ -111,13 +112,19 @@ function jujed_play_next(ojb) {
 
 function play_next_by_end_or_error(obj) {
 	need_play_next = 1;
-	setTimeout("jujed_play_next()",3400);
+	setTimeout("jujed_play_next()",1000);
 	//next_img(obj)
 }
 
 function playe__vent() {
 	//alert("start play");
 	need_play_next = 0;
+}
+
+function volume_change() {
+	myVid=document.getElementById("video1");
+	golbol_volume = myVid.volume;
+	storage.setItem("volume", golbol_volume)
 }
 
 function shwo_cur_pic(page) {
@@ -141,21 +148,21 @@ function shwo_cur_pic(page) {
 		myVid=document.getElementById("video1");
 		need_play_next = 0;
 		if (myVid) {
-			golbol_volume = myVid.volume;
+			
 			myVid.src = new_src;
+			myVid.focus()
 			myVid.play()
 			//return
 		} else {
-			var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" > <source src="' + new_src + '" type="video/mp4"> </video>';
+			var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" onvolumechange="volume_change()" > <source src="' + new_src + '" type="video/mp4"> </video>';
 			$("#center_box").append(vidstr);
 			myVid = document.getElementById("video1");
+			myVid.volume = golbol_volume;
 			myVid.focus()
 		}
 	}
 	javascript:scroll(0,0);
 }
-
-
 
 function start_show()
 {
@@ -255,7 +262,9 @@ $(document).keydown(function(event){
 			} else  {
 				golbol_volume = 0;
 			}
+			alert(myVid.volume)
 			myVid.volume = golbol_volume;
+			
 		}
 		return
 	} else if (browsing_mode == 1) {
@@ -275,7 +284,7 @@ function page_select() {
 	}
 }
 
-function add_title_link(title, browsing_mode) {
+function add_title_link(title) {
 	/*为标题添加各级目录链接*/
 	var list = $('#file-title');
 	var dir_link =  title .split("/");
@@ -292,7 +301,7 @@ function add_title_link(title, browsing_mode) {
 				url.length = 0;
 			} else {
 				pre_dir = pre_dir + data;
-				url = "index.html?file_dir=/" + pre_dir + "&browsing_mode=" + browsing_mode;
+				url = "index.html?file_dir=/" + pre_dir;
 				pre_dir = pre_dir + "/";
 			}
 		}
@@ -302,14 +311,49 @@ function add_title_link(title, browsing_mode) {
 	});
 }
 
+function select_mode_0() {
+	if (browsing_mode == 0) {
+		return;
+	}
+	browsing_mode = 0;
+	storage.setItem("browsing_mode", browsing_mode)
+	window.location.reload()
+}
+
+function select_mode_1() {
+	if (browsing_mode == 1) {
+		return;
+	}
+	browsing_mode = 1;
+	storage.setItem("browsing_mode", browsing_mode)
+	window.location.reload()
+}
+function select_mode_2() {
+	if (browsing_mode == 2) {
+		return;
+	} 
+	browsing_mode = 2;
+	storage.setItem("browsing_mode", browsing_mode)
+	window.location.reload()
+}
+function select_mode_3() {
+	alert(browsing_mode)
+	if (browsing_mode == 3) {
+		return;
+	} 
+	browsing_mode = 3;
+	storage.setItem("browsing_mode", browsing_mode)
+	window.location.reload()
+}
+
 function add_menu_url(title_string, browsing_mode) {
 	var url = "index.html?file_dir=" + title_string;
 
-	$('#file_menu').attr("href",url + "&browsing_mode=0");
-	$('#pic_menu').attr("href",url + "&browsing_mode=1");
-	$('#video_menu').attr("href",url + "&browsing_mode=2");
-	$('#music_menu').attr("href",url + "&browsing_mode=3");
-	$('#cartoon_menu').attr("href",url + "&browsing_mode=1");
+	$('#file_menu').attr("href","javascript:select_mode_0();");
+	$('#pic_menu').attr("href","javascript:select_mode_1();");
+	$('#video_menu').attr("href","javascript:select_mode_2();");
+	$('#music_menu').attr("href","javascript:select_mode_3();");
+	$('#cartoon_menu').attr("href","javascript:select_mode_0();");
 	if (browsing_mode == 0) {
 		$("#file_menu").attr("style","background-color:rgb(173, 173, 172);");
 	} else if (browsing_mode == 1) {
@@ -324,19 +368,35 @@ function add_menu_url(title_string, browsing_mode) {
 }
 
 $(function() {
+	if(! window.localStorage){
+		alert("浏览器不支持localstorage");
+		return false;
+	}
+	storage = window.localStorage;
+	
+	var tmp = storage.getItem("volume")
+	if (tmp) {
+		golbol_volume = parseFloat(tmp)
+	} else {
+		storage.setItem("volume", golbol_volume)
+	}
+	tmp = storage.getItem("browsing_mode")
+	if (tmp) {
+		browsing_mode = parseInt(tmp)
+	} else {
+		storage.setItem("browsing_mode", browsing_mode)
+	}
+
 	var file_dir = getQueryString('file_dir');
 	if (file_dir == null) {
 		file_dir = "";
 	} else {
 		//file_dir = file_dir.slice(2, file_dir.length-1)
 	}
-	browsing_mode = getQueryString('browsing_mode');
-	if (browsing_mode == null) {
-		browsing_mode = 0;
-	}
+
 	add_menu_url(file_dir, browsing_mode);
 	var title_string = "home" + file_dir;
-	add_title_link(title_string, browsing_mode);
+	add_title_link(title_string);
 	
 	//$('#file-title').html(dir_path);
 	var host = window.location.host;
@@ -355,7 +415,7 @@ $(function() {
 		if (file_list.length != 0) {
 			var list = $('#dir_list');
 			file_list.forEach(function(data) {
-				list.append('<li class="list bg-grayLight"><a href="index.html?file_dir=' + file_dir + '/' + data + '&browsing_mode=' + browsing_mode + '" ><span class="list-title">' + data + '/</span></a></li>')
+				list.append('<li class="list bg-grayLight"><a href="index.html?file_dir=' + file_dir + '/' + data + '" ><span class="list-title">' + data + '/</span></a></li>')
 			});
 		} else {
 			$("#dir_contex").attr("style","display:none;");
