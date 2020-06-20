@@ -7,7 +7,6 @@
     <meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Cache" content="no-cache">
 
-	<base href="http://192.168.31.111:8089">
 	<link rel="shortcut icon" href="/img/title.png">
 	<title>File Browsing</title>
 	<link href="css/metro.min.css" rel="stylesheet" media="screen">
@@ -30,11 +29,18 @@
 	<div class = "max_div" padding>
 	<div id="menu" style="font-size:20px;background-color:rgb(251, 238, 177);width:110px;height:360px;">
 		<p>菜单</p>
-		<a id="file_menu">&nbsp&nbsp文件模式</a><br><br>
-		<a id="pic_menu">&nbsp&nbsp图片模式</a><br><br>
-		<a id="video_menu">&nbsp&nbsp视频模式</a><br><br>
-		<a id="music_menu">&nbsp&nbsp音乐模式</a><br><br>
-		<a id="cartoon_menu">&nbsp&nbsp漫画模式</a><br><br>
+		<select id = "recursive_cnt">
+			<option value="1">遍历1层</option>
+			<option value="2">遍历2层</option>
+			<option value="3">遍历3层</option>
+		</select>
+		<br>
+		<select id = "browsing_mode">
+			<option value="0">文件模式</option>
+			<option value="1">图片模式</option>
+			<option value="2">视频模式</option>
+			<option value="3">音乐模式</option>
+		</select>
 	</div>
 	
 	<div class="picinfo" id = "picinfo" style="display:none;">
@@ -68,6 +74,7 @@ var golbol_volume = 1;
 var is_star = 0;
 var need_play_next = 0;
 var storage;
+var video_ecursive_cnt = 1;
 
 function dir_star() {
 	var file_dir = getQueryString('file_dir');
@@ -262,7 +269,7 @@ $(document).keydown(function(event){
 			} else  {
 				golbol_volume = 0;
 			}
-			alert(myVid.volume)
+			//alertalert(myVid.volume)
 			myVid.volume = golbol_volume;
 			
 		}
@@ -311,62 +318,6 @@ function add_title_link(title) {
 	});
 }
 
-function select_mode_0() {
-	if (browsing_mode == 0) {
-		return;
-	}
-	browsing_mode = 0;
-	storage.setItem("browsing_mode", browsing_mode)
-	window.location.reload()
-}
-
-function select_mode_1() {
-	if (browsing_mode == 1) {
-		return;
-	}
-	browsing_mode = 1;
-	storage.setItem("browsing_mode", browsing_mode)
-	window.location.reload()
-}
-function select_mode_2() {
-	if (browsing_mode == 2) {
-		return;
-	} 
-	browsing_mode = 2;
-	storage.setItem("browsing_mode", browsing_mode)
-	window.location.reload()
-}
-function select_mode_3() {
-	alert(browsing_mode)
-	if (browsing_mode == 3) {
-		return;
-	} 
-	browsing_mode = 3;
-	storage.setItem("browsing_mode", browsing_mode)
-	window.location.reload()
-}
-
-function add_menu_url(title_string, browsing_mode) {
-	var url = "index.html?file_dir=" + title_string;
-
-	$('#file_menu').attr("href","javascript:select_mode_0();");
-	$('#pic_menu').attr("href","javascript:select_mode_1();");
-	$('#video_menu').attr("href","javascript:select_mode_2();");
-	$('#music_menu').attr("href","javascript:select_mode_3();");
-	$('#cartoon_menu').attr("href","javascript:select_mode_0();");
-	if (browsing_mode == 0) {
-		$("#file_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 1) {
-		$("#pic_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 2) {
-		$("#video_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 3) {
-		$("#music_menu").attr("style","background-color:rgb(173, 173, 172);");
-	} else if (browsing_mode == 3) {
-		$("#cartoon_menu").attr("style","background-color:rgb(173, 173, 172);");
-	}
-}
-
 $(function() {
 	if(! window.localStorage){
 		alert("浏览器不支持localstorage");
@@ -382,9 +333,15 @@ $(function() {
 	}
 	tmp = storage.getItem("browsing_mode")
 	if (tmp) {
-		browsing_mode = parseInt(tmp)
+		browsing_mode = tmp
 	} else {
 		storage.setItem("browsing_mode", browsing_mode)
+	}
+	tmp = storage.getItem("video_ecursive_cnt")
+	if (tmp) {
+		video_ecursive_cnt = tmp
+	} else {
+		storage.setItem("video_ecursive_cnt", video_ecursive_cnt)
 	}
 
 	var file_dir = getQueryString('file_dir');
@@ -394,12 +351,34 @@ $(function() {
 		//file_dir = file_dir.slice(2, file_dir.length-1)
 	}
 
-	add_menu_url(file_dir, browsing_mode);
 	var title_string = "home" + file_dir;
 	add_title_link(title_string);
-	
-	//$('#file-title').html(dir_path);
 	var host = window.location.host;
+
+	var selete_s = document.getElementById('recursive_cnt')
+	selete_s.value = video_ecursive_cnt
+	selete_s.addEventListener('change',function(){
+		video_ecursive_cnt = this.value,
+		$.post('http://' + host,     
+			{
+				recursive_cnt:this.value,
+			},
+			function(data) {
+				storage.setItem("video_ecursive_cnt", video_ecursive_cnt)
+				window.location.reload()
+			}
+		)
+	},false);
+
+	var selete_m = document.getElementById('browsing_mode')
+	selete_m.value = browsing_mode
+	selete_m.addEventListener('change',function(){
+		browsing_mode = this.value
+		storage.setItem("browsing_mode", browsing_mode)
+		window.location.reload()
+	},false);
+
+	//$('#file-title').html(dir_path);
 	$.getJSON('http://' + host + '/get_file_list?file_dir=' + file_dir + "&browsing_mode=" + browsing_mode, function(data) {
 		if (data['code'] != 0 &&  data['code'] != 1) {
 		    $('#wrong-content').text(JSON.stringify(data));

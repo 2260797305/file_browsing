@@ -3,9 +3,9 @@ var fs = require("fs");
 var express = require('express');
 var app = express();
 var SqliteDB = require('./data/sqlite.js').SqliteDB;
-var HOST = "192.168.31.111"; // 请改成实际的ip地址
+var HOST = "192.168.31.151"; // 请改成实际的ip地址
                         // 后面的图片的URL会使用这个变量来构造
-var PORT = 8089;
+var PORT = 9089;
 var db_file = "./data/FileB.db";
 
 var sqliteDB = new SqliteDB(db_file)
@@ -23,7 +23,7 @@ sqliteDB.queryData(querySql, dataDeal);
 
 
 app.use('/', express.static('public'));
-
+var video_ecursive_cnt = 1;
 /**
  * 错误提示
  */
@@ -66,8 +66,27 @@ function checkParam(param) {
 
 //  POST 请求
 app.post('/', function (req, res) {
-   console.log("主页 POST 请求");
-   res.send('Hello POST');
+    //post
+    var reqBody='';
+    // 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量
+    req.on('data',function (data) {
+        reqBody += data;
+    });
+    // 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。
+    req.on('end',function () {//用于数据接收完成后再获取
+        //res.writeHead(200,{'Content-Type':'text/html'});
+       // res.write('you have sent a '+req.method+' request\n');
+       // res.write('<p>Content-Type:'+req.headers['content-type']+'</p>'
+        //    +'<p>Data:your name is '+querystring.parse(reqBody).user+'</p>'
+        //    +'<p>Data:your password is  '+ querystring.parse(reqBody).pwd+'</p>');
+        video_ecursive_cnt = parseInt(reqBody.split("=")[1])
+        console.log("video_ecursive_cnt = " + video_ecursive_cnt)
+        //recursive_cnt
+        //video_ecursive_cnt = 
+        //res.end();
+        res.send('200');
+    })
+   //res.send('200');
 });
 
 app.get('/process_get', function (req, res) {
@@ -502,7 +521,7 @@ app.get('/get_file_list', function (req, res) {
     var pic_list = new Array();
     var Recursive_cnt = 1;
     if (browsing_mode == 2) {
-        Recursive_cnt = 3;
+        Recursive_cnt = video_ecursive_cnt;
     }
     Recursive_dir(Recursive_cnt, dir, "", browsing_mode, dir_list, file_list)
     //Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
