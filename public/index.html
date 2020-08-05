@@ -30,11 +30,10 @@
 	<div id="menu" style="font-size:20px;background-color:rgb(251, 238, 177);width:110px;height:360px;">
 		<p>菜单</p>
 		<select id = "recursive_cnt">
-			<option value="1">遍历1层</option>
-			<option value="2">遍历2层</option>
-			<option value="3">遍历3层</option>
+			<option value="1">遍历 1层</option>
+			<option value="2">遍历 2层</option>
+			<option value="3">遍历 3层</option>
 		</select>
-		<br>
 		<select id = "browsing_mode">
 			<option value="0">文件模式</option>
 			<option value="1">图片模式</option>
@@ -119,7 +118,7 @@ function jujed_play_next(ojb) {
 
 function play_next_by_end_or_error(obj) {
 	need_play_next = 1;
-	setTimeout("jujed_play_next()",1000);
+	setTimeout("jujed_play_next()",2000);
 	//next_img(obj)
 }
 
@@ -407,8 +406,16 @@ $(function() {
 				start_show();
 			}
 			list = $('#file_list');
+			
 			show_list.forEach(function(data) {
-				list.append('<li class="list bg-grayLight"><a href="store/' + file_dir + '/' + data + '" ><span class="list-title">' + data + '</span></a></li>')
+				url = '"store/' + file_dir + '/' + data + '"'
+				download_info = ""
+				var index = data.lastIndexOf(".");
+				var suffix = data.substring(index+1).toLowerCase();
+				if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
+					download_info = "download=" + data
+				}
+				list.append('<li class="list bg-grayLight"><a href=' + url + download_info + ">"+ data + '<span class="list-title">' +'</span></a></li>')
 			});
 		} else {
 			$("#file_contex").remove()
