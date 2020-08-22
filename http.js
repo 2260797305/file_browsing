@@ -1,6 +1,7 @@
 
 var fs = require("fs");
 var express = require('express');
+var querystring = require('querystring');
 var app = express();
 var SqliteDB = require('./data/sqlite.js').SqliteDB;
 var HOST = "192.168.31.151"; // 请改成实际的ip地址
@@ -61,9 +62,42 @@ function checkParam(param) {
     return /^[^\.\\\/]+$/.test(param);
 }
 
+//  POST 请求
+app.post('/login', function (req, res) {
+    //post
+    var reqBody='';
+    // console.log(req)
+
+    // 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量
+    req.on('data',function (data) {
+        reqBody += data;
+    });
+    // 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。
+    req.on('end',function () {//用于数据接收完成后再获取
+        name = querystring.parse(reqBody).uname
+        upwd = querystring.parse(reqBody).upwd
+        console.log(name)
+        console.log(upwd)
+        // res.writeHead(200,{'Content-Type':'text/html'});
+        //res.write('you have sent a '+req.method+' request\n');
+        //res.write('<p>Content-Type:'+req.headers['content-type']+'</p>');
+
+        //    +'<p>Data:your name is '+querystring.parse(reqBody).entry_name+'</p>'
+        //    +'<p>Data:your password is  '+ querystring.parse(reqBody).entry_password+'</p>');
+        // video_ecursive_cnt = parseInt(reqBody.split("=")[1])
+        // console.log("video_ecursive_cnt = " + video_ecursive_cnt)
+
+        req.session.error = '用户名不存在';
+        res.send(404); 
+
+        // res.jsonp({'status': "success", 'code': 200});
+        // res.send('400');
+    })
+   //res.send('200');
+});
 
 //  POST 请求
-app.post('/', function (req, res) {
+app.post('/recursive_cnt', function (req, res) {
     //post
     var reqBody='';
     // 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量
@@ -72,16 +106,9 @@ app.post('/', function (req, res) {
     });
     // 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。
     req.on('end',function () {//用于数据接收完成后再获取
-        //res.writeHead(200,{'Content-Type':'text/html'});
-       // res.write('you have sent a '+req.method+' request\n');
-       // res.write('<p>Content-Type:'+req.headers['content-type']+'</p>'
-        //    +'<p>Data:your name is '+querystring.parse(reqBody).user+'</p>'
-        //    +'<p>Data:your password is  '+ querystring.parse(reqBody).pwd+'</p>');
-        video_ecursive_cnt = parseInt(reqBody.split("=")[1])
+        video_ecursive_cnt = querystring.parse(reqBody).recursive_cnt
+        // video_ecursive_cnt = parseInt(reqBody.split("=")[1])
         console.log("video_ecursive_cnt = " + video_ecursive_cnt)
-        //recursive_cnt
-        //video_ecursive_cnt = 
-        //res.end();
         res.send('200');
     })
    //res.send('200');
@@ -491,7 +518,7 @@ app.get('/get_prev_dir', function (req, res) {
 app.get('/get_next_dir', function (req, res) {
     var file_name = req.query.file_dir;
     var new_dir = get_select_dir(file_name, 1);
-    res.jsonp({'find_dir': new_dir, 'code': 0});
+    res.jsonp({'find_dir': new_dir, 'recursive_cnt':video_ecursive_cnt,'code': 0});
 });
 
 /**
@@ -543,9 +570,9 @@ app.get('/get_file_list', function (req, res) {
         console.log(objects.length)
         if (objects.length == 0) {
             /**not start */
-            res.jsonp({'is_star':0, 'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+            res.jsonp({'is_star':0, 'dir_list': dir_list, 'file_list': file_list, 'recursive_cnt':video_ecursive_cnt, 'code': 0});
         } else {
-            res.jsonp({'is_star':1, 'dir_list': dir_list, 'file_list': file_list, 'code': 0});
+            res.jsonp({'is_star':1, 'dir_list': dir_list, 'file_list': file_list, 'recursive_cnt':video_ecursive_cnt, 'code': 0});
         }
     });
     //res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});

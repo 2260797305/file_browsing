@@ -58,7 +58,7 @@ var golbol_volume = 1;
 function add_title_link(title) {
 	/*为标题添加各级目录链接*/
 	var list = $('#file-title');
-	url = "/index.html";
+	url = "/browsing.html";
 	list.append('<a  style="text-decoration:none" href="' + url + '">' + title  + '</a>');
 }
 
@@ -78,7 +78,7 @@ $(function() {
 		if (file_list.length != 0) {
 			var list = $('#dir_list');
 			file_list.forEach(function(data) {
-				list.append('<li class="list bg-grayLight"><a href="index.html?file_dir=' + '/' + data + '" ><span class="list-title">' + data + '/</span></a></li>')
+				list.append('<li class="list bg-grayLight"><a href="browsing.html?file_dir=' + '/' + data + '" ><span class="list-title">' + data + '/</span></a></li>')
 			});
 		} else {
 			$("#dir_contex").remove()
