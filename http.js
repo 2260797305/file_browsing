@@ -87,7 +87,7 @@ app.post('/login', function (req, res) {
         // video_ecursive_cnt = parseInt(reqBody.split("=")[1])
         // console.log("video_ecursive_cnt = " + video_ecursive_cnt)
 
-        req.session.error = '用户名不存在';
+        // req.session.error = '用户名不存在';
         res.send(404); 
 
         // res.jsonp({'status': "success", 'code': 200});

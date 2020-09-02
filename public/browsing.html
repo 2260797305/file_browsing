@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="File Browsing" content="简单的本地文件浏览器" http-equiv="refresh" content="30">
+    <meta http-equiv="Expirse" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+
+	<link rel="shortcut icon" href="/img/title.png">
+	<!-- <link rel="stylesheet" type="text/css" href="index/css/style.css"> -->
+
+	<title>File Browsing</title>
+	<link href="css/metro.min.css" rel="stylesheet" media="screen">
+	<link href="css/index.css" rel="stylesheet" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/metro.min.js"></script>
+	<script src="js/lazeload.js"></script>
+	<script src="js/util.js"></script>
+
+	<script type="text/javascript" src="index/js/jquery.min.js"></script>
+	<script type="text/javascript" src="index/js/vector.js"></script>
+
+</head>
+
+<body style="background-color:bisque;">
+	<h1 id="file-title" style="margin: 20px auto 20px 20px;">
+		<a>
+			<img alt="收藏" id="star" src="img/unstar.png" style="cursor: pointer;" onclick="javascript:dir_star();">
+			<img alt="复制" id="t_copy" src="img/t_copy.png" style="cursor: pointer;" onclick="javascript:dir_copy();">
+
+		</a>
+	</h1>
+	<h2 style="margin: 20px auto 20px 20px;">
+		<a style="text-decoration:none" href="favorite.html"> 收藏的网址 </a>
+    </h2>
+	<div class = "max_div" padding>
+	<div id="menu" style="font-size:20px;background-color:rgb(251, 238, 177);width:110px;height:360px;">
+		<p>菜单</p>
+		<select id = "recursive_cnt">
+			<option value="1">遍历 1层</option>
+			<option value="2">遍历 2层</option>
+			<option value="3">遍历 3层</option>
+		</select>
+		<select id = "browsing_mode">
+			<option value="0">文件模式</option>
+			<option value="1">图片模式</option>
+			<option value="2">视频模式</option>
+			<option value="3">音乐模式</option>
+		</select>
+	</div>
+	
+	<div class="picinfo" id = "picinfo" style="display:none;">
+		<input id = "page_input" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}">
+		<b>0/0</b>
+		<br><br>
+		<div class="comic_wraCon autoHeight" style="width: auto;" id="center_box"">
+			<a id = "pre_evt" class="img_land_prev" onclick="prev_img()"></a>
+			<a id = "nxt_evt" class="img_land_next" onclick="next_img()"></a>
+		</div>
+	</div>
+	
+	<div style="width:45%;background-color:rgb(231, 184, 43)" id="dir_contex">
+	<p> 目录</p>
+	<ul class="listview list-type-tiles"  id='dir_list'> </ul>
+	</div>
+
+	<div style="width:45%;background-color:rgb(253, 225, 141)" id="file_contex">
+	<p> 文件</p>
+	<ul class="listview list-type-tiles"  id='file_list'>  </ul>
+	</div>
+</div>
+</body>
+
+<script>
+var show_list = new Array();
+var cur_page = 0;
+var is_show_pic = 0;
+var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
+var golbol_volume = 1;
+var is_star = 0;
+var need_play_next = 0;
+var storage;
+var video_ecursive_cnt = 1;
+
+function dir_copy() {
+	var file_dir = getQueryString('file_dir');
+	if (file_dir == null) {
+        file_dir = "/"
+	}
+	var idx = file_dir.indexOf("windows")
+	if (idx == -1) {
+		return
+	}
+	file_dir = file_dir.slice(idx + 8)
+	if (show_list[cur_page] && browsing_mode != 0) {
+		file_dir = file_dir + "/" + show_list[cur_page]
+	}
+	file_dir = file_dir.replace("//", "/")
+	var cp_text = file_dir.slice(0, 1) + ":" + file_dir.slice(1)
+
+	copyTest(cp_text, function(text) {
+		alert(text + " copy ok")
+	})
+}
+
+function dir_star() {
+	var file_dir = getQueryString('file_dir');
+	if (file_dir == null) {
+        file_dir = "/"
+    }
+	var request_url = new String();
+	var host = window.location.host;
+	if (is_star == 0) {
+		request_url = '/set_favorite_list?file_dir=' + file_dir;
+		$.getJSON(request_url, function(data) {
+			if (data["code"] != 0) {
+				alert("收藏失败");
+				return;
+			}
+			
+			is_star = 1;
+			$("#star").attr("src","img/star.png");
+			alert("收藏成功")
+		});
+	} else  {
+		request_url = '/del_favorite_list?file_dir=' + file_dir;
+		$.getJSON(request_url, function(data) {
+			if (data["code"] != 0) {
+				alert("取消收藏失败");
+				return;
+			}
+			
+			is_star = 0;
+			$("#star").attr("src","img/unstar.png");
+			alert("取消收藏成功")
+		});
+	}
+ }
+
+function jujed_play_next(ojb) {
+	if (need_play_next == 1) {
+		next_img()
+		need_play_next = 0;
+	}
+}
+
+function play_next_by_end_or_error(obj) {
+	need_play_next = 1;
+	setTimeout("jujed_play_next()",2000);
+	//next_img(obj)
+}
+
+function playe__vent() {
+	//alert("start play");
+	need_play_next = 0;
+}
+
+function volume_change() {
+	myVid=document.getElementById("video1");
+	golbol_volume = myVid.volume;
+	storage.setItem("volume", golbol_volume)
+}
+
+function shwo_cur_pic(page) {
+	var file_dir = getQueryString('file_dir');
+	var pic_info = (cur_page+1) + "/" + show_list.length + "<br>" + show_list[page]
+	//document.getElementById("demo").innerHTML = "Hello javascript!";
+	$("#picinfo").find("b")[0].innerHTML = pic_info;
+	//$("#picinfo").find("b").remove();
+	//$("#picinfo").append(pic_info);
+
+	input = document.getElementById("page_input")
+	input.value = page + 1
+
+	if (browsing_mode == 1) {
+		var imgStr = '<img style="width: 95%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
+		$("#center_box").find("img").remove();
+		$("#center_box").append(imgStr);
+		new LazyLoad().init();
+	} else if (browsing_mode == 2) {
+		var new_src = "store/" + file_dir + "/" + show_list[page];
+		myVid=document.getElementById("video1");
+		need_play_next = 0;
+		if (myVid) {
+			
+			myVid.src = new_src;
+			myVid.focus()
+			myVid.play()
+			//return
+		} else {
+			var vidstr = '<video id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" onvolumechange="volume_change()" > <source src="' + new_src + '" type="video/mp4"> </video>';
+			$("#center_box").append(vidstr);
+			myVid = document.getElementById("video1");
+			myVid.volume = golbol_volume;
+			myVid.focus()
+		}
+	}
+	javascript:scroll(0,0);
+}
+
+function start_show()
+{
+	//$("#shwo_pic").attr["style"].append("display:none;");
+	//$("#dir_contex").attr("style","display:none;");
+	//$("#file_contex").attr("style","display:none;");
+	$("#dir_contex").remove()
+	$("#file_contex").remove()
+
+	$("#picinfo").attr("style","display:;width:90%;")
+
+	if (browsing_mode == 2) { // 视频模式
+		$("#center_box").attr("style","display:;width:75%; margin:0 auto")
+		$("#pre_evt").attr("style","height:50%;");//remove();
+		$("#nxt_evt").attr("style","height:50%;");//remove();
+	} else {
+		$("#center_box").attr("style","display:;width:100%;")
+	}
+
+	is_show_pic = 1;
+	shwo_cur_pic(cur_page);
+}
+
+function jump_chapter(dirct) {
+	var file_dir = getQueryString('file_dir');
+	var browsing_mode = getQueryString('browsing_mode');
+	if (!browsing_mode) {
+		browsing_mode = 0;
+	}
+	var request_url = new String();
+	var host = window.location.host;
+	if (dirct == 0) {
+		request_url = 'http://' + host + '/get_prev_dir?file_dir=' + file_dir;
+	} else {
+		request_url = 'http://' + host + '/get_next_dir?file_dir=' + file_dir;
+	}
+	$.getJSON(request_url, function(data) {
+		if (data["code"] != 0) {
+			alert("寻找上、下级目录错误");
+			return;
+		}
+		location.href = "browsing.html?file_dir=" + data["find_dir"] + "&browsing_mode=" + browsing_mode;
+	});
+}
+
+function prev_img(obj) {
+	if (cur_page == 0) {
+		if(confirm("已经是此章节第1页了，要打开上一个章节吗？")==true){
+			jump_chapter(0);
+		}
+		return;
+	} else {
+		cur_page -= 1;
+	}
+	shwo_cur_pic(cur_page);
+}
+
+function next_img(obj) {
+	if (cur_page == (show_list.length - 1)) {
+		if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
+			jump_chapter(1);
+		}
+		return;
+	} else {
+		cur_page += 1;
+	}
+	shwo_cur_pic(cur_page);
+}
+
+$(document).keydown(function(event){
+
+	if (is_show_pic == 0) {
+		return;
+	}
+	//alert(event.keyCode)
+//	return
+	if (event.keyCode == 65 /*a*/) {
+		prev_img(null);
+		return
+	} else if (event.keyCode == 68 /*d*/) {
+		next_img(null);
+		return
+	}
+	if (browsing_mode == 2) {
+		myVid=document.getElementById("video1");
+		golbol_volume = myVid.volume;
+		if (event.keyCode == 87 /*w*/) {
+			if (golbol_volume + 0.1 <= 0.99) {
+				golbol_volume += 0.1;
+			} else  {
+				golbol_volume = 1;
+			}
+			myVid.volume = golbol_volume;
+		} else if (event.keyCode == 83 /*s*/) {
+			if (golbol_volume - 0.1 >= 0.01) {
+				golbol_volume -= 0.1;
+			} else  {
+				golbol_volume = 0;
+			}
+			//alertalert(myVid.volume)
+			myVid.volume = golbol_volume;
+			
+		}
+		return
+	} else if (browsing_mode == 1) {
+		//javascript:scroll(0,200);
+	}
+});
+
+function page_select() {
+	input = document.getElementById("page_input")
+	var page = input.value
+	if (is_show_pic != 0 && cur_page != page) {
+		if (page <= 0 && page >= show_list.length) {
+			return;
+		}
+		cur_page = parseInt(page) - 1;
+		shwo_cur_pic(cur_page);
+	}
+}
+
+function add_title_link(title) {
+	/*为标题添加各级目录链接*/
+	var list = $('#file-title');
+	var dir_link =  title .split("/");
+	var pre_dir = new String();
+	var home_dir = 1;
+
+	dir_link.forEach(function(data) {
+		var url = new String();
+		if (home_dir == 1) {
+			url = "/browsing.html"
+			home_dir = 0;
+		} else {
+			if (data == "/") {
+				url.length = 0;
+			} else {
+				pre_dir = pre_dir + data;
+				url = "browsing.html?file_dir=/" + pre_dir;
+				pre_dir = pre_dir + "/";
+			}
+		}
+		if (url.length != 0) {
+			list.append('<a  style="text-decoration:none" href="' + url + '">' + data + '/</style="text-decoration:none">')
+		}
+	});
+}
+
+function copyTest(text, cbk) {
+	
+	var tag = document.createElement("input")
+	tag.setAttribute("id", "cp_hgz_input")
+	tag.value = text
+	document.getElementsByTagName('body')[0].appendChild(tag)
+	document.getElementById("cp_hgz_input").select()
+	document.execCommand("copy")
+	document.getElementById("cp_hgz_input").remove()
+	if (cbk) {
+		cbk(text)
+	}
+}
+
+$(function() {
+	if(! window.localStorage){
+		alert("浏览器不支持localstorage");
+		return false;
+	}
+	storage = window.localStorage;
+	
+	var tmp = storage.getItem("volume")
+	if (tmp) {
+		golbol_volume = parseFloat(tmp)
+	} else {
+		storage.setItem("volume", golbol_volume)
+	}
+	tmp = storage.getItem("browsing_mode")
+	if (tmp) {
+		browsing_mode = tmp
+	} else {
+		storage.setItem("browsing_mode", browsing_mode)
+	}
+	tmp = storage.getItem("video_ecursive_cnt")
+	if (tmp) {
+		video_ecursive_cnt = tmp
+	} else {
+		storage.setItem("video_ecursive_cnt", video_ecursive_cnt)
+	}
+
+	var file_dir = getQueryString('file_dir');
+	if (file_dir == null) {
+		file_dir = "";
+	} else {
+		//file_dir = file_dir.slice(2, file_dir.length-1)
+	}
+
+	var title_string = "home" + file_dir;
+	add_title_link(title_string);
+	var host = window.location.host;
+
+	var selete_s = document.getElementById('recursive_cnt')
+	selete_s.value = video_ecursive_cnt
+	selete_s.addEventListener('change',function(){
+		video_ecursive_cnt = this.value,
+		$.post("/recursive_cnt",     
+			{
+				recursive_cnt:this.value,
+			},
+			function(data) {
+				storage.setItem("video_ecursive_cnt", video_ecursive_cnt)
+				window.location.reload()
+			}
+		)
+	},false);
+
+	var selete_m = document.getElementById('browsing_mode')
+	selete_m.value = browsing_mode
+	selete_m.addEventListener('change',function(){
+		browsing_mode = this.value
+		storage.setItem("browsing_mode", browsing_mode)
+		window.location.reload()
+	},false);
+
+	//$('#file-title').html(dir_path);
+	$.getJSON('/get_file_list?file_dir=' + file_dir + "&browsing_mode=" + browsing_mode, function(data) {
+		if (data['code'] != 0 &&  data['code'] != 1) {
+		    $('#wrong-content').text(JSON.stringify(data));
+            metroDialog.open('#dialog');
+            return;
+		}
+		is_star = data['is_star']
+		if (is_star == 1) {
+			$("#star").attr("src","img/star.png");
+		}
+
+		video_ecursive_cnt = data['recursive_cnt']
+		selete_s.value = video_ecursive_cnt
+		/*目录显示，一直都在*/
+		var file_list = data['dir_list'];
+		if (file_list.length != 0) {
+			var list = $('#dir_list');
+			file_list.forEach(function(data) {
+				list.append('<li class="list bg-grayLight"><a href="browsing.html?file_dir=' + file_dir + '/' + data + '" ><span class="list-title">' + data + '/</span></a></li>')
+			});
+		} else {
+			$("#dir_contex").attr("style","display:none;");
+			$("#file_contex").attr("style","width:90%;background-color:rgb(253, 225, 141)");
+		}
+
+		show_list = data['file_list'];
+		if (show_list.length != 0) {
+			if (browsing_mode != 0) {
+				start_show();
+			}
+			list = $('#file_list');
+			
+			show_list.forEach(function(data) {
+				url = '"store/' + file_dir + '/' + data + '"'
+				download_info = ""
+				var index = data.lastIndexOf(".");
+				var suffix = data.substring(index+1).toLowerCase();
+				if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
+					download_info = "download='" + data + "'"
+				}
+				list.append('<li class="list bg-grayLight"><a href=' + url + download_info + ">"+ data + '<span class="list-title">' +'</span></a></li>')
+			});
+		} else {
+			$("#file_contex").remove()
+			$("#dir_contex").attr("style","width:90%;background-color:rgb(231, 184, 43)");
+		}
+		//var s = len.toString();
+		//alert(s); //将输出 String
+	});
+
+});
+
+</script>
+</html>
