@@ -209,12 +209,22 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
     if (pre_dir.length != 0) {
         pre_dir = pre_dir + "/"
     }
-
-    files = fs.readdirSync(search_dir)
+    var file = null
+    try {
+        files = fs.readdirSync(search_dir)
+    } catch(e) {
+        return
+    }
     if (files.length != 0) { 
         files.forEach(function(data) {
+            var stats = null
             //console.log(data)
-			var stats = fs.statSync(search_dir + "/" + data);
+            try {
+                stats = fs.statSync(search_dir + "/" + data);
+            } catch(e) {
+                return
+            }
+			// var stats = fs.statSync(search_dir + "/" + data);
 			if (stats.isFile()) {
                 if (browsing_mode == 0) {
                     file_list.push(pre_dir + data)
