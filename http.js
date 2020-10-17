@@ -78,6 +78,15 @@ app.post('/login', function (req, res) {
         upwd = querystring.parse(reqBody).upwd
         console.log(name)
         console.log(upwd)
+
+        if (name === "kkk" && upwd === "kkk") {
+            res.jsonp({'status': "success", 'url': "/browsing.html"});
+            // res.send('400');
+            // return
+        } else {
+            res.jsonp({'status': "error", 'url': "/index.html"});
+            // return
+        }
         // res.writeHead(200,{'Content-Type':'text/html'});
         //res.write('you have sent a '+req.method+' request\n');
         //res.write('<p>Content-Type:'+req.headers['content-type']+'</p>');
@@ -88,7 +97,7 @@ app.post('/login', function (req, res) {
         // console.log("video_ecursive_cnt = " + video_ecursive_cnt)
 
         // req.session.error = '用户名不存在';
-        res.send(404); 
+        // res.send(404); 
 
         // res.jsonp({'status': "success", 'code': 200});
         // res.send('400');
