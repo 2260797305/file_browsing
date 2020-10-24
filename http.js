@@ -564,7 +564,7 @@ app.get('/get_file_list', function (req, res) {
     var file_list = new Array();
     var pic_list = new Array();
     var Recursive_cnt = 1;
-    if (browsing_mode == 2) {
+    if (browsing_mode == 2 || browsing_mode == 1) {
         Recursive_cnt = video_ecursive_cnt;
     }
     Recursive_dir(Recursive_cnt, dir, "", browsing_mode, dir_list, file_list)
