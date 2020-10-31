@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Cache" content="no-cache">
 
-	<link rel="shortcut icon" href="/img/title.png">
+	<link rel="shortcut icon" href="/img/title.ico">
 	<!-- <link rel="stylesheet" type="text/css" href="index/css/style.css"> -->
 
 	<title>File Browsing</title>
@@ -26,8 +26,8 @@
 <body style="background-color:bisque;">
 	<h2 id="file-title" style="margin: 20px auto 20px 20px;">
 		<a>
-			<img alt="收藏" id="star" src="img/unstar.png" style="cursor: pointer;" onclick="javascript:dir_star();">
-			<img alt="复制" id="t_copy" src="img/t_copy.png" style="cursor: pointer;" onclick="javascript:dir_copy();">
+			<img alt="收藏" id="star" src="img/unstar.ico" style="cursor: pointer;" onclick="javascript:dir_star();">
+			<img alt="复制" id="t_copy" src="img/t_copy.ico" style="cursor: pointer;" onclick="javascript:dir_copy();">
 
 		</a>
 	</h2>
@@ -137,7 +137,7 @@ function dir_star() {
 			}
 			
 			is_star = 1;
-			$("#star").attr("src","img/star.png");
+			$("#star").attr("src","img/star.ico");
 			alert("收藏成功")
 		});
 	} else  {
@@ -149,7 +149,7 @@ function dir_star() {
 			}
 			
 			is_star = 0;
-			$("#star").attr("src","img/unstar.png");
+			$("#star").attr("src","img/unstar.ico");
 			alert("取消收藏成功")
 		});
 	}
@@ -475,7 +475,7 @@ $(function() {
 		}
 		is_star = data['is_star']
 		if (is_star == 1) {
-			$("#star").attr("src","img/star.png");
+			$("#star").attr("src","img/star.ico");
 		}
 
 		video_ecursive_cnt = data['recursive_cnt']
