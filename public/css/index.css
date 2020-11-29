@@ -30,6 +30,12 @@
 h3 {
     color:red;
 }
+
+h2 {
+    font-size: 1.20em;
+}
+
+
 p {
     /*font-size:35px;*/
     font: normal 150% Helvetica, Arial, sans-serif;
@@ -51,28 +57,61 @@ p {
 }
 
 #video1 {
-    width: 100%;
+    width: 90%;
     autoplay:autoplay;
 }
 
 body {
     /*background: rgb(185, 246, 246);*//*设置颜色背景*/
     /*background-image: url("../img/background.png");/*设置背景图片;*/
-    background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
-    background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/
-    background-origin: border-box;/*从边框区域显示*/
-    background-size:cover;/*指定图片大小，此时会保持图像的纵横比并将图像缩放成将完全覆盖背景定位区域的最小大小*/
+    /*background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
+    /*background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/
+    /*background-origin: border-box;/*从边框区域显示*/
+    /*background-size:cover;/*指定图片大小，此时会保持图像的纵横比并将图像缩放成将完全覆盖背景定位区域的最小大小*/
+    background-image: url('../img/eg_bg_03.gif');
+    /*background-repeat: repeat-y;    */
 }
+
+
 b {
-    position: absolute;     /* 相对定位或绝对定位均可 */
-    width:auto;
-    font: normal 150% Helvetica, Arial, sans-serif;
-    height:auto;
+    position: relative;
+
+    /* position: absolute;     相对定位或绝对定位均可 */
+    width:100%;
+    font: normal 100% Helvetica, Arial, sans-serif;
+    height:20px;
     /*top: 50%;*/
-    left: 50%;
-    transform: translate(-50%, -50%);
+    /* left: 50%; */
+    /* transform: translate(-50%, -50%); */
     color:red;
-    /*background-color: rgb(8, 8, 19);*/
+    /* overflow: hidden; */
+    padding-left: 20px;
+    white-space: nowrap;
+    /* animation: 10s wordsLoop linear infinite normal; */
+    display: inline-block;
+}
+
+
+@keyframes wordsLoop {
+    0% {
+        transform: translateX(200px);
+        -webkit-transform: translateX(200px);
+    }
+    100% {
+        transform: translateX(-100%);
+        -webkit-transform: translateX(-100%);
+    }
+}
+
+@-webkit-keyframes wordsLoop {
+    0% {
+        transform: translateX(200px);
+        -webkit-transform: translateX(200px);
+    }
+    100% {
+        transform: translateX(-100%);
+        -webkit-transform: translateX(-100%);
+    }
 }
 
 .max_div {

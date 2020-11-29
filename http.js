@@ -25,6 +25,8 @@ sqliteDB.queryData(querySql, dataDeal);
 
 app.use('/', express.static('public'));
 var video_ecursive_cnt = 1;
+
+
 /**
  * 错误提示
  */
@@ -67,6 +69,9 @@ app.post('/login', function (req, res) {
     //post
     var reqBody='';
     // console.log(req)
+    console.log("是否有代理：" + req.headers['x-forwarded-for']) 
+    console.log("客户端 IP： " + req.connection.remoteAddress)
+    console.log("客户端 socket： " + req.socket.remoteAddress)
 
     // 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量
     req.on('data',function (data) {
@@ -401,7 +406,7 @@ app.get('/get_favorite_list', function (req, res) {
     var file_list = new Array()
 
     var a = "//jwioq/e/j////f/q//o//efjqo/";
-    while (1) {
+    while (1) {fffffffff
         var b = a.replace(/\/\//, "/");
         if (b == a) {
             if (b[0] == "/") {
@@ -497,7 +502,11 @@ app.get('/set_favorite_list', function (req, res) {
  */
 app.get('/del_favorite_list', function (req, res) {
     var file_name = req.query.file_dir;
- 
+
+    console.log("是否有代理：" + req.headers['x-forwarded-for']) 
+    console.log("客户端 IP： " + req.connection.remoteAddress)
+    console.log("客户端 socket： " + req.socket.remoteAddress)
+
     if (file_name.length == 0) {
         file_name = "/"
     }
