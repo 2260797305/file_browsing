@@ -30,47 +30,41 @@
 			<img alt="复制" id="t_copy" src="img/t_copy.ico" width="20" height="20" style="cursor: pointer;" onclick="javascript:dir_copy();">
 		</ico>
 	</h2>
+	<hr>
 
 	<div class = "max_div" padding>
-	<div id="menu" style="font-size:20px;;width:110px;height:360px;">
+	<div id="menu" style="font-size:20px;width:80px;height:360px;">
 		<p>菜单</p>
-		<a style="text-decoration:none" href="favorite.html"> 收藏 </a>
-		<input id = "page_input" value="14"  style="width:70px;" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}">
-		<p>
+		
+		<a href="favorite.html"> 收藏 <br></a>
+		<br>
+		<input id = "page_input" value="跳转页码"  style="width:70px;" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}">
+		
 		<form action="" method="" id = "recursive_cnt"> 
-			遍历层数<br />
-			<label><input name="recursive" type="radio" value="1" />遍历 1层 </label> 
-			<label><input name="recursive" type="radio" value="2" />遍历 2层 </label> 
-			<label><input name="recursive" type="radio" value="3" />遍历 3层 </label> 
+			<br>遍历<br />
+			<label><input name="recursive" type="radio" value="1" />1层 </label> 
+			<br>
+			<label><input name="recursive" type="radio" value="2" />2层 </label> 
+			<br>
+			<label><input name="recursive" type="radio" value="3" />3层 </label> 
 		</form> 
 		<br />
 		<form action="" method="" id = "browsing_mode"> 
-			浏览模式<br />
-			<label><input name="browsing_mode" type="radio" value="0" />文件模式 </label> 
-			<label><input name="browsing_mode" type="radio" value="1" />图片模式 </label> 
-			<label><input name="browsing_mode" type="radio" value="2" />视频模式 </label> 
-			<label><input name="browsing_mode" type="radio" value="3" />音乐模式 </label> 
+			浏览<br />
+			<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
+			<br>
+			<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
+			<br>
+			<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
+			<br>
+			<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
 		</form> 
-
-		<!-- <select id = "recursive_cnt">
-			<option value="1">遍历 1层</option>
-			<option value="2">遍历 2层</option>
-			<option value="3">遍历 3层</option>
-		</select>
-
-		<select id = "browsing_mode">
-			<option value="0">文件模式</option>
-			<option value="1">图片模式</option>
-			<option value="2">视频模式</option>
-			<option value="3">音乐模式</option>
-		</select> -->
 	</div>
 	
 	<div class="picinfo" id = "picinfo" style="display:none;" padding>
 		<div>
 			<b>[0/0]</b>
 		</div>
-			
 			<div class="comic_wraCon autoHeight" style="margin-top: 20px" id="center_box"">
 			<a id = "pre_evt" class="img_land_prev" onclick="prev_img()"></a>
 			<a id = "nxt_evt" class="img_land_next" onclick="next_img()"></a>

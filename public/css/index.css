@@ -1,26 +1,29 @@
-.img_land_prev{
+.img_land_prev {
     width: 40%;
     height: 100%;
     position: absolute;
-    left:0;
+    left: 0;
     z-index: 5;
-    cursor: url("../img/pre.cur"),auto;
+    cursor: url("../img/pre.cur"), auto;
 }
-.img_land_next{
+
+.img_land_next {
     width: 40%;
     height: 100%;
     position: absolute;
-    right:0;
+    right: 0;
     float: right;
     top: 0;
     z-index: 5;
-    cursor: url("../img/next.cur"),auto;
+    cursor: url("../img/next.cur"), auto;
 }
+
 .comic_wraCon {
     vertical-align: middle;
     text-align: center;
     position: relative;
 }
+
 .comic_wraCon img {
     border: 1px solid #e6e6e6;
     padding: 20px;
@@ -28,41 +31,55 @@
 }
 
 h3 {
-    color:red;
+    color: red;
+}
+
+body {
+    font-family: 宋体 'Courier New', Courier, monospace;
+}
+
+hr {
+    color: black;
+}
+
+a {
+    text-decoration: none;
 }
 
 h2 {
     font-size: 1.20em;
 }
 
-
 p {
     /*font-size:35px;*/
-    font: normal 150% Helvetica, Arial, sans-serif;
-    color:red;
+    font: normal 130% Helvetica, Arial, sans-serif;
+    color: red;
 }
+
 #dir_list {
     font: normal 150% Helvetica, Arial, sans-serif;
     /*font-size:25px;*/
-    text-decoration:none;
+    text-decoration: none;
     margin: auto auto auto auto;
-    color:red;
+    color: red;
 }
+
 #file_list {
     font: normal 150% Helvetica, Arial, sans-serif;
     /*font-size:25px;*/
-    text-decoration:none;
+    text-decoration: none;
     /*margin: auto auto auto auto;*/
-    color:rgb(0, 38, 255);
+    color: rgb(0, 38, 255);
 }
 
 #video1 {
     width: 90%;
-    autoplay:autoplay;
+    autoplay: autoplay;
 }
 
 body {
-    /*background: rgb(185, 246, 246);*//*设置颜色背景*/
+    /*background: rgb(185, 246, 246);*/
+    /*设置颜色背景*/
     /*background-image: url("../img/background.png");/*设置背景图片;*/
     /*background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
     /*background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/
@@ -72,25 +89,22 @@ body {
     /*background-repeat: repeat-y;    */
 }
 
-
 b {
     position: relative;
-
     /* position: absolute;     相对定位或绝对定位均可 */
-    width:100%;
+    width: 100%;
     font: normal 100% Helvetica, Arial, sans-serif;
-    height:20px;
+    height: 20px;
     /*top: 50%;*/
     /* left: 50%; */
     /* transform: translate(-50%, -50%); */
-    color:red;
+    color: red;
     /* overflow: hidden; */
     padding-left: 20px;
     white-space: nowrap;
     /* animation: 10s wordsLoop linear infinite normal; */
     display: inline-block;
 }
-
 
 @keyframes wordsLoop {
     0% {
@@ -121,5 +135,5 @@ b {
 }
 
 a {
-    text-decoration:none
+    text-decoration: none
 }
