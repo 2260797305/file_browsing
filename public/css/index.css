@@ -44,6 +44,19 @@ hr {
 
 a {
     text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    background-color: #ff6700;
+}
+
+#page_input {
+    width: 20px;
+}
+
+input:focus {
+    background-color: thistle;
 }
 
 h2 {
@@ -57,17 +70,15 @@ p {
 }
 
 #dir_list {
-    font: normal 150% Helvetica, Arial, sans-serif;
-    /*font-size:25px;*/
-    text-decoration: none;
     margin: auto auto auto auto;
     color: red;
 }
-
-#file_list {
-    font: normal 150% Helvetica, Arial, sans-serif;
-    /*font-size:25px;*/
+ul li {
+    font: normal 120% Helvetica, Arial, sans-serif;
     text-decoration: none;
+}
+#file_list {
+
     /*margin: auto auto auto auto;*/
     color: rgb(0, 38, 255);
 }
@@ -86,7 +97,7 @@ body {
     /*background-origin: border-box;/*从边框区域显示*/
     /*background-size:cover;/*指定图片大小，此时会保持图像的纵横比并将图像缩放成将完全覆盖背景定位区域的最小大小*/
     background-image: url('../img/eg_bg_03.gif');
-    /*background-repeat: repeat-y;    */
+    background-repeat: repeat;   
 }
 
 b {
@@ -104,6 +115,29 @@ b {
     white-space: nowrap;
     /* animation: 10s wordsLoop linear infinite normal; */
     display: inline-block;
+}
+
+/* #start_div {
+    height: 60px;
+    /* width: 20px; */
+    /* background-image: url(../img/unstar.ico); */
+    /* background-position: left center; */
+    /* background-color: antiquewhite; */
+    /* background-repeat: no-repeat; */
+/*} */
+
+#start_div {
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+    /* color: yellow; */
+    background-color: yellow;
+    
+    /* width: 20px; */
+    /* background-image: url(../img/unstar.ico); */
+    /* background-position: left center; */
+    /* background-color: antiquewhite; */
+    /* background-repeat: no-repeat; */
 }
 
 @keyframes wordsLoop {
@@ -134,6 +168,3 @@ b {
     justify-content: space-between;
 }
 
-a {
-    text-decoration: none
-}

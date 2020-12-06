@@ -453,9 +453,43 @@ function dir_is_start(file_name) {
     });
 }
 
+// 删除文件
+
+app.get('/delete_file', function(req, res) {
+    var dir = req.query.dir;
+
+    if (dir.length == 0 || dir == "/") {
+        res.jsonp({ 'code': 0 });
+    }
+    dir = __dirname + '/public/store' + dir
+    console.log("需要删除的路径: " + dir);
+    fs.exists(dir , function(exists) {
+        console.log(exists ? "文件存在" : "文件不存在");
+        if (exists) {
+            fs.rename(dir, dir+".removefile", function(err) {
+                if (err) {
+                    console.log("重命名失败")
+                    res.jsonp({ 'code': -1 });
+                } else {
+                    res.jsonp({ 'code': 0 });
+                }
+               
+            });
+            // fs.unlinkSync(dir, function(status) {
+            //     console.log(status)
+            //     res.jsonp({ 'code': 0 });
+            // })
+        } else {
+            res.jsonp({ 'code': -1 });
+        }
+    });
+});
+
+
 /**
  * 添加收藏目录
  */
+
 app.get('/set_favorite_list', function(req, res) {
     var file_name = req.query.file_dir;
 
@@ -491,8 +525,6 @@ app.get('/set_favorite_list', function(req, res) {
             res.jsonp({ 'code': -1 });
         }
     });
-
-
 });
 
 /**
