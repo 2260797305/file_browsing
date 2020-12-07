@@ -1,7 +1,13 @@
 #!/bin/bash
 #sleep 1
 
-cd /home/k-yuki
+if [ -n "$1" ]; then
+    DIR=$1
+else
+    DIR=`pwd`
+fi
+
+cd $DIR
 
 #echo "kill old process"
 process_name='test.js'
