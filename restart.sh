@@ -10,11 +10,18 @@ fi
 cd $DIR
 
 #echo "kill old process"
-process_name='test.js'
+process_name='http.js'
 ps -efww|grep -w $process_name | grep -v "grep"
 while (($? == 0))
 do
         ps -efww|grep -w $process_name |grep -v grep|cut -c 11-15 | xargs kill -9
+		if [ $? != 0 ]; then 
+			ps -efww|grep -w $process_name |grep -v grep|cut -c 11-15 | xargs sudo kill -9
+			if [ $? != 0 ]; then 
+				exit -1
+			fi
+		fi
+
         # echo "kill " "$(pid)"
         # kill -9 $(pid)
         # echo "kill " $(v)
@@ -33,5 +40,3 @@ sync
 
 #nohup /home/k-yuki/restart.sh 1>/dev/null  2>&1 &
 #nohup /home/k-yuki/run_test.sh 1>/dev/null  2>&1 &
-#sync
-

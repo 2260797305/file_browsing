@@ -146,6 +146,22 @@ function delete_file() {
 			return;
 		}
 		alert("删除成功")
+
+		if(window.localStorage){
+			var file_dir = getQueryString('file_dir');
+			if (file_dir == null) {
+				file_dir = "/"
+			}
+			storage = window.localStorage;
+			if (cur_page > 0 && cur_page < show_list.length) {
+				cur_page = cur_page - 1
+			} else {
+				cur_page = 0
+			}
+			storage.setItem("cur_page", cur_page)
+			storage.setItem("cur_dir", file_dir)
+			location.reload()
+		} 
 	});
 }
 
@@ -220,6 +236,8 @@ function shwo_cur_pic(page) {
 	input = document.getElementById("page_input")
 	input.value = page + 1
 
+	storage.setItem("cur_page", page)
+
 	if (browsing_mode == 1) {
 		var imgStr = '<img style="width: 95%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
 		$("#center_box").find("img").remove();
@@ -248,6 +266,32 @@ function shwo_cur_pic(page) {
 
 function start_show()
 {
+	if(window.localStorage){
+		storage = window.localStorage;
+		var tmp = storage.getItem("cur_dir")
+		var file_dir = getQueryString('file_dir');
+		if (file_dir == null) {
+			file_dir = "";
+		} else {
+			//file_dir = file_dir.slice(2, file_dir.length-1)
+		}
+		if (tmp) {
+			// alert(tmp)
+			// alert(file_dir)
+			if (tmp === file_dir) {
+				var page = storage.getItem("cur_page")
+				page = parseInt(page)
+				if (page < 0 || page >= show_list.length) {
+					cur_page = 0
+				} else {
+					cur_page = page
+				}
+			}
+		}
+		storage.setItem("cur_dir", file_dir)
+	} 
+
+
 	//$("#shwo_pic").attr["style"].append("display:none;");
 	//$("#dir_contex").attr("style","display:none;");
 	//$("#file_contex").attr("style","display:none;");
@@ -413,7 +457,7 @@ $(function() {
 		return false;
 	}
 	storage = window.localStorage;
-	
+
 	var tmp = storage.getItem("volume")
 	if (tmp) {
 		golbol_volume = parseFloat(tmp)
