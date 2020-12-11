@@ -18,8 +18,8 @@ createFTableSql = "create table if not exists history_list(url KEY NOT NULL);";
 console.log(createTableSql)
 sqliteDB.createTable(createTableSql);
 
-var querySql = 'select * from favorite_list';
-sqliteDB.queryData(querySql, dataDeal);
+// var querySql = 'select * from favorite_list';
+// sqliteDB.queryData(querySql, dataDeal);
 
 
 app.use('/', express.static('public'));

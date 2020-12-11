@@ -1,3 +1,8 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
 .img_land_prev {
     width: 40%;
     height: 100%;
@@ -18,16 +23,20 @@
     cursor: url("../img/next.cur"), auto;
 }
 
-.comic_wraCon {
+#center_box {
     vertical-align: middle;
+    width: 100%;
     text-align: center;
     position: relative;
+    /* border: 2px solid #f04545; */
+    /* padding: 20px; */
+    margin-top: 5px;
+    margin: 5px auto;
 }
 
-.comic_wraCon img {
-    border: 1px solid #e6e6e6;
-    padding: 20px;
-    margin-top: 20px;
+
+#show_ctx {
+    width: 95%;
 }
 
 h3 {
@@ -45,6 +54,7 @@ hr {
 a {
     text-decoration: none;
     font-size: 14px;
+    color: black;
 }
 
 a:hover {
@@ -52,15 +62,20 @@ a:hover {
 }
 
 #page_input {
-    width: 20px;
+    width: 30px;
+    border-radius: 4px;
+    background-color: rgb(243, 200, 243);
+    text-align: center;
 }
 
 input:focus {
-    background-color: thistle;
+    background-color: rgb(185, 183, 185);
 }
 
 h2 {
     font-size: 1.20em;
+    border-bottom: rgb(255, 102, 0) 6px solid;
+    height: 30px;
 }
 
 p {
@@ -69,6 +84,7 @@ p {
     color: red;
 }
 
+
 #dir_list {
     margin: auto auto auto auto;
     color: red;
@@ -76,6 +92,8 @@ p {
 ul li {
     font: normal 120% Helvetica, Arial, sans-serif;
     text-decoration: none;
+    /* 去掉小圆点 */
+    list-style: none;
 }
 #file_list {
 
@@ -84,20 +102,80 @@ ul li {
 }
 
 #video1 {
-    width: 90%;
-    autoplay: autoplay;
+    width: 80%;
+    /* autoplay: autoplay; */
 }
 
 body {
-    /*background: rgb(185, 246, 246);*/
-    /*设置颜色背景*/
-    /*background-image: url("../img/background.png");/*设置背景图片;*/
-    /*background-repeat:no-repeat;/*图片适应窗口大小，这里设置的是不进行平铺*/
-    /*background-attachment: fixed;/*图片相对于浏览器固定,这里设置背景图片固定，不随内容滚动*/
-    /*background-origin: border-box;/*从边框区域显示*/
-    /*background-size:cover;/*指定图片大小，此时会保持图像的纵横比并将图像缩放成将完全覆盖背景定位区域的最小大小*/
     background-image: url('../img/eg_bg_03.gif');
     background-repeat: repeat;   
+}
+.menu_func {
+    height: 30px;
+    line-height: 30px;
+
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgb(250, 15, 15);
+
+    width: 70%;
+    color: white;
+    font-size: 13px;
+    /* x, y, 模糊距离，影音尺寸 */
+    box-shadow: 2px 2px 5px 2px rgb(0, 0, 0, 0.3);
+    margin: 6px auto;
+}
+
+
+#jump {
+    line-height: 25px;
+    height: 55px;
+
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgb(250, 15, 15);
+    width: 70%;
+    color: white;
+    font-size: 13px;
+    box-shadow: 2px 2px 5px 2px rgb(0, 0, 0, 0.3);
+    margin: 6px auto;
+}
+
+#func_option {
+    line-height: 25px;
+
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgb(250, 15, 15);
+    width: 70%;
+    color: white;
+    font-size: 13px;
+    box-shadow: 2px 2px 5px 2px rgb(0, 0, 0, 0.3);
+    margin: 6px auto;
+}
+
+
+.menu_func  #jump #func_option  {
+    text-align: center;
+    border-radius: 6px;
+    background-color: rgb(250, 15, 15);
+    margin: 4px auto;
+    width: 70%;
+    color: white;
+    font-size: 13px;
+}
+
+.menu_func :hover {
+    background-color: #ff6700;
+}
+
+#menu {
+    /* background-color: rgb(0, 0, 0, 0.4); */
+    font-size: 14px;
+    width:75px;
+    /* height:auto; */
+    /* padding-left: 8px; */
+    border-right: rgb(255, 102, 0) 6px solid;
 }
 
 b {
@@ -105,33 +183,32 @@ b {
     /* position: absolute;     相对定位或绝对定位均可 */
     width: 100%;
     font: normal 100% Helvetica, Arial, sans-serif;
-    height: 20px;
+    height: auto;
+    margin: 0 auto 0 auto;
+    display: inline-block;
+    font-size: 12px;
     /*top: 50%;*/
     /* left: 50%; */
     /* transform: translate(-50%, -50%); */
     color: red;
     /* overflow: hidden; */
-    padding-left: 20px;
-    white-space: nowrap;
+    /* padding-left: 20px; */
+    text-align: center;
+    /* white-space: nowrap; */
     /* animation: 10s wordsLoop linear infinite normal; */
-    display: inline-block;
+    /* display: inline-block; */
 }
 
-/* #start_div {
-    height: 60px;
-    /* width: 20px; */
-    /* background-image: url(../img/unstar.ico); */
-    /* background-position: left center; */
-    /* background-color: antiquewhite; */
-    /* background-repeat: no-repeat; */
-/*} */
 
 #start_div {
-    height: 20px;
-    width: 20px;
+    /* height: 20px;
+    width: 20px; */
     cursor: pointer;
     /* color: yellow; */
     background-color: yellow;
+    color: white;
+    
+
     
     /* width: 20px; */
     /* background-image: url(../img/unstar.ico); */
@@ -164,7 +241,7 @@ b {
 
 .max_div {
     display: flex;
-    padding-top: 20;
+    /* padding-top: 20; */
     justify-content: space-between;
 }
 

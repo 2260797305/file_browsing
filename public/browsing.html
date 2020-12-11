@@ -20,69 +20,72 @@
 
 	<script type="text/javascript" src="index/js/jquery.min.js"></script>
 	<script type="text/javascript" src="index/js/vector.js"></script>
-
 </head>
 
 <body>
 	<h2 id="file-title" style="margin: 3px auto 3px 3px;"></h2>
-	<hr>
 
-	<div class = "max_div" padding>
-	<div id="menu" style="font-size:20px;width:80px;height:360px;">
-		<div>菜单</div>
-		<div style="height: 50px;">
-			<span style="float: left; line-height: 50px;">
-				<canvas  id="start_div" onclick="javascript:dir_star();"></canvas>
-			</span>
-		</div>
+	<div class = "max_div">
+		<div id="menu">
+			<div class="menu_func" id="start_div" onclick="javascript:dir_star();">
+				收藏
+			</div>
+			<div class="menu_func" onclick="javascript:delete_file();">
+				删除
+			</div>
+			<div class="menu_func" onclick="javascript:goto_favorite();">
+				记录
+			</div>
 
-		<div style="height: 50px;" id="delete_file"  onclick="javascript:delete_file();">
-			删除
+			<div  id="jump">
+				<label for="" style="font-size: small;">跳转<br> <input id = "page_input" type=text oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label>
+			</div>
+
+		<div id="func_option">
+			<form action="" method="" id = "recursive_cnt"> 
+				<h6>遍历</h6>
+				<label><input name="recursive" type="radio" value="1" />1层 </label> 
+				<br>
+				<label><input name="recursive" type="radio" value="2" />2层 </label> 
+				<br>
+				<label><input name="recursive" type="radio" value="3" />3层 </label> 
+			</form> 
 		</div>
-		<div>
-			<a href="favorite.html"> 收藏的目录</a>
-		</div>
-		<label for="" style="font-size: small;"><br/>跳转 <input id = "page_input" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"></label>
-		<form action="" method="" id = "recursive_cnt"> 
-			<br>遍历<br />
-			<label><input name="recursive" type="radio" value="1" />1层 </label> 
-			<br>
-			<label><input name="recursive" type="radio" value="2" />2层 </label> 
-			<br>
-			<label><input name="recursive" type="radio" value="3" />3层 </label> 
-		</form> 
-		<br />
-		<form action="" method="" id = "browsing_mode"> 
-			浏览<br />
-			<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
-			<br>
-			<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
-			<br>
-			<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
-			<br>
-			<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
-		</form> 
-	</div>
-	
-	<div class="picinfo" id = "picinfo" style="display:none;" padding>
-		<div>
-			<b>[0/0]</b>
-		</div>
-			<div class="comic_wraCon" style="margin-top: 20px" id="center_box"">
-			<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
-			<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
+		<div id="func_option">
+			<form action="" method="" id = "browsing_mode"> 
+				<h6>浏览</h6>
+				<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
+				<br>
+				<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
+				<br>
+				<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
+				<br>
+				<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
+			</form> 
 		</div>
 	</div>
 	
-	<div style="width:45%;" id="dir_contex">
-	<p> 目录</p>
-	<ul class="listview list-type-tiles"  id='dir_list'> </ul>
-	</div>
+		<div class="picinfo" id = "picinfo" style="display:none;">
+			<div style="margin: 2px auto;">
+				<b>[0/0]</b>
+			</div>
 
-	<div style="width:45%;" id="file_contex">
-	<p> 文件</p>
-	<ul class="listview list-type-tiles"  id='file_list'>  </ul>
-	</div>
+			<div style="margin:30px auto;" id="center_box"">
+				<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
+				<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
+			</div>
+		</div>
+
+
+		<div style="width:45%;" id="dir_contex">
+			<h3> 目录</h3>
+			<ul class="listview list-type-tiles"  id='dir_list'> </ul>
+		</div>
+			
+		<div style="width:45%;" id="file_contex">
+			<h3> 文件</h3>
+			<ul class="listview list-type-tiles"  id='file_list'>  </ul>
+		</div>
 </div>
 </body>
 
@@ -116,6 +119,10 @@ function dir_copy() {
 	copyTest(cp_text, function(text) {
 		alert(text + " copy ok")
 	})
+}
+
+function goto_favorite() {
+	window.location.replace("favorite.html")
 }
 
 function delete_file() {
@@ -183,7 +190,7 @@ function dir_star() {
 			
 			is_star = 1;
 			// start_ico.style.background-image = url(img/star.ico)
-			$("#start_div").attr("style","background-color: yellow;");
+			$("#start_div").attr("style","background-color: yellow; color:black; text-decoration:line-through;");
 			alert("收藏成功")
 		});
 	} else  {
@@ -195,7 +202,7 @@ function dir_star() {
 			}
 			
 			is_star = 0;
-			$("#start_div").attr("style","background-color: teal;");
+			$("#start_div").attr("style","background-color: teal; color:white; text-decoration: none;");
 			alert("取消收藏成功")
 		});
 	}
@@ -239,7 +246,7 @@ function shwo_cur_pic(page) {
 	storage.setItem("cur_page", page)
 
 	if (browsing_mode == 1) {
-		var imgStr = '<img style="width: 95%;" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
+		var imgStr = '<img id="show_ctx" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
 		$("#center_box").find("img").remove();
 		$("#center_box").append(imgStr);
 		new LazyLoad().init();
@@ -301,11 +308,11 @@ function start_show()
 	$("#picinfo").attr("style","display:;width:100%;")
 
 	if (browsing_mode == 2) { // 视频模式
-		$("#center_box").attr("style","display:;width:92%;")
+		$("#center_box").attr("style","display:;")
 		$("#pre_evt").attr("style","height:50%;");//remove();
 		$("#nxt_evt").attr("style","height:50%;");//remove();
 	} else {
-		$("#center_box").attr("style","display:;width:100%;")
+		$("#center_box").attr("style","display:;")
 	}
 
 	is_show_pic = 1;
@@ -549,9 +556,9 @@ $(function() {
 		}
 		is_star = data['is_star']
 		if (is_star == 1) {
-			$("#start_div").attr("style","background-color: yellow;");
+			$("#start_div").attr("style","background-color: yellow; color: black; text-decoration: line-through;");
 		} else {
-			$("#start_div").attr("style","background-color: teal;");
+			$("#start_div").attr("style","background-color: teal; color:white; text-decoration: none;");
 		}
 
 		video_ecursive_cnt = data['recursive_cnt']
