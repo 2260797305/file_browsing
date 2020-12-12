@@ -37,56 +37,62 @@
 				记录
 			</div>
 
-			<div  id="jump">
+			<div id="jump">
 				<label for="" style="font-size: small;">跳转<br> <input id = "page_input" type=text oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label>
 			</div>
 
-		<div id="func_option">
-			<form action="" method="" id = "recursive_cnt"> 
-				<h6>遍历</h6>
-				<label><input name="recursive" type="radio" value="1" />1层 </label> 
-				<br>
-				<label><input name="recursive" type="radio" value="2" />2层 </label> 
-				<br>
-				<label><input name="recursive" type="radio" value="3" />3层 </label> 
-			</form> 
+			<div id="func_option">
+				<form action="" method="" id = "recursive_cnt"> 
+					<h6>遍历</h6>
+					<label><input name="recursive" type="radio" value="1" />1层 </label> 
+					<br>
+					<label><input name="recursive" type="radio" value="2" />2层 </label> 
+					<br>
+					<label><input name="recursive" type="radio" value="3" />3层 </label> 
+				</form> 
+			</div>
+			<div id="func_option">
+				<form action="" method="" id = "browsing_mode"> 
+					<h6>浏览</h6>
+					<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
+					<br>
+					<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
+					<br>
+					<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
+					<br>
+					<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
+				</form> 
+			</div>
 		</div>
-		<div id="func_option">
-			<form action="" method="" id = "browsing_mode"> 
-				<h6>浏览</h6>
-				<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
-				<br>
-				<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
-				<br>
-				<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
-				<br>
-				<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
-			</form> 
+		
+		<div id="max_ctx">
+			<div class="picinfo" id = "picinfo" style="display:none;">
+				<div style="margin: 2px auto;">
+					<b>[0/0]</b>
+				</div>
+
+				<div style="margin:30px auto;" id="center_box"">
+					<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
+					<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
+				</div>
+			</div>
+
+
+			<div id="dir_contex">
+				<h3> 目录</h3>
+				<ul class="listview list-type-tiles"  id='dir_list'> </ul>
+			</div>
+				
+			<div id="file_contex">
+				<h3> 文件</h3>
+				<ul class="listview list-type-tiles"  id='file_list'>  </ul>
+			</div>
 		</div>
 	</div>
-	
-		<div class="picinfo" id = "picinfo" style="display:none;">
-			<div style="margin: 2px auto;">
-				<b>[0/0]</b>
-			</div>
 
-			<div style="margin:30px auto;" id="center_box"">
-				<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
-				<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
-			</div>
-		</div>
-
-
-		<div style="width:45%;" id="dir_contex">
-			<h3> 目录</h3>
-			<ul class="listview list-type-tiles"  id='dir_list'> </ul>
-		</div>
-			
-		<div style="width:45%;" id="file_contex">
-			<h3> 文件</h3>
-			<ul class="listview list-type-tiles"  id='file_list'>  </ul>
-		</div>
-</div>
+	<!-- <div id="bottom-div">
+		
+	</div> -->
 </body>
 
 <script>
@@ -99,6 +105,8 @@ var is_star = 0;
 var need_play_next = 0;
 var storage;
 var video_ecursive_cnt = 1;
+var box_w;
+var box_h;
 
 function dir_copy() {
 	var file_dir = getQueryString('file_dir');
@@ -232,6 +240,49 @@ function volume_change() {
 	storage.setItem("volume", golbol_volume)
 }
 
+function video_set_by_hw() {
+	var myVid=document.getElementById("video1");
+	if (!myVid) {
+		return
+	}
+
+	// alert(myVid.videoWidth)
+	// alert(myVid.videoHeight)
+
+	if ((box_w / box_h) > (myVid.videoWidth/myVid.videoHeight)) {
+			// this.height = this.videoHeight
+			// this.width = box_w
+			myVid.height = box_h * 0.90
+
+			myVid.width = myVid.height * myVid.videoWidth/myVid.videoHeight
+			// alert("set width")
+			// this.width = box_w
+		} else {
+			// this.height = box_h.videoHeight
+			// this.width = videoWidth
+
+			// this.height = box_h.videoHeight
+			// alert("set hight")
+			myVid.width = box_w * 0.90
+			myVid.height = myVid.width * myVid.videoHeight/myVid.videoWidth
+
+		}
+}
+
+function video_hw_set() {
+	// return
+	// alert(document.body.clientWidth)
+	// alert(document.body.clientHeight)
+	// return
+	var video = document.querySelector('video');
+	video.addEventListener('canplay', function () {
+		removeEventListener('canplay', function () {
+			alert("事件结束")
+		}, false);
+		video_set_by_hw()
+	}, false);
+}
+
 function shwo_cur_pic(page) {
 	var file_dir = getQueryString('file_dir');
 	var pic_info = "【" + (cur_page+1) + "/" + show_list.length + "】: " + show_list[page]
@@ -255,7 +306,6 @@ function shwo_cur_pic(page) {
 		myVid=document.getElementById("video1");
 		need_play_next = 0;
 		if (myVid) {
-			
 			myVid.src = new_src;
 			myVid.focus()
 			myVid.play()
@@ -266,6 +316,7 @@ function shwo_cur_pic(page) {
 			myVid = document.getElementById("video1");
 			myVid.volume = golbol_volume;
 			myVid.focus()
+			video_hw_set()
 		}
 	}
 	javascript:scroll(0,0);
@@ -459,6 +510,10 @@ function copyTest(text, cbk) {
 }
 
 $(function() {
+
+	box_h = $(window).height();
+	box_w = $(window).width();
+
 	if(! window.localStorage){
 		alert("浏览器不支持localstorage");
 		return false;
@@ -607,6 +662,12 @@ $(function() {
 	});
 
 });
+
+$(window).resize(function(){ 
+	box_h = $(window).height();
+	box_w = $(window).width();
+	video_set_by_hw();
+})
 
 </script>
 </html>
