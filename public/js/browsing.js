@@ -151,24 +151,36 @@ function video_set_by_hw() {
 	// alert(myVid.videoWidth)
 	// alert(myVid.videoHeight)
 
-	if ((box_w / box_h) > (myVid.videoWidth/myVid.videoHeight)) {
+	var rotio = 0
+
+	if (myVid.videoWidth == 0 || myVid.videoHeight == 0) {
+		ratio = 1280/720
+	} else {
+		ratio = myVid.videoWidth/myVid.videoHeight
+	}
+
+	if ((box_w / box_h) > ratio) {
 			// this.height = this.videoHeight
 			// this.width = box_w
-			myVid.height = box_h * 0.90
+			myVid.height = box_h - 65
 
-			myVid.width = myVid.height * myVid.videoWidth/myVid.videoHeight
-			// alert("set width")
+			myVid.width = myVid.height * ratio
+			// alert("set height")
 			// this.width = box_w
 		} else {
 			// this.height = box_h.videoHeight
 			// this.width = videoWidth
 
 			// this.height = box_h.videoHeight
-			// alert("set hight")
-			myVid.width = box_w * 0.90
-			myVid.height = myVid.width * myVid.videoHeight/myVid.videoWidth
+			// alert("set width")
+			myVid.width = box_w - 110
+			myVid.height = myVid.width * (1/ratio)
 
 		}
+		// alert(box_w)
+		// alert(box_h)
+		// alert(myVid.height)
+		// alert(myVid.width)
 }
 
 function video_hw_set() {

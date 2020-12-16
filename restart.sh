@@ -1,5 +1,5 @@
 #!/bin/bash
-#sleep 1
+sleep 2
 
 if [ -n "$1" ]; then
     DIR=$1

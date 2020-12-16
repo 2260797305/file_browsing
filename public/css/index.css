@@ -6,8 +6,9 @@
 .img_land_prev {
     width: 40%;
     height: 100%;
+    /* absolute: 相对于父亲， x 轴 4% */
     position: absolute;
-    left: 0;
+    left: 4%;
     z-index: 5;
     cursor: url("../img/pre.cur"), auto;
 }
@@ -16,8 +17,7 @@
     width: 40%;
     height: 100%;
     position: absolute;
-    right: 0;
-    float: right;
+    right: 4%;
     top: 0;
     z-index: 5;
     cursor: url("../img/next.cur"), auto;
@@ -63,6 +63,7 @@ a {
 h2>a:hover {
     background-color: #e7ebe3ea;
     color: rgb(5, 1, 1);
+    font-size: 20px;
     /* text-shadow: 2px 2px 4px rgb(0, 0, 0, 0.8); */
 }
 
@@ -105,6 +106,8 @@ h2 {
 h2>a {
     color: #b0b0b0;
     line-height: 30px;
+    font-size: 18px;
+    
 }
 
 .max_div {
