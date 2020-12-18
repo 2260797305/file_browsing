@@ -7,7 +7,7 @@
     <meta http-equiv="Cache-control" content="no-cache">
 	<meta http-equiv="Cache" content="no-cache">
 
-	<link rel="shortcut icon" href="/img/title.ico">
+	<link rel="shortcut icon" href="img/title.ico">
 	<!-- <link rel="stylesheet" type="text/css" href="index/css/style.css"> -->
 
 	<title>File Browsing</title>
@@ -29,13 +29,13 @@
 	<div class = "max_div">
 		<div id="menu">
 			<div class="menu_func" id="start_div" onclick="javascript:dir_star();">
-				收藏
+				<span></span>
 			</div>
-			<div class="menu_func" onclick="javascript:delete_file();">
-				删除
+			<div class="menu_func" onclick="javascript:delete_file();" style="color: black;">
+				<span></span>
 			</div>
-			<div class="menu_func" onclick="javascript:goto_favorite();">
-				记录
+			<div class="menu_func" onclick="javascript:goto_favorite();" style="color: yellow;">
+				<span></span>
 			</div>
 
 			<div id="jump">
@@ -54,14 +54,13 @@
 			</div>
 			<div id="func_option">
 				<form action="" method="" id = "browsing_mode"> 
-					<h6>浏览</h6>
-					<label><input name="browsing_mode" type="radio" value="0" />文件 </label> 
+					<label><input name="browsing_mode" type="radio" value="0" /><span style="color: #b5ffe0;"></span></label> 
 					<br>
-					<label><input name="browsing_mode" type="radio" value="1" />图片 </label> 
+					<label><input name="browsing_mode" type="radio" value="1" /><span style="color: #b5ffe0;"></span></label> 
 					<br>
-					<label><input name="browsing_mode" type="radio" value="2" />视频 </label> 
+					<label><input name="browsing_mode" type="radio" value="2" /><span style="color: #b5ffe0;"></span></label> 
 					<br>
-					<label><input name="browsing_mode" type="radio" value="3" />音乐 </label> 
+					<label><input name="browsing_mode" type="radio" value="3" /><span style="color: #b5ffe0;"></span> </label> 
 				</form> 
 			</div>
 		</div>

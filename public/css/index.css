@@ -4,21 +4,22 @@
 }
 
 .img_land_prev {
-    width: 40%;
+    width: 30%;
     height: 100%;
-    /* absolute: 相对于父亲， x 轴 4% */
+    /* absolute: 相对于父亲， x 轴 4%， 父亲必须有定位，没有就一直往上找 */
     position: absolute;
-    left: 4%;
+    left: 10px;
+    /* z 轴位置，越大越考上， 相同则后来居上，只有定位的盒子才有的属性， 无单位 */
     z-index: 5;
     cursor: url("../img/pre.cur"), auto;
 }
 
 .img_land_next {
-    width: 40%;
+    width: 30%;
     height: 100%;
     position: absolute;
-    right: 4%;
-    top: 0;
+    right: 10px;
+    /* top: 0; */
     z-index: 5;
     cursor: url("../img/next.cur"), auto;
 }
@@ -27,7 +28,7 @@
     vertical-align: middle;
     width: 100%;
     text-align: center;
-    position: relative;
+    /* position: relative; */
     /* border: 2px solid #f04545; */
     /* padding: 20px; */
     margin-top: 5px;
@@ -72,6 +73,8 @@ h2>a:hover {
     border-radius: 4px;
     background-color: rgb(243, 200, 243);
     text-align: center;
+    /* 去掉表单边框 */
+    outline: 0vmin;
 }
 
 input:focus {
@@ -140,6 +143,10 @@ h3 {
     /* overflow:hidden; */
 }
 
+#picinfo {
+    position: relative;
+}
+
 #max_ctx {
     /* float: left; */
     margin-left: 90px;
@@ -187,8 +194,11 @@ ul>li {
     /* list-style:image("../img/file.ico"); */
     width: 100%;
     height: 25px;
+    /* 超出长度的文字： 隐藏 */
     overflow: hidden;
     white-space: nowrap;
+    /* 文字溢出用省略号表示 */
+    text-overflow: ellipsis;
 }
 ul>li:hover {
     background-color: #3a3836;
@@ -306,8 +316,17 @@ ul>li>a:hover {
 
 #start_div {
     cursor: pointer;
-    background-color: yellow;
+    /* background-color: yellow; */
     color: white;
+}
+
+span {
+    font-family: 'icomoon';
+    font-size: 18px;
+    display: inline-block;
+    margin-left: 4px;
+    /* color: rgb(174, 243, 45); */
+    /* color: yellow; */
 }
 
 @keyframes wordsLoop {
@@ -334,3 +353,17 @@ ul>li>a:hover {
         -webkit-transform: translateX(-100%);
     }
 }
+
+/* 字体申明 */
+  @font-face {
+    font-family: 'icomoon';
+    src:  url('../fonts/icomoon.eot?199i7s');
+    src:  url('../fonts/icomoon.eot?199i7s#iefix') format('embedded-opentype'),
+      url('../fonts/icomoon.ttf?199i7s') format('truetype'),
+      url('../fonts/icomoon.woff?199i7s') format('woff'),
+      url('../fonts/icomoon.svg?199i7s#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+  }
+  

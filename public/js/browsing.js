@@ -100,7 +100,7 @@ function dir_star() {
 			
 			is_star = 1;
 			// start_ico.style.background-image = url(img/star.ico)
-			$("#start_div").attr("style","background-color: yellow; color:black; text-decoration:line-through;");
+			$("#start_div").attr("style","color: yellow;");
 			alert("收藏成功")
 		});
 	} else  {
@@ -112,7 +112,7 @@ function dir_star() {
 			}
 			
 			is_star = 0;
-			$("#start_div").attr("style","background-color: teal; color:white; text-decoration: none;");
+			$("#start_div").attr("style","color: black;");
 			alert("取消收藏成功")
 		});
 	}
@@ -539,9 +539,9 @@ $(function() {
 		}
 		is_star = data['is_star']
 		if (is_star == 1) {
-			$("#start_div").attr("style","background-color: yellow; color: black; text-decoration: line-through;");
+			$("#start_div").attr("style","color: yellow;");
 		} else {
-			$("#start_div").attr("style","background-color: teal; color:white; text-decoration: none;");
+			$("#start_div").attr("style","color: black;");
 		}
 
 		video_ecursive_cnt = data['recursive_cnt']
