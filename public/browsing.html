@@ -39,7 +39,8 @@
 			</div>
 
 			<div id="jump">
-				<label for="" style="font-size: small;">跳转<br> <input id = "page_input" type=text oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label>
+				<!-- <label for="" style="font-size: small;">跳转<br> <input id = "page_input" type="text" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label> -->
+				<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="if(event.keyCode==13) {page_select()}">
 			</div>
 
 			<div id="func_option">
