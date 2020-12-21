@@ -1,7 +1,8 @@
+
 var show_list = new Array();
 var cur_page = 0;
 var is_show_pic = 0;
-var browsing_mode = 0; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
+var browsing_mode = 'file'; /*0:文件模式; 1:漫画模式; 2:视频模式; 3:音乐模式*/
 var golbol_volume = 1;
 var is_star = 0;
 var need_play_next = 0;
@@ -9,6 +10,31 @@ var storage;
 var video_ecursive_cnt = 1;
 var box_w;
 var box_h;
+
+function show_star(is_star) {
+	console.log(is_star);
+	if (is_star == 1) {
+		$("#start_div").attr("style","color: yellow;");
+	} else {
+		$("#start_div").attr("style","color: black;");
+	}
+}
+
+function find_cur_is_star(file) {
+	request_url = '/is_start_file?dir=' + file + "&browsing_mode=" + browsing_mode;
+	console.log(request_url);
+	$.getJSON(request_url, function(data) {
+		console.log(data);
+		if (data["code"] != 0) {
+			show_star(0);
+			is_star = 0;
+			return;
+		} else {
+			show_star(1);
+			is_star = 1;
+		}
+	})
+}
 
 function dir_copy() {
 	var file_dir = getQueryString('file_dir');
@@ -20,7 +46,7 @@ function dir_copy() {
 		return
 	}
 	file_dir = file_dir.slice(idx + 8)
-	if (show_list[cur_page] && browsing_mode != 0) {
+	if (show_list[cur_page] && browsing_mode != 'file') {
 		file_dir = file_dir + "/" + show_list[cur_page]
 	}
 	file_dir = file_dir.replace("//", "/")
@@ -36,7 +62,7 @@ function goto_favorite() {
 }
 
 function delete_file() {
-	if (browsing_mode == 0) {
+	if (browsing_mode == 'file') {
 		alert("只有浏览模式才可以删除文件")
 		return
 	}
@@ -88,31 +114,33 @@ function dir_star() {
         file_dir = "/"
     }
 	var request_url = new String();
-	var host = window.location.host;
-	var start_ico = $("#start_div")
+
+	if (browsing_mode != 'video') {
+		set_mode = 'file'
+	} else  {
+		file_dir = file_dir + "/" + show_list[cur_page]
+		set_mode = browsing_mode
+	}
 	if (is_star == 0) {
-		request_url = '/set_favorite_list?file_dir=' + file_dir;
+		request_url = '/set_favorite_list?dir=' + file_dir + "&browsing_mode=" + set_mode;
 		$.getJSON(request_url, function(data) {
 			if (data["code"] != 0) {
 				alert("收藏失败");
 				return;
 			}
-			
+			show_star(1);
 			is_star = 1;
-			// start_ico.style.background-image = url(img/star.ico)
-			$("#start_div").attr("style","color: yellow;");
 			alert("收藏成功")
 		});
 	} else  {
-		request_url = '/del_favorite_list?file_dir=' + file_dir;
+		request_url = '/del_favorite_list?dir=' + file_dir + "&browsing_mode=" + set_mode;
 		$.getJSON(request_url, function(data) {
 			if (data["code"] != 0) {
 				alert("取消收藏失败");
 				return;
 			}
-			
+			show_star(0);
 			is_star = 0;
-			$("#start_div").attr("style","color: black;");
 			alert("取消收藏成功")
 		});
 	}
@@ -177,10 +205,6 @@ function video_set_by_hw() {
 			myVid.height = myVid.width * (1/ratio)
 
 		}
-		// alert(box_w)
-		// alert(box_h)
-		// alert(myVid.height)
-		// alert(myVid.width)
 }
 
 function video_hw_set() {
@@ -224,12 +248,12 @@ function shwo_cur_pic(page) {
 
 	storage.setItem("cur_page", page)
 
-	if (browsing_mode == 1) {
+	if (browsing_mode == 'picture') {
 		var imgStr = '<img id="show_ctx" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
 		$("#center_box").find("img").remove();
 		$("#center_box").append(imgStr);
 		new LazyLoad().init();
-	} else if (browsing_mode == 2) {
+	} else if (browsing_mode == 'video') {
 		var new_src = "store/" + file_dir + "/" + show_list[page];
 		myVid=document.getElementById("video1");
 		need_play_next = 0;
@@ -246,6 +270,7 @@ function shwo_cur_pic(page) {
 			myVid.focus()
 			video_hw_set()
 		}
+		find_cur_is_star(file_dir + "/" + show_list[page]);
 	}
 	javascript:scroll(0,0);
 }
@@ -286,7 +311,7 @@ function start_show()
 
 	$("#picinfo").attr("style","display:;width:100%;")
 
-	if (browsing_mode == 2) { // 视频模式
+	if (browsing_mode == 'video') { // 视频模式
 		$("#center_box").attr("style","display:;")
 		$("#pre_evt").attr("style","height:50%;");//remove();
 		$("#nxt_evt").attr("style","height:50%;");//remove();
@@ -302,7 +327,7 @@ function jump_chapter(dirct) {
 	var file_dir = getQueryString('file_dir');
 	var browsing_mode = getQueryString('browsing_mode');
 	if (!browsing_mode) {
-		browsing_mode = 0;
+		browsing_mode = 'file';
 	}
 	var request_url = new String();
 	var host = window.location.host;
@@ -358,7 +383,7 @@ $(document).keydown(function(event){
 		next_img(null);
 		return
 	}
-	if (browsing_mode == 2) {
+	if (browsing_mode == 'video') {
 		myVid=document.getElementById("video1");
 		golbol_volume = myVid.volume;
 		if (event.keyCode == 87 /*w*/) {
@@ -379,7 +404,7 @@ $(document).keydown(function(event){
 			
 		}
 		return
-	} else if (browsing_mode == 1) {
+	} else if (browsing_mode == 'picture') {
 		//javascript:scroll(0,200);
 	}
 });
@@ -424,7 +449,6 @@ function add_title_link(title) {
 }
 
 function copyTest(text, cbk) {
-	
 	var tag = document.createElement("input")
 	tag.setAttribute("id", "cp_hgz_input")
 	tag.value = text
@@ -492,6 +516,19 @@ $(function() {
 		if (!item) {
 			return
 		}
+		console.log(browsing_mode);
+		console.log(item);
+		if (browsing_mode == 'file') {
+			
+			for (var i = 0; i < obj.length; i++) { //遍历Radio 
+				console.log(obj[i].value);
+				if (obj[i].value == 1) {
+					obj[i].checked = true
+					break;              
+				}
+			}
+			return
+		}
 		video_ecursive_cnt = item,
 		$.post("/recursive_cnt",     
 			{
@@ -513,7 +550,6 @@ $(function() {
 	}
 	// selete_m.value = browsing_mode
 	selete_m.addEventListener('change',function(){
-
 		var item = null;
 		var obj = document.getElementById('browsing_mode')
 		for (var i = 0; i < obj.length; i++) { //遍历Radio 
@@ -538,11 +574,7 @@ $(function() {
             return;
 		}
 		is_star = data['is_star']
-		if (is_star == 1) {
-			$("#start_div").attr("style","color: yellow;");
-		} else {
-			$("#start_div").attr("style","color: black;");
-		}
+		show_star(is_star);
 
 		video_ecursive_cnt = data['recursive_cnt']
 		for (var i = 0; i < selete_s.length; i++) { //遍历Radio 
@@ -566,10 +598,11 @@ $(function() {
 			$("#dir_contex").attr("style","display:none;");
 			$("#file_contex").attr("style","width:90%;");
 		}
-
+		console.log(browsing_mode);
 		show_list = data['file_list'];
+		console.log(show_list);
 		if (show_list.length != 0) {
-			if (browsing_mode != 0) {
+			if (browsing_mode != 'file') {
 				start_show();
 			}
 			list = $('#file_list');

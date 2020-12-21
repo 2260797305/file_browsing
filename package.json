@@ -1,14 +1,24 @@
-
-
 {
-  "name": "hello-world",
-  "description": "hello world test app",
-  "version": "0.0.1",
-  "private": true,
+  "name": "file_browsing",
+  "version": "1.0.0",
+  "description": "本地文件浏览器",
+  "main": "app.js",
   "dependencies": {
     "express": "4.x",
+    "express-session": "^1.17.1",
     "sqlite3": "4.x"
-  }
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2260797305/file_browsing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2260797305/file_browsing/issues"
+  },
+  "homepage": "https://github.com/2260797305/file_browsing#readme"
 }
-
-

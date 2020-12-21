@@ -70,13 +70,6 @@ h2>a:hover {
     background-color: #e7ebe3ea;
     color: rgb(5, 1, 1);
     font-size: 20px;
-
-    /*text-shadow: 2px 2px 4px rgb(0, 0, 0, 0.8);
-    */:;
-    -webkit-transition: all 0.8s;
-    -moz-transition: all 0.8s;
-    -ms-transition: all 0.8s;
-    -o-transition: all 0.8s;
 }
 
 #page_input {
@@ -257,16 +250,6 @@ ul li:nth-of-type(2n + 1) {
 #file_list {
     /*margin: auto auto auto auto;*/
     color: rgb(0, 38, 255);
-}
-
-#video1 {
-    /* height: 100%;
-    display: block; */
-    /* width: 100%; */
-    /* autoplay: autoplay; */
-    /* width: 80%; */
-     /*fill  | contain | cover | none | scale-down */
-    /* object-fit:scale-down; */
 }
 
 .menu_func {

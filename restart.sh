@@ -10,7 +10,7 @@ fi
 cd $DIR
 
 #echo "kill old process"
-process_name='http.js'
+process_name='app.js'
 ps -efww|grep -w $process_name | grep -v "grep"
 while (($? == 0))
 do
@@ -32,6 +32,9 @@ done
 a=`date "+%Y-%m-%d_%H_%M_%S"`
 #echo  log file: ./log/$a.log
 
+# supervisor 是热更新，无需重启 js 就可以更新 node中的内容，检测文件修改吧
+# nohup supervisor $process_name 1>./log/$a.log 2>&1 &
+# npm install -g supervisor
 nohup node $process_name 1>./log/$a.log 2>&1 &
 sync
 #echo "startup over"
