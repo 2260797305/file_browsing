@@ -2,7 +2,7 @@
   "name": "file_browsing",
   "version": "1.0.0",
   "description": "本地文件浏览器",
-  "main": "app.js",
+  "main": "file_browsing.js",
   "dependencies": {
     "express": "4.x",
     "express-session": "^1.17.1",

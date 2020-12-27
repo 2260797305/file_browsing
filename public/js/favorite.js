@@ -26,36 +26,15 @@ function find_cur_is_star(file) {
 	$.getJSON(request_url, function(data) {
 		console.log(data);
 		if (data["code"] != 0) {
-			show_star(0);
 			is_star = 0;
 			return;
 		} else {
-			show_star(1);
 			is_star = 1;
 		}
+		show_star(is_star);
 	})
 }
 
-function dir_copy() {
-	var file_dir = getQueryString('file_dir');
-	if (file_dir == null) {
-        file_dir = "/"
-	}
-	var idx = file_dir.indexOf("windows")
-	if (idx == -1) {
-		return
-	}
-	file_dir = file_dir.slice(idx + 8)
-	if (show_list[cur_page] && browsing_mode != 'file') {
-		file_dir = file_dir + "/" + show_list[cur_page]
-	}
-	file_dir = file_dir.replace("//", "/")
-	var cp_text = file_dir.slice(0, 1) + ":" + file_dir.slice(1)
-
-	copyTest(cp_text, function(text) {
-		alert(text + " copy ok")
-	})
-}
 
 function goto_favorite() {
 	window.location.replace("favorite.html")

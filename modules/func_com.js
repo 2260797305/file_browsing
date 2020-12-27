@@ -311,6 +311,7 @@ function filePathFix(file_name) {
         file_name = file_name.substring(1);
     }
     file_name = file_name.replace("'", '"')
+    // file_name = file_name.replace('"', '\'"')
     return file_name;
 }
 

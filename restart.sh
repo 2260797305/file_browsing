@@ -10,7 +10,7 @@ fi
 cd $DIR
 
 #echo "kill old process"
-process_name='app.js'
+process_name='file_browsing.js'
 ps -efww|grep -w $process_name | grep -v "grep"
 while (($? == 0))
 do

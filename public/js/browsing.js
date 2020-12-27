@@ -61,6 +61,19 @@ function goto_favorite() {
 	window.location.replace("favorite.html")
 }
 
+function path_dir_cvt (data2) {
+    data2=data2.replace(/\%/g,"%25");
+    data2=data2.replace(/\#/g,"%23");
+    data2=data2.replace(/\&/g,"%26");
+    data2=data2.replace(/\ /g,"%20");
+    data2=data2.replace(/\+/g,"%2B");
+    data2=data2.replace(/\//g,"%2F");
+    data2=data2.replace(/\?/g,"%3F");
+    data2=data2.replace(/\=/g,"%3D");
+    return data2
+};
+
+
 function delete_file() {
 	if (browsing_mode == 'file') {
 		alert("只有浏览模式才可以删除文件")
@@ -82,10 +95,11 @@ function delete_file() {
 			return
 	}
 
+	file_dir = path_dir_cvt(file_dir)
 	request_url = '/delete_file?dir=' + file_dir;
 	$.getJSON(request_url, function(data) {
 		if (data["code"] != 0) {
-			alert("删除失败");
+			alert("删除失败" + data['reson']);
 			return;
 		}
 		alert("删除成功")

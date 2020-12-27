@@ -1,8 +1,10 @@
 var fs = require("fs");
 var express = require('express');
 var querystring = require('querystring');
-var session = require('express-session')
+// var session = require('express-session')
+
 var SqliteDB = require('./modules/sqlite').SqliteDB;
+console.log("hew");
 var func_com = require('./modules/func_com')
 
 var HOST = "192.168.31.151"; // 请改成实际的ip地址
@@ -11,6 +13,12 @@ var PORT = 9089;
 var db_file = "./data/FileB.db";
 var app = express();
 app.use('/', express.static('public'));
+
+// You're mixing up a warning and an error that have nothing in common from this log. 
+// The actual error is you don't have write permissions to the destination folder. 
+// If you are running as root, try adding --unsafe-perm
+
+
 
 var sqliteDB = new SqliteDB(db_file)
 
@@ -195,6 +203,7 @@ app.get('/get_favorite_list', function(req, res) {
         console.log(objects.length);
         for (var i = 0; i < objects.length; ++i) {
             url = objects[i]["url"]
+            url = url.replace('"', "'")
             complete_url = static_path + url
             console.log(complete_url);
             try {
@@ -204,12 +213,17 @@ app.get('/get_favorite_list', function(req, res) {
                 } else if (stats.isFile()) {
                     console.log(url);
                     file_list.push(url)
-                } 
+                } else {
+                    console.log(url + " 文件不存在");
+                }
                 // else if (browsing_mode != 'file' && stats.isDirectory()) {
                 //     var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
                 //     sqliteDB.executeSql(delFavSql);
                 // }
             } catch (e) {
+                console.log(url + " 文件不存在, 从数据库");
+                // var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
+                // sqliteDB.executeSql(delFavSql);
                 // console.log(e);
                 continue;
             }
@@ -222,7 +236,6 @@ app.get('/get_favorite_list', function(req, res) {
 /**
  * 添加收藏目录
  */
-
 app.get('/set_favorite_list', function(req, res) {
     var file_name = req.query.dir;
     var browsing_mode = req.query.browsing_mode;
@@ -291,12 +304,14 @@ app.get('/delete_file', function(req, res) {
 
     if (dir.length == 0 || dir == "/") {
         res.jsonp({ 'code': 0 });
+        return;
     }
     dir = static_path + dir
     console.log("需要删除的路径: " + dir);
-    fs.exists(dir, function(exists) {
-        console.log(exists ? "文件存在" : "文件不存在");
-        if (exists) {
+
+    try {
+        stats = fs.statSync(dir)
+        if (stats.isFile()) {
             fs.rename(dir, dir+".removefile", function(err) {
                 if (err) {
                     console.log("重命名失败")
@@ -304,12 +319,13 @@ app.get('/delete_file', function(req, res) {
                 } else {
                     res.jsonp({ 'code': 0 });
                 }
-               
             });
         } else {
-            res.jsonp({ 'code': -1 });
+            res.jsonp({ 'code': -1 , 'reson':'选择的不是文件'});
         }
-    });
+    } catch (e) {
+        res.jsonp({ 'code': -1 , 'reson':'文件读取错误'});
+    }
 });
 
 

@@ -70,6 +70,7 @@ h2>a:hover {
     background-color: #e7ebe3ea;
     color: rgb(5, 1, 1);
     font-size: 20px;
+
 }
 
 #page_input {
@@ -120,6 +121,7 @@ h2 {
     top: 0;
     position: fixed;
     overflow:hidden;
+    z-index: 999;
     /* position: relative; */
 }
 h2>a {
