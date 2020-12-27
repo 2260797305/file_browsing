@@ -17,6 +17,7 @@
 	<script src="js/metro.min.js"></script>
 	<script src="js/lazeload.js"></script>
 	<script src="js/util.js"></script>
+	<script src="js/browsing_common.js"></script>
 	<script src="js/favorite.js"></script>
 
 	<script type="text/javascript" src="index/js/jquery.min.js"></script>
@@ -45,17 +46,23 @@
 
 			<div id="func_option">
 				<form action="" method="" id = "browsing_mode"> 
-					<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
-					<br>
-					<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
-					<br>
-					<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
-					<br>
-					<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
+					</div>
 				</form> 
 			</div>
 		</div>
-		
+
 		<div id="max_ctx">
 			<div class="picinfo" id = "picinfo" style="display:none;">
 				<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>

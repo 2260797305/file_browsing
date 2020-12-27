@@ -48,7 +48,6 @@ sqliteDB.createTable(createFTableSql);
 var static_path = __dirname + '/public/store/'
 func_com.setPrePath(static_path)
 
-var recursive_cnt = 1;
 
 /**
  * 错误提示
@@ -108,7 +107,7 @@ app.post('/login', function(req, res) {
             console.log(upwd)
 
             if (name === "kkk" && upwd === "kkk") {
-                res.jsonp({ 'status': "success", 'url': "/browsing.html" });
+                res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1" });
                 // res.send('400');
                 // return
             } else {
@@ -120,7 +119,7 @@ app.post('/login', function(req, res) {
         //res.send('200');
 });
 
-//  POST 请求
+//  POST 请求, 弃用
 app.post('/recursive_cnt', function(req, res) {
     //post
     var reqBody = '';
@@ -151,7 +150,7 @@ app.get('/process_get', function(req, res) {
 
 // 判断是否被收藏
 app.get('/is_start_file', function(req, res) {
-    var file_name = req.query.dir;
+    var file_name = req.query.file_dir;
     var browsing_mode = req.query.browsing_mode;
 
     if (file_name.length == 0 || file_name == "/") {
@@ -237,9 +236,9 @@ app.get('/get_favorite_list', function(req, res) {
  * 添加收藏目录
  */
 app.get('/set_favorite_list', function(req, res) {
-    var file_name = req.query.dir;
+    var file_name = req.query.file_dir;
     var browsing_mode = req.query.browsing_mode;
-
+    console.log("获添加的收藏路径: " + file_name);
     if (file_name.length == 0 || file_name == "/") {
         res.jsonp({ 'code': 0 });
     }
@@ -250,7 +249,7 @@ app.get('/set_favorite_list', function(req, res) {
     }
 
     file_name = func_com.filePathFix(file_name);
-    console.log("获添加的收藏路径: " + file_name);
+    
 
     var querySql = "select * from " + dbname +  " where url='" + file_name + "'";
     console.log(querySql)
@@ -273,7 +272,7 @@ app.get('/set_favorite_list', function(req, res) {
  * 删除收藏目录
  */
 app.get('/del_favorite_list', function(req, res) {
-    var file_name = req.query.dir;
+    var file_name = req.query.file_dir;
     var browsing_mode = req.query.browsing_mode;
 
     if (file_name.length == 0 || file_name == "/") {
@@ -300,7 +299,7 @@ app.get('/del_favorite_list', function(req, res) {
 // 删除文件
 
 app.get('/delete_file', function(req, res) {
-    var dir = req.query.dir;
+    var dir = req.query.file_dir;
 
     if (dir.length == 0 || dir == "/") {
         res.jsonp({ 'code': 0 });
@@ -347,7 +346,7 @@ app.get('/get_next_dir', function(req, res) {
     var file_name = req.query.file_dir;
     var new_dir = func_com.get_select_dir(file_name, 'next');
     console.log("获取下一个章节");
-    res.jsonp({ 'find_dir': new_dir, 'recursive_cnt': recursive_cnt, 'code': 0 });
+    res.jsonp({ 'find_dir': new_dir, 'code': 0 });
 });
 
 
@@ -356,9 +355,13 @@ app.get('/get_next_dir', function(req, res) {
  */
 app.get('/get_file_list', function(req, res) {
     var file_name = req.query.file_dir;
+    var recursive_cnt = req.query.recursive_cnt
     var browsing_mode = req.query.browsing_mode;
     if (!file_name) {
         file_name = ""
+    }
+    if (!recursive_cnt) {
+        recursive_cnt = 1
     }
     console.log(browsing_mode)
     if (!browsing_mode) {
@@ -399,9 +402,9 @@ app.get('/get_file_list', function(req, res) {
         console.log(objects.length)
         if (objects.length == 0) {
             /**not start */
-            res.jsonp({ 'is_star': 0, 'dir_list': dir_list, 'file_list': file_list, 'recursive_cnt': recursive_cnt, 'code': 0 });
+            res.jsonp({ 'is_star': 0, 'dir_list': dir_list, 'file_list': file_list, 'code': 0 });
         } else {
-            res.jsonp({ 'is_star': 1, 'dir_list': dir_list, 'file_list': file_list, 'recursive_cnt': recursive_cnt, 'code': 0 });
+            res.jsonp({ 'is_star': 1, 'dir_list': dir_list, 'file_list': file_list, 'code': 0 });
         }
     });
     //res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
