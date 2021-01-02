@@ -37,7 +37,7 @@ function filePathFix(file_name) {
             break;
         }
         file_name = b;
-        console.log(file_name);
+        // console.log(file_name);
     }
     if (file_name[0] == "/") {
         file_name = file_name.substring(1);
@@ -55,7 +55,7 @@ function set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
 }
 
 function show_star(is_star) {
-	console.log(is_star);
+	// console.log(is_star);
 	if (is_star == 1) {
 		$("#start_div").attr("style","color: yellow;");
 	} else {
@@ -86,9 +86,9 @@ function goto_favorite() {
 function find_cur_is_star(file) {
     set_serch_url(file, browsing_mode, file_recursive_cnt)
 	request_url = '/is_start_file?' + set_serch_url(file, browsing_mode, file_recursive_cnt)
-	console.log(request_url);
+	// console.log(request_url);
 	$.getJSON(request_url, function(data) {
-		console.log(data);
+		// console.log(data);
 		if (data["code"] != 0) {
 			show_star(0);
 			is_star = 0;
@@ -307,8 +307,9 @@ function shwo_cur_pic(page) {
 	storage.setItem("cur_page", page)
 
 	if (browsing_mode == 'picture') {
-		var imgStr = '<img id="show_ctx" src="./img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
-		$("#center_box").find("img").remove();
+		var imgStr = '<img id="show_ctx" src="../img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
+        $("#center_box").find("img").remove();
+        console.log(imgStr);
 		$("#center_box").append(imgStr);
 		new LazyLoad().init();
 	} else if (browsing_mode == 'video') {
@@ -488,9 +489,9 @@ function add_title_link(title) {
 	var dir_link =  title .split("/");
 	var pre_dir = new String();
     var home_dir = 1;
-    console.log(dir_link);
+
 	dir_link.forEach(function(data) {
-        console.log(data);
+
         if (!data) {
             return;
         }
@@ -543,11 +544,11 @@ function recursive_change()
     if (!item) {
         return
     }
-    console.log(browsing_mode);
-    console.log(item);
+    // console.log(browsing_mode);
+    // console.log(item);
     if (browsing_mode == 'file') {
         for (var i = 0; i < obj.length; i++) { //遍历Radio 
-            console.log(obj[i].value);
+            // console.log(obj[i].value);
             if (obj[i].value == 1) {
                 obj[i].checked = true
                 break;              
@@ -641,7 +642,7 @@ $(function() {
     // file_dir = path_dir_cvt(file_dir)
     req_url = get_load_callback_str() +  set_serch_url(file_dir, browsing_mode, file_recursive_cnt);
     //$('#file-title').html(dir_path);
-    console.log(req_url);
+    // console.log(req_url);
 	$.getJSON(req_url, function(data) {
 		if (data['code'] != 0 &&  data['code'] != 1) {
 		    alert("服务器加载失败")
@@ -664,7 +665,7 @@ $(function() {
 			$("#dir_contex").attr("style","display:none;");
 			$("#file_contex").attr("style","width:90%;");
 		}
-		console.log(show_list);
+		// console.log(show_list);
 		if (show_list.length != 0) {
 			if (browsing_mode != 'file') {
 				start_show();
