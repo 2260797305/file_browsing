@@ -37,7 +37,7 @@
 
 
 #show_ctx {
-    width: 95%;
+    /* width: 95%; */
     background-color: black;
 }
 
@@ -384,13 +384,13 @@ span {
 }
 
 /* 字体申明 */
-  @font-face {
+@font-face {
     font-family: 'icomoon';
-    src:  url('../fonts/icomoon.eot?199i7s');
-    src:  url('../fonts/icomoon.eot?199i7s#iefix') format('embedded-opentype'),
-      url('../fonts/icomoon.ttf?199i7s') format('truetype'),
-      url('../fonts/icomoon.woff?199i7s') format('woff'),
-      url('../fonts/icomoon.svg?199i7s#icomoon') format('svg');
+    src:  url('../fonts/icomoon.eot?tczia3');
+    src:  url('../fonts/icomoon.eot?tczia3#iefix') format('embedded-opentype'),
+      url('../fonts/icomoon.ttf?tczia3') format('truetype'),
+      url('../fonts/icomoon.woff?tczia3') format('woff'),
+      url('../fonts/icomoon.svg?tczia3#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
     font-display: block;

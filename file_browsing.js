@@ -114,13 +114,13 @@ app.post('/login', function(req, res) {
     });
     // 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。
     req.on('end', function() { //用于数据接收完成后再获取
-            name = querystring.parse(reqBody).uname
-            upwd = querystring.parse(reqBody).upwd
+            var name = querystring.parse(reqBody).uname
+            var upwd = querystring.parse(reqBody).upwd
             console.log(name)
             console.log(upwd)
 
             if (name === "kkk" && upwd === "kkk") {
-                res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1" });
+                res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
                 // res.send('400');
                 // return
             } else {

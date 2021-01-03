@@ -1,10 +1,12 @@
 var show_list = new Array();
+var show_shuffle_order = new Array();
 var cur_page = 0;
 var is_show_pic = 0;
 var browsing_mode = 'file';
 var golbol_volume = 1;
 var is_star = 0;
 var need_play_next = 0;
+var loop_mode = "dir_order" //file_order, file_loop, file_shuffle
 var storage;
 var file_recursive_cnt = 1;
 var box_w;
@@ -47,12 +49,35 @@ function filePathFix(file_name) {
     return file_name;
 }
 
-function set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+function set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
 {
 	file_dir = filePathFix(file_dir)
 	console.log(file_dir);
-    serch_url = "file_dir=" + file_dir + "&browsing_mode=" + browsing_mode + "&recursive_cnt=" + file_recursive_cnt;
+	if (loop_mode == null) {
+		loop_mode = "dir_order"
+	}
+    serch_url = "file_dir=" + file_dir + "&browsing_mode=" + browsing_mode + "&recursive_cnt=" + file_recursive_cnt + "&loop_mode=" + loop_mode;
     return serch_url
+}
+
+function show_icon_by_loop_mode(loop_mode) {
+	var txt = ""
+
+	if (loop_mode == "file_order") {
+		txt =  ""
+	} else if (loop_mode == "file_loop") {
+		txt = ""
+	} else if (loop_mode == "file_shuffle") {
+		txt = ""
+	} else if (loop_mode == "dir_order") {
+		txt = ""
+	} else {
+		return
+	}
+	console.log("new loop_mode " + loop_mode);
+	txt = "<span>" + txt + "</span>"
+	$("#loop_mode").find("span").remove();
+	$("#loop_mode").append(txt);
 }
 
 function show_star(is_star) {
@@ -79,14 +104,14 @@ function path_dir_cvt (path_url) {
 
 
 function goto_favorite() {
-    url = "favorite.html?" + set_serch_url("", 'file', 1)
+    url = "favorite.html?" + set_serch_url("", 'file', 1, loop_mode)
 	window.location.replace(url)
 }
 
 
 function find_cur_is_star(file) {
     set_serch_url(file, browsing_mode, file_recursive_cnt)
-	request_url = '/is_start_file?' + set_serch_url(file, browsing_mode, file_recursive_cnt)
+	request_url = '/is_start_file?' + set_serch_url(file, browsing_mode, file_recursive_cnt, loop_mode)
 	// console.log(request_url);
 	$.getJSON(request_url, function(data) {
 		// console.log(data);
@@ -144,7 +169,7 @@ function delete_file() {
 			return
 	}
     
-	request_url = '/delete_file?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+	request_url = '/delete_file?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
 	$.getJSON(request_url, function(data) {
 		if (data["code"] != 0) {
 			alert("删除失败" + data['reson']);
@@ -179,7 +204,7 @@ function dir_star() {
         file_dir = file_dir + '/' +  show_list[cur_page]
     }
 	var request_url = new String();
-    request_url = set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+    request_url = set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
 	if (is_star == 0) {
 		request_url = '/set_favorite_list?' + request_url
 		$.getJSON(request_url, function(data) {
@@ -280,6 +305,68 @@ function video_hw_set() {
 	}, false);
 }
 
+function show_pic_slid()
+{
+	javascript:scroll(0,0);
+	var file_dir = getQueryString('file_dir');
+	src = 'store/' + file_dir + "/" + show_list[cur_page]
+	myPic = document.getElementById("show_ctx");
+	myPic.src = src;
+}
+
+function size_increase()
+{
+	if (browsing_mode == 'file') {
+		return
+	}
+	myPic = document.getElementById("show_ctx");
+	// myPic.src = src;
+
+	console.log(myPic.width);	
+	// console.log(myPic.height);
+	console.log(box_w);
+	// console.log(box_h);
+
+	if (myPic.width + 80 < box_w - 130) {
+		myPic.width += 80
+		// myPic.css("height", myPic.width);
+		// console.log(myPic.width);	
+	} else {
+		myPic.width = box_w - 130;
+	}
+
+}
+
+
+function size_decrease()
+{
+	if (browsing_mode == 'file') {
+		return
+	}
+	myPic = document.getElementById("show_ctx");
+	// myPic.src = src;
+	if (myPic.width - 80 > 100) {
+		myPic.width -= 80
+	}
+}
+
+function loop_mode_change()
+{
+	console.log(loop_mode);
+	if (loop_mode == "dir_order") {
+		loop_mode = "file_order"
+	} else if (loop_mode == "file_order") {
+		loop_mode = "file_loop"
+	} else if (loop_mode == "file_loop") {
+		loop_mode = "file_shuffle"
+	} else if (loop_mode == "file_shuffle") {
+		loop_mode = "dir_order"
+	} else {
+		return
+	}
+	show_icon_by_loop_mode(loop_mode);
+}
+
 function shwo_cur_pic(page) {
 	var file_dir = getQueryString('file_dir');
 	var pic_info = "<txt>【" + (cur_page+1) + "/" + show_list.length + "】: " + show_list[page] + "</txt>"
@@ -310,10 +397,13 @@ function shwo_cur_pic(page) {
 		src = 'store/' + file_dir + "/" + show_list[page]
 		myPic = document.getElementById("show_ctx");
 		if (myPic)  {
-			myPic.src = src;
+			myPic.src = "../img/loading.png";
+			setTimeout("show_pic_slid()",10);
 		} else {
 			var imgStr = '<img id="show_ctx" src="store/' + file_dir + "/" + show_list[page] + '">';
 			$("#center_box").append(imgStr);
+			myPic = document.getElementById("show_ctx");
+			myPic.width = box_w - 130;
 		}
 	} else if (browsing_mode == 'video') {
 		var new_src = "store/" + file_dir + "/" + show_list[page];
@@ -331,10 +421,10 @@ function shwo_cur_pic(page) {
 			myVid.volume = golbol_volume;
 			myVid.focus()
 			video_hw_set()
+			javascript:scroll(0,0);
 		}
     }
     find_cur_is_star(file_dir + "/" + show_list[page]);
-	javascript:scroll(0,0);
 }
 
 function start_show()
@@ -382,6 +472,13 @@ function start_show()
 	}
 
 	is_show_pic = 1;
+	// 记录随机顺序，貌似没啥必要
+	// for (var i = 0; i < show_list.length; i++) {
+	// 	show_shuffle_order[i] = i
+	// }
+	// show_shuffle_order.sort(function(){return Math.random()>0.5?-1:1;})
+	// console.log(show_shuffle_order);
+
 	shwo_cur_pic(cur_page);
 }
 
@@ -396,9 +493,9 @@ function jump_chapter(dirct) {
     file_dir = path_dir_cvt(file_dir)
     
 	if (dirct == 0) {
-		request_url = '/get_prev_dir?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+		request_url = '/get_prev_dir?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
 	} else {
-		request_url = '/get_next_dir?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+		request_url = '/get_next_dir?' + set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
 	}
 	$.getJSON(request_url, function(data) {
 		if (data["code"] != 0) {
@@ -406,30 +503,57 @@ function jump_chapter(dirct) {
 			return;
         }
         
-		location.href = "browsing.html?" + set_serch_url(data["find_dir"], browsing_mode, file_recursive_cnt)
+		location.href = "browsing.html?" + set_serch_url(data["find_dir"], browsing_mode, file_recursive_cnt, loop_mode)
 	});
 }
 
 function prev_img(obj) {
-	if (cur_page == 0) {
-		if(confirm("已经是此章节第1页了，要打开上一个章节吗？")==true){
-			jump_chapter(0);
+	if (loop_mode == "dir_order") {
+		if (cur_page == 0) {
+			if(confirm("已经是此章节第1页了，要打开上一个章节吗？")==true){
+				jump_chapter(0);
+			}
+		} else {
+			cur_page -= 1;
 		}
-		return;
+	} else if (loop_mode == "file_order") {
+		if (cur_page == 0) {
+			cur_page = show_list.length - 1
+		} else {
+			cur_page -= 1;
+		}
+	} else if (loop_mode == "file_loop") {
+		cur_page = cur_page;
+	} else if (loop_mode == "file_shuffle"){
+		cur_page = Math.floor(Math.random()*show_list.length); 
 	} else {
-		cur_page -= 1;
+		return
 	}
+
 	shwo_cur_pic(cur_page);
 }
 
 function next_img(obj) {
-	if (cur_page == (show_list.length - 1)) {
-		if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
-			jump_chapter(1);
+	if (loop_mode == "dir_order") {
+		if (cur_page == (show_list.length - 1)) {
+			if(confirm("已经是此章节最后一页了，要打开下一个章节吗？")==true){
+				jump_chapter(1);
+			}
+		} else {
+			cur_page += 1;
 		}
-		return;
+	} else if (loop_mode == "file_order") {
+		if (cur_page == (show_list.length - 1)) {
+			cur_page = 0
+		} else {
+			cur_page += 1;
+		}
+	} else if (loop_mode == "file_loop") {
+		cur_page = cur_page;
+	} else if (loop_mode == "file_shuffle"){
+		cur_page = Math.floor(Math.random()*show_list.length); 
 	} else {
-		cur_page += 1;
+		return
 	}
 	shwo_cur_pic(cur_page);
 }
@@ -500,7 +624,7 @@ function add_title_link(title) {
         }
 		var url = new String();
 		if (home_dir == 1) {
-			url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1"
+			url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
 			home_dir = 0;
 		} else {
 			if (data == "/") {
@@ -508,7 +632,7 @@ function add_title_link(title) {
 			} else {
                 pre_dir = pre_dir + data;
                 
-				url = "browsing.html?" + set_serch_url(pre_dir, browsing_mode,file_recursive_cnt)
+				url = "browsing.html?" + set_serch_url(pre_dir, browsing_mode,file_recursive_cnt, loop_mode)
 				pre_dir = pre_dir + "/";
 			}
         }
@@ -563,7 +687,7 @@ function recursive_change()
     file_recursive_cnt = item
     file_dir = getQueryString('file_dir');
     browsing_mode = getQueryString('browsing_mode');
-    new_url = old_url + "?"+ set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+    new_url = old_url + "?"+ set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
     location.href = new_url
 }
 
@@ -585,7 +709,7 @@ function mode_change()
     browsing_mode = item
     file_dir = getQueryString('file_dir');
     file_recursive_cnt = getQueryString('recursive_cnt');
-    new_url = old_url + "?"+ set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
+    new_url = old_url + "?"+ set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
     location.href = new_url
 }
 
@@ -617,7 +741,9 @@ $(function() {
     browsing_mode = getQueryString('browsing_mode');
     // alert(browsing_mode)
     file_recursive_cnt = getQueryString('recursive_cnt');
-    // alert(file_recursive_cnt)
+	// alert(file_recursive_cnt)
+	loop_mode = getQueryString('loop_mode');
+	show_icon_by_loop_mode(loop_mode)
 
 	var file_dir = getQueryString('file_dir');
 	if (file_dir == null) {
@@ -643,7 +769,7 @@ $(function() {
     selete_m.addEventListener('change', mode_change, false);
     
     // file_dir = path_dir_cvt(file_dir)
-    req_url = get_load_callback_str() +  set_serch_url(file_dir, browsing_mode, file_recursive_cnt);
+    req_url = get_load_callback_str() +  set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode);
     //$('#file-title').html(dir_path);
     console.log(req_url);
 	$.getJSON(req_url, function(data) {
@@ -658,8 +784,6 @@ $(function() {
 		} catch(e) {
 			console.log(e);
 		}
-		
-
 
 		show_list = data['file_list'];
 		/*目录显示，一直都在*/
@@ -667,7 +791,7 @@ $(function() {
 		if (file_list.length != 0) {
 			var list = $('#dir_list');
 			file_list.forEach(function(data) {
-                dir_url = set_serch_url(file_dir + '/' + data, browsing_mode, file_recursive_cnt);
+                dir_url = set_serch_url(file_dir + '/' + data, browsing_mode, file_recursive_cnt, loop_mode);
                 dir_url = "browsing.html?" + dir_url
                 dir_url = 'href="' + dir_url + '"'
                 dir_url = "<a " + dir_url + ">" + "<txt>" + data + "</txt></a>"
@@ -692,7 +816,7 @@ $(function() {
 						download_info = "download='" + data + "'"
 					} else if (suffix == "rar" || suffix == "zip") {
 						
-						url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1) + '"'
+						url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1, loop_mode) + '"'
 						console.log(url);
 					}
 					url = url + download_info
@@ -741,3 +865,68 @@ $(function() {
 		//alert(s); //将输出 String
      });
 });
+
+
+//滚动动画
+windowAddMouseWheel();
+function windowAddMouseWheel() {
+	var scrollFunc = function (e) {
+		if (browsing_mode != "video") {
+			return;
+		}
+
+		myVid=document.getElementById("video1");
+		golbol_volume = myVid.volume;
+
+		e = e || window.event;
+		if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
+			if (e.wheelDelta > 0) { //当滑轮向上滚动时
+				console.log("google 上");
+				if (golbol_volume < 0.1) {
+					golbol_volume += 0.01;
+				} else if (golbol_volume + 0.1 <= 0.99) {
+					golbol_volume += 0.1;
+				} else  {
+					golbol_volume = 1;
+				}
+				myVid.volume = golbol_volume;
+			}
+			if (e.wheelDelta < 0) { //当滑轮向下滚动时
+				console.log("google 下");
+				if (golbol_volume - 0.1 >= 0.01) {
+					golbol_volume -= 0.1;
+				} else if (golbol_volume >= 0.01) {
+					golbol_volume -= 0.01;
+				}
+				myVid.volume = golbol_volume;
+			}
+		} else if (e.detail) {  //Firefox滑轮事件
+			if (e.detail> 0) { //当滑轮向上滚动时
+				console.log("fox 上");
+				if (golbol_volume < 0.1) {
+					golbol_volume += 0.01;
+				} else if (golbol_volume + 0.1 <= 0.99) {
+					golbol_volume += 0.1;
+				} else {
+					golbol_volume = 1;
+				}
+				myVid.volume = golbol_volume;
+			}
+			if (e.detail< 0) { //当滑轮向下滚动时
+				console.log("fox 下");
+				if (golbol_volume - 0.1 >= 0.01) {
+					golbol_volume -= 0.1;
+				} else if (golbol_volume >= 0.01) {
+					golbol_volume -= 0.01;
+				}
+				myVid.volume = golbol_volume;
+			}
+		}
+	};
+	//给页面绑定滑轮滚动事件
+	if (document.addEventListener) {
+		document.addEventListener('DOMMouseScroll', scrollFunc, false);
+	}
+	//滚动滑轮触发scrollFunc方法
+	window.onmousewheel = document.onmousewheel = scrollFunc;
+}

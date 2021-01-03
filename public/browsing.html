@@ -39,8 +39,18 @@
 				<span></span>
 			</div>
 
+			<div class="menu_func" onclick="javascript:size_increase();" style="color: black;">
+				<span></span>
+			</div>
+			<div class="menu_func" onclick="javascript:size_decrease();" style="color: black;">
+				<span></span>
+			</div>
+
+			<div class="menu_func" id="loop_mode" onclick="javascript:loop_mode_change();" style="color: black;">
+				<span></span>
+			</div>
+
 			<div id="jump">
-				<!-- <label for="" style="font-size: small;">跳转<br> <input id = "page_input" type="text" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label> -->
 				<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="if(event.keyCode==13) {page_select()}">
 			</div>
 
