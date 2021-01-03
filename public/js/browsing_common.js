@@ -49,7 +49,8 @@ function filePathFix(file_name) {
 
 function set_serch_url(file_dir, browsing_mode, file_recursive_cnt)
 {
-    file_dir = filePathFix(file_dir)
+	file_dir = filePathFix(file_dir)
+	console.log(file_dir);
     serch_url = "file_dir=" + file_dir + "&browsing_mode=" + browsing_mode + "&recursive_cnt=" + file_recursive_cnt;
     return serch_url
 }
@@ -305,13 +306,15 @@ function shwo_cur_pic(page) {
 	input.value = page + 1
 
 	storage.setItem("cur_page", page)
-
 	if (browsing_mode == 'picture') {
-		var imgStr = '<img id="show_ctx" src="../img/loading.png" lazy-src="store/' + file_dir + "/" + show_list[page] + '">';
-        $("#center_box").find("img").remove();
-        console.log(imgStr);
-		$("#center_box").append(imgStr);
-		new LazyLoad().init();
+		src = 'store/' + file_dir + "/" + show_list[page]
+		myPic = document.getElementById("show_ctx");
+		if (myPic)  {
+			myPic.src = src;
+		} else {
+			var imgStr = '<img id="show_ctx" src="store/' + file_dir + "/" + show_list[page] + '">';
+			$("#center_box").append(imgStr);
+		}
 	} else if (browsing_mode == 'video') {
 		var new_src = "store/" + file_dir + "/" + show_list[page];
 		myVid=document.getElementById("video1");
@@ -597,7 +600,7 @@ $(window).resize(function(){
 $(function() {
 	box_h = $(window).height();
 	box_w = $(window).width();
-
+	console.log(box_h);
 	if(! window.localStorage){
 		alert("浏览器不支持localstorage");
 		return false;
@@ -642,14 +645,23 @@ $(function() {
     // file_dir = path_dir_cvt(file_dir)
     req_url = get_load_callback_str() +  set_serch_url(file_dir, browsing_mode, file_recursive_cnt);
     //$('#file-title').html(dir_path);
-    // console.log(req_url);
+    console.log(req_url);
 	$.getJSON(req_url, function(data) {
 		if (data['code'] != 0 &&  data['code'] != 1) {
 		    alert("服务器加载失败")
             return;
-        }
-        show_list = data['file_list'];
-        set_load_callback(data)
+		}
+
+		try {
+			set_load_callback(data)
+			console.log(data);
+		} catch(e) {
+			console.log(e);
+		}
+		
+
+
+		show_list = data['file_list'];
 		/*目录显示，一直都在*/
 		var file_list = data['dir_list'];
 		if (file_list.length != 0) {
@@ -669,22 +681,26 @@ $(function() {
 		if (show_list.length != 0) {
 			if (browsing_mode != 'file') {
 				start_show();
+			} else {
+				list = $('#file_list');
+					show_list.forEach(function(data) {
+					url = '"store/' + file_dir + '/' + data + '"'
+					download_info = ""
+					var index = data.lastIndexOf(".");
+					var suffix = data.substring(index+1).toLowerCase();
+					if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
+						download_info = "download='" + data + "'"
+					} else if (suffix == "rar" || suffix == "zip") {
+						
+						url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1) + '"'
+						console.log(url);
+					}
+					url = url + download_info
+					url = 'href=' + url
+					url = "<a " + url + ">" + "<txt>" + data + "</txt></a>"
+					list.append('<li>' + url + '</li>')
+				});
 			}
-			list = $('#file_list');
-			
-			show_list.forEach(function(data) {
-                url = '"store/' + file_dir + '/' + data + '"'
-				download_info = ""
-				var index = data.lastIndexOf(".");
-				var suffix = data.substring(index+1).toLowerCase();
-				if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
-					download_info = "download='" + data + "'"
-                }
-                img_url = url + download_info
-                img_url = 'href=' + img_url
-                img_url = "<a " + img_url + ">" + "<txt>" + data + "</txt></a>"
-				list.append('<li>' + img_url + '</li>')
-			});
 		} else {
 			$("#file_contex").remove()
 			$("#dir_contex").attr("style","width:90%;");

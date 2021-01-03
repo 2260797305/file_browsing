@@ -1,4 +1,6 @@
-var fs = require("fs");
+// var fs = require('fs');
+import fs from 'fs';
+
 
 var pre_path="";
 
@@ -72,8 +74,9 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
     }
     var file = null
     try {
-        files = fs.readdirSync(search_dir)
+        var files = fs.readdirSync(search_dir)
     } catch (e) {
+        console.log(e);
         return
     }
     if (files.length != 0) {
@@ -162,7 +165,7 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
 
 function Traversing_the_directory(dir, dir_list, file_list, browsing_mode) {
     files = fs.readdirSync(dir)
-
+    console.log("Traversing_the_directory");
     if (files.length != 0) {
         files.forEach(function(data) {
             var stats = fs.statSync(dir + "/" + data);
@@ -265,7 +268,7 @@ function setPrePath(init_path) {
 }
 
 function getDataBase(browsing_mode) {
-    dbname=""
+    var dbname=""
     if (browsing_mode == 'file') {
         dbname = 'favorite_list'
     } else if (browsing_mode == 'picture'){
@@ -326,4 +329,5 @@ var func_com = {
     getDataBase : getDataBase
 };
 
-module.exports=func_com
+// module.exports=func_com
+export default func_com

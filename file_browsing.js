@@ -1,11 +1,21 @@
-var fs = require("fs");
-var express = require('express');
-var querystring = require('querystring');
+// var fs = require("fs");
+import fs from 'fs';
+import resolve from 'path';
+// var express = require('express');
+import express from 'express';
+// var querystring = require('querystring');
+import querystring from 'querystring';
+import { list, unpack } from 'node-unar';
+
+
 // var session = require('express-session')
 
-var SqliteDB = require('./modules/sqlite').SqliteDB;
-console.log("hew");
-var func_com = require('./modules/func_com')
+// var SqliteDB = require('./modules/sqlite').SqliteDB;
+import SqliteDB from './modules/sqlite.js';
+
+
+// var func_com = require('./modules/func_com')
+import func_com from './modules/func_com.js';
 
 var HOST = "192.168.31.151"; // 请改成实际的ip地址
 // 后面的图片的URL会使用这个变量来构造
@@ -26,28 +36,31 @@ var createTableSql = "create table if not exists favorite_list(url KEY NOT NULL)
 console.log(createTableSql)
 sqliteDB.createTable(createTableSql);
 
-createFTableSql = "create table if not exists history_list(url KEY NOT NULL);";
-console.log(createFTableSql)
-sqliteDB.createTable(createFTableSql);
+createTableSql = "create table if not exists history_list(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
 
-createFTableSql = "create table if not exists favorite_picture(url KEY NOT NULL);";
-console.log(createFTableSql)
-sqliteDB.createTable(createFTableSql);
+createTableSql = "create table if not exists favorite_picture(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
 
-createFTableSql = "create table if not exists favorite_video(url KEY NOT NULL);";
-console.log(createFTableSql)
-sqliteDB.createTable(createFTableSql);
+createTableSql = "create table if not exists favorite_video(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
 
-createFTableSql = "create table if not exists favorite_music(url KEY NOT NULL);";
-console.log(createFTableSql)
-sqliteDB.createTable(createFTableSql);
+createTableSql = "create table if not exists favorite_music(url KEY NOT NULL);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
 
-
+var __dirname = process.cwd();
 // var querySql = 'select * from favorite_list';
 // sqliteDB.queryData(querySql, dataDeal);
 var static_path = __dirname + '/public/store/'
 func_com.setPrePath(static_path)
 
+console.log(process.cwd());
+console.log(static_path);
+console.log(func_com.getDataBase("file"));
 
 /**
  * 错误提示
@@ -201,12 +214,12 @@ app.get('/get_favorite_list', function(req, res) {
         }
         console.log(objects.length);
         for (var i = 0; i < objects.length; ++i) {
-            url = objects[i]["url"]
+            var url = objects[i]["url"]
             url = url.replace('"', "'")
-            complete_url = static_path + url
+            var complete_url = static_path + url
             console.log(complete_url);
             try {
-                stats = fs.statSync(complete_url)
+                var stats = fs.statSync(complete_url)
                 if (browsing_mode == 'file' && stats.isDirectory()) {
                     dir_list.push(url)
                 } else if (stats.isFile()) {
@@ -220,6 +233,7 @@ app.get('/get_favorite_list', function(req, res) {
                 //     sqliteDB.executeSql(delFavSql);
                 // }
             } catch (e) {
+                console.log(e);
                 console.log(url + " 文件不存在, 从数据库");
                 // var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
                 // sqliteDB.executeSql(delFavSql);
@@ -380,6 +394,7 @@ app.get('/get_file_list', function(req, res) {
     if (browsing_mode == 'picture' || browsing_mode == 'video') {
         Recursive_cnt = recursive_cnt;
     }
+    console.log("Recursive_cnt " + Recursive_cnt);
     func_com.Recursive_dir(Recursive_cnt, dir, "", browsing_mode, dir_list, file_list)
         //Traversing_the_directory(dir, dir_list, file_list, browsing_mode);
     console.log("dir_list.length %d", dir_list.length);
@@ -409,6 +424,46 @@ app.get('/get_file_list', function(req, res) {
     });
     //res.jsonp({'dir_list': dir_list, 'file_list': file_list, 'code': 0});
 });
+
+
+/**
+ * 添加收藏目录
+ */
+app.get('/compressing_dir', function(req, res) {
+    console.log("compressing_dir");
+    var file_name = req.query.file_dir;
+    var browsing_mode = req.query.browsing_mode;
+    var passwd = req.query.passwd;
+    console.log("需要解压的文件: " + file_name);
+    if (file_name.length == 0 || file_name == "/") {
+        res.jsonp({ 'code': 0 });
+    }
+
+    var old_file_name = func_com.filePathFix(file_name);
+    file_name = static_path + old_file_name
+    unpack(file_name, "./public/store/.tmp/" + old_file_name)
+    .progress((eachFle) => {
+        console.log(eachFle);
+        console.log("-------------------");
+    })
+    .then((results) => {
+        let type = results.type;
+        let fileList = results.files;
+        let outputDirectory = results.directory;
+        console.log("type= " + type);
+        console.log("fileList= " + fileList);
+        console.log("outputDirectory = " + outputDirectory);
+        old_file_name = ".tmp/" + old_file_name
+        res.jsonp({'target': old_file_name, 'code': 0 });
+    })
+    .catch((anyError) => {
+        console.log("error");
+        console.log(anyError);
+        res.jsonp({ 'code': -1 });
+    });
+});
+
+
 
 var server = app.listen(PORT, HOST, function() {
     console.log("\n应用实例，访问地址为 http://%s:%s\n", HOST, PORT)

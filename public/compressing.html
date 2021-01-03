@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="File Browsing" content="简单的本地文件浏览器" http-equiv="refresh" content="30">
+    <meta http-equiv="Expirse" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+
+	<link rel="shortcut icon" href="img/title.ico">
+	<!-- <link rel="stylesheet" type="text/css" href="index/css/style.css"> -->
+
+	<title>File Browsing</title>
+	<link href="css/metro.min.css" rel="stylesheet" media="screen">
+	<link href="css/index.css" rel="stylesheet" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/metro.min.js"></script>
+	<script src="js/lazeload.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/cooompressing.js"></script>
+	<script src="js/browsing_common.js"></script>
+
+	<script type="text/javascript" src="index/js/jquery.min.js"></script>
+	<script type="text/javascript" src="index/js/vector.js"></script>
+</head>
+
+<body>
+	<h2 id="file-title" style="margin: 3px auto 3px 3px;"></h2>
+
+	<div class = "max_div">
+		<div id="menu">
+			<div class="menu_func" id="start_div" onclick="javascript:dir_star();" style="color: black;">
+				<span></span>
+			</div>
+			<div class="menu_func" onclick="javascript:delete_file();" style="color: black;">
+				<span></span>
+			</div>
+			<div class="menu_func" onclick="javascript:goto_favorite();" style="color: yellow;">
+				<span></span>
+			</div>
+
+			<div id="jump">
+				<!-- <label for="" style="font-size: small;">跳转<br> <input id = "page_input" type="text" oninput="value=value.replace(/[^\d]/g,'')" onkeydown="if(event.keyCode==13) {page_select()}"><br></label> -->
+				<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="if(event.keyCode==13) {page_select()}">
+			</div>
+
+			<div id="func_option">
+				<form action="" method="" id = "browsing_mode"> 
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
+					</div>
+					<div class= "from_option">
+						<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
+					</div>
+				</form> 
+			</div>
+		</div>
+
+		<div id="max_ctx">
+			<div class="picinfo" id = "picinfo" style="display:none;">
+				<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
+				<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
+				
+				<div id="number">[0/0]</div>
+				
+				<div style="margin:30px auto;" id="center_box"">
+				</div>
+			</div>
+
+			<div id="dir_contex">
+				<h3> 目录</h3>
+				<ul class="listview list-type-tiles"  id='dir_list'> </ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

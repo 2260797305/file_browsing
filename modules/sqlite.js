@@ -5,9 +5,11 @@
  * Datetime: 2018/07/24.
  */
  
-var fs = require('fs');
-var sqlite3 = require('sqlite3').verbose();
- 
+// var fs = require('fs');
+import fs from 'fs';
+// var sqlite3 = require('sqlite3').verbose();
+import sqlite3 from 'sqlite3';
+
 var DB = DB || {};
  
 DB.SqliteDB = function(file){
@@ -74,4 +76,5 @@ DB.SqliteDB.prototype.close = function(){
 };
  
 /// export SqliteDB.
-exports.SqliteDB = DB.SqliteDB;
+// exports.SqliteDB = DB.SqliteDB;
+export default DB.SqliteDB
