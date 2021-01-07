@@ -176,6 +176,11 @@ app.get('/is_start_file', function(req, res) {
     }
     file_name = func_com.filePathFix(file_name);
     console.log("判断的收藏路径: " + file_name);
+    if (file_name.startsWith(".tmp"))  {
+        // 解压目录，不需要判断；
+        res.jsonp({ 'code': -1 });
+        return;
+    }
 
     var querySql = "select * from " + dbname +  " where url='" + file_name + "'";
     console.log(querySql)
@@ -323,7 +328,7 @@ app.get('/delete_file', function(req, res) {
     console.log("需要删除的路径: " + dir);
 
     try {
-        stats = fs.statSync(dir)
+        var stats = fs.statSync(dir)
         if (stats.isFile()) {
             fs.rename(dir, dir+".removefile", function(err) {
                 if (err) {
@@ -441,7 +446,23 @@ app.get('/compressing_dir', function(req, res) {
 
     var old_file_name = func_com.filePathFix(file_name);
     file_name = static_path + old_file_name
-    unpack(file_name, "./public/store/.tmp/" + old_file_name)
+    var target_dir = "./public/store/.tmp/" + old_file_name
+    // 判断是否已经解压过了，如果是，则不需要重复解压；
+
+    try {
+        var files = fs.readdirSync(target_dir)
+        console.log(target_dir + " 存在");
+        if (files.length != 0) {
+            old_file_name = ".tmp/" + old_file_name
+            res.jsonp({'target': old_file_name, 'code': 0 });
+            return;
+        }
+    } catch (e) {
+        console.log(target_dir + " 不存在");
+    }
+
+    console.log(file_name + " to " + target_dir);
+    unpack(file_name, target_dir)
     .progress((eachFle) => {
         console.log(eachFle);
         console.log("-------------------");
@@ -457,7 +478,6 @@ app.get('/compressing_dir', function(req, res) {
         res.jsonp({'target': old_file_name, 'code': 0 });
     })
     .catch((anyError) => {
-        console.log("error");
         console.log(anyError);
         res.jsonp({ 'code': -1 });
     });

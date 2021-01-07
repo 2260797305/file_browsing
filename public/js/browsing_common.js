@@ -615,13 +615,15 @@ function add_title_link(title) {
 	var list = $('#file-title');
 	var dir_link =  title .split("/");
 	var pre_dir = new String();
-    var home_dir = 1;
-
+	var home_dir = 1;
+	
+	var url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
+	list.append('<a  style="text-decoration:none" href="' + url + '">' + "<span></span>" + '</style="text-decoration:none">')
+	list.append("<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>")
 	dir_link.forEach(function(data) {
-
         if (!data) {
             return;
-        }
+		}
 		var url = new String();
 		if (home_dir == 1) {
 			url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
@@ -631,7 +633,6 @@ function add_title_link(title) {
 				url.length = 0;
 			} else {
                 pre_dir = pre_dir + data;
-                
 				url = "browsing.html?" + set_serch_url(pre_dir, browsing_mode,file_recursive_cnt, loop_mode)
 				pre_dir = pre_dir + "/";
 			}
@@ -753,7 +754,7 @@ $(function() {
 	}
 
     
-    var title_string = "home/" + file_dir;
+    var title_string = file_dir;
     title_string = filePathFix(title_string)
     add_title_link(title_string);
     set_recursive_cnt(file_recursive_cnt);
@@ -806,23 +807,27 @@ $(function() {
 			if (browsing_mode != 'file') {
 				start_show();
 			} else {
-				list = $('#file_list');
+					list = $('#file_list');
 					show_list.forEach(function(data) {
-					url = '"store/' + file_dir + '/' + data + '"'
-					download_info = ""
-					var index = data.lastIndexOf(".");
-					var suffix = data.substring(index+1).toLowerCase();
-					if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
-						download_info = "download='" + data + "'"
-					} else if (suffix == "rar" || suffix == "zip") {
-						
-						url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1, loop_mode) + '"'
-						console.log(url);
-					}
-					url = url + download_info
-					url = 'href=' + url
-					url = "<a " + url + ">" + "<txt>" + data + "</txt></a>"
-					list.append('<li>' + url + '</li>')
+						var is_compressing = 0
+						url = '"store/' + file_dir + '/' + data + '"'
+						download_info = ""
+						var index = data.lastIndexOf(".");
+						var suffix = data.substring(index+1).toLowerCase();
+						if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
+							download_info = "download='" + data + "'"
+						} else if (suffix == "rar" || suffix == "zip" || suffix == "7z") {
+							url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1, loop_mode) + '"'
+							console.log(url);
+							is_compressing = 1
+						}
+						url = url + download_info
+						url = 'href=' + url
+						if (is_compressing) {
+							url = url + 'target="_blank"'
+						}
+						url = "<a " + url + ">" + "<txt>" + data + "</txt></a>"
+						list.append('<li>' + url + '</li>')
 				});
 			}
 		} else {
