@@ -11,6 +11,7 @@ var storage;
 var file_recursive_cnt = 1;
 var box_w;
 var box_h;
+var size_timer;
 
 /**规范路径 */
 function filePathFix(file_name) {
@@ -316,6 +317,7 @@ function show_pic_slid()
 
 function size_increase()
 {
+	console.log("size_increase");
 	if (browsing_mode == 'file') {
 		return
 	}
@@ -327,8 +329,8 @@ function size_increase()
 	console.log(box_w);
 	// console.log(box_h);
 
-	if (myPic.width + 80 < box_w - 130) {
-		myPic.width += 80
+	if (myPic.width + 20 < box_w - 130) {
+		myPic.width += 20
 		// myPic.css("height", myPic.width);
 		// console.log(myPic.width);	
 	} else {
@@ -345,10 +347,31 @@ function size_decrease()
 	}
 	myPic = document.getElementById("show_ctx");
 	// myPic.src = src;
-	if (myPic.width - 80 > 100) {
-		myPic.width -= 80
+	if (myPic.width - 20 > 100) {
+		myPic.width -= 20
 	}
 }
+
+
+function size_change(direct)
+{
+	console.log(direct);
+	if (direct > 0) {
+		size_timer = setInterval(function(){
+			console.log("timeout");
+			size_increase()
+		}, 20);
+	} else {
+		size_timer = setInterval(function(){
+			size_decrease()
+		}, 20);
+	}
+}
+
+function size_timer_clear(){
+	console.log("clear timer");
+	clearInterval(size_timer);
+  }
 
 function loop_mode_change()
 {
@@ -615,9 +638,12 @@ function add_title_link(title) {
 	var list = $('#file-title');
 	var dir_link =  title .split("/");
 	var pre_dir = new String();
-	var home_dir = 1;
+	var home_dir = 0;
 	
-	var url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
+	console.log(title);
+
+	/** home 目录*/
+	var url = "/browsing.html?file_dir=/&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
 	list.append('<a  style="text-decoration:none" href="' + url + '">' + "<span></span>" + '</style="text-decoration:none">')
 	list.append("<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>")
 	dir_link.forEach(function(data) {
@@ -626,8 +652,9 @@ function add_title_link(title) {
 		}
 		var url = new String();
 		if (home_dir == 1) {
-			url = "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
+			url = "/browsing.html?file_dir=/&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order"
 			home_dir = 0;
+			pre_dir = "windows/"
 		} else {
 			if (data == "/") {
 				url.length = 0;

@@ -39,6 +39,7 @@
 #show_ctx {
     /* width: 95%; */
     background-color: black;
+    transition: all 0.1s;
 }
 
 
@@ -308,6 +309,7 @@ ul li:nth-of-type(2n + 1) {
     /* background-color: rgb(0, 0, 0, 0.4); */
     font-size: 14px;
     width:60px;
+    /* height: 475px; */
     /* height:auto; */
     /* padding-left: 8px; */
     border-right: rgb(255, 102, 0) 6px solid;

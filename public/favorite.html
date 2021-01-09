@@ -32,10 +32,12 @@
 			<div class="menu_func" id="start_div" onclick="javascript:dir_star();" style="color: black;">
 				<span></span>
 			</div>
-			<div class="menu_func" onclick="javascript:size_increase();" style="color: black;">
+			<!-- /*onclick="javascript:size_increase();"*/ -->
+			<div class="menu_func" id="size_increase" onmousedown="size_change(1)"  onmouseup="size_timer_clear()" style="color: black;">
 				<span></span>
 			</div>
-			<div class="menu_func" onclick="javascript:size_decrease();" style="color: black;">
+			<!-- onclick="javascript:size_decrease();"  -->
+			<div class="menu_func" id="size_decrease" onmousedown="size_change(0)"  onmouseup="size_timer_clear()" style="color: black;">
 				<span></span>
 			</div>
 			<div class="menu_func" id="loop_mode" onclick="javascript:loop_mode_change();" style="color: black;">
