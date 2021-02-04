@@ -313,7 +313,8 @@ function filePathFix(file_name) {
     if (file_name[0] == "/") {
         file_name = file_name.substring(1);
     }
-    file_name = file_name.replace("'", '"')
+    file_name = file_name.replace(/'/g,'"')
+    // 下面这种方法只会替换第一个
     // file_name = file_name.replace('"', '\'"')
     return file_name;
 }

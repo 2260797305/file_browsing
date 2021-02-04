@@ -336,7 +336,8 @@ function size_increase()
 	} else {
 		myPic.width = box_w - 130;
 	}
-
+	storage = window.localStorage;
+	storage.setItem("pic_width", myPic.width)
 }
 
 
@@ -350,6 +351,9 @@ function size_decrease()
 	if (myPic.width - 20 > 100) {
 		myPic.width -= 20
 	}
+
+	storage = window.localStorage;
+	storage.setItem("pic_width", myPic.width)
 }
 
 
@@ -360,11 +364,11 @@ function size_change(direct)
 		size_timer = setInterval(function(){
 			console.log("timeout");
 			size_increase()
-		}, 20);
+		}, 10);
 	} else {
 		size_timer = setInterval(function(){
 			size_decrease()
-		}, 20);
+		}, 10);
 	}
 }
 
@@ -426,7 +430,13 @@ function shwo_cur_pic(page) {
 			var imgStr = '<img id="show_ctx" src="store/' + file_dir + "/" + show_list[page] + '">';
 			$("#center_box").append(imgStr);
 			myPic = document.getElementById("show_ctx");
-			myPic.width = box_w - 130;
+			storage = window.localStorage;
+			var tmp = storage.getItem("pic_width")
+			if (tmp) {
+				myPic.width = parseFloat(tmp)
+			} else {
+				storage.setItem("pic_width", box_w - 130)
+			}
 		}
 	} else if (browsing_mode == 'video') {
 		var new_src = "store/" + file_dir + "/" + show_list[page];
@@ -914,8 +924,8 @@ function windowAddMouseWheel() {
 		if (e.wheelDelta) {  //判断浏览器IE，谷歌滑轮事件
 			if (e.wheelDelta > 0) { //当滑轮向上滚动时
 				console.log("google 上");
-				if (golbol_volume < 0.1) {
-					golbol_volume += 0.01;
+				if (golbol_volume < 0.2) {
+					golbol_volume += 0.001;
 				} else if (golbol_volume + 0.1 <= 0.99) {
 					golbol_volume += 0.1;
 				} else  {
@@ -925,18 +935,20 @@ function windowAddMouseWheel() {
 			}
 			if (e.wheelDelta < 0) { //当滑轮向下滚动时
 				console.log("google 下");
-				if (golbol_volume - 0.1 >= 0.01) {
+				if (golbol_volume - 0.2 >= 0.01) {
 					golbol_volume -= 0.1;
 				} else if (golbol_volume >= 0.01) {
-					golbol_volume -= 0.01;
+					golbol_volume -= 0.001;
+				} else {
+					golbol_volume = 0;
 				}
 				myVid.volume = golbol_volume;
 			}
 		} else if (e.detail) {  //Firefox滑轮事件
 			if (e.detail> 0) { //当滑轮向上滚动时
 				console.log("fox 上");
-				if (golbol_volume < 0.1) {
-					golbol_volume += 0.01;
+				if (golbol_volume < 0.2) {
+					golbol_volume += 0.001;
 				} else if (golbol_volume + 0.1 <= 0.99) {
 					golbol_volume += 0.1;
 				} else {
@@ -946,14 +958,17 @@ function windowAddMouseWheel() {
 			}
 			if (e.detail< 0) { //当滑轮向下滚动时
 				console.log("fox 下");
-				if (golbol_volume - 0.1 >= 0.01) {
+				if (golbol_volume - 0.2 >= 0.01) {
 					golbol_volume -= 0.1;
 				} else if (golbol_volume >= 0.01) {
-					golbol_volume -= 0.01;
+					golbol_volume -= 0.001;
+				} else {
+					golbol_volume = 0;
 				}
 				myVid.volume = golbol_volume;
 			}
 		}
+		console.log(golbol_volume);
 	};
 	//给页面绑定滑轮滚动事件
 	if (document.addEventListener) {
