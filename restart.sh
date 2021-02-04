@@ -35,6 +35,7 @@ a=`date "+%Y-%m-%d_%H_%M_%S"`
 # supervisor 是热更新，无需重启 js 就可以更新 node中的内容，检测文件修改吧
 # nohup supervisor $process_name 1>./log/$a.log 2>&1 &
 # npm install -g supervisor
+export PATH=/home/k-yuki/work/node-v12.19.0-linux-x64/bin:$PATH
 nohup node $process_name 1>./log/$a.log 2>&1 &
 sync
 #echo "startup over"
