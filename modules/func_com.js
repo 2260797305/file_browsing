@@ -105,7 +105,9 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
                     var suffix = data.substring(suffixIndex + 1).toUpperCase();
                     if (suffix == "MP4") {
                         file_list.push(pre_dir + data)
-                    }
+                    } else if (suffix == "WEBM") {
+                        file_list.push(pre_dir + data)
+                    } 
                 } else if (browsing_mode == 'audio') {
                     //console.log('find audio')
                     var suffixIndex = data.lastIndexOf(".");

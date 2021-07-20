@@ -416,8 +416,8 @@ function shwo_cur_pic(page) {
 	//$("#picinfo").find("b").remove();
 	//$("#picinfo").append(pic_info);
 
-	input = document.getElementById("page_input")
-	input.value = page + 1
+	// input = document.getElementById("page_input")
+	// input.value = page + 1
 
 	storage.setItem("cur_page", page)
 	if (browsing_mode == 'picture') {
@@ -448,8 +448,12 @@ function shwo_cur_pic(page) {
 			myVid.play()
 			//return
 		} else {
-			var vidstr = '<video object-fit:fill id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" onvolumechange="volume_change()" > <source src="' + new_src + '" type="video/mp4"> </video>';
+			var vidstr = '<video width="400" object-fit:fill id = "video1" controls autoplay="autoplay" onended="play_next_by_end_or_error()" onerror="play_next_by_end_or_error()" onplaying="playe__vent()" onvolumechange="volume_change()" > <source src="' + new_src + '" type="video/mp4"> </video>';
+			// var vidstr = '<video object-fit:fill id = "video1"  > <source src="' + new_src + '" type="video/mp4"> </video>';
+
 			$("#center_box").append(vidstr);
+			// $("#max_ctx11").append(vidstr);
+			
 			myVid = document.getElementById("video1");
 			myVid.volume = golbol_volume;
 			myVid.focus()
@@ -558,7 +562,9 @@ function prev_img(obj) {
 	} else if (loop_mode == "file_loop") {
 		cur_page = cur_page;
 	} else if (loop_mode == "file_shuffle"){
+		// cur_page = (int)(Math.random() * show_list.length);
 		cur_page = Math.floor(Math.random()*show_list.length); 
+		console.log(cur_page);
 	} else {
 		return
 	}
@@ -584,6 +590,7 @@ function next_img(obj) {
 	} else if (loop_mode == "file_loop") {
 		cur_page = cur_page;
 	} else if (loop_mode == "file_shuffle"){
+		// cur_page = (int)(Math.random() * show_list.length);
 		cur_page = Math.floor(Math.random()*show_list.length); 
 	} else {
 		return
@@ -608,6 +615,7 @@ $(document).keydown(function(event){
 	if (browsing_mode == 'video') {
 		myVid=document.getElementById("video1");
 		golbol_volume = myVid.volume;
+		time = 1 /**1 秒变化 */
 		if (event.keyCode == 87 /*w*/) {
 			if (golbol_volume + 0.1 <= 0.99) {
 				golbol_volume += 0.1;
@@ -623,9 +631,19 @@ $(document).keydown(function(event){
 			}
 			//alertalert(myVid.volume)
 			myVid.volume = golbol_volume;
-			
+		} else if(event.keyCode == 37 /*←*/) {
+			console.log("left");
+			console.log(myVid.currentTime);
+			myVid.currentTime !== 0 ? myVid.currentTime -= time : 1;
+			console.log(myVid.currentTime);
+		} else if(event.keyCode == 39 /*→*/) {
+			console.log(myVid.currentTime);
+			myVid.currentTime !== myVid.duration ? myVid.currentTime += time : 1;
+			console.log("right");
+			console.log(myVid.duration);
+			console.log(myVid.currentTime);
 		}
-		return
+		return true
 	} else if (browsing_mode == 'picture') {
 		//javascript:scroll(0,200);
 	}
@@ -633,7 +651,13 @@ $(document).keydown(function(event){
 
 function page_select() {
 	input = document.getElementById("page_input")
+	
 	var page = input.value
+	console.log(page);
+
+	if (!page) {
+		return
+	}
 	if (is_show_pic != 0 && cur_page != page) {
 		if (page <= 0 && page >= show_list.length) {
 			return;
@@ -729,6 +753,19 @@ function recursive_change()
     location.href = new_url
 }
 
+function input_key_func(event)
+{
+	var evt = event || window.event;
+	// 之前这里有一个 bug:如果返回 false，意味着其他的 hook 无法接受到此 event；
+	if(evt.keyCode==13) {
+		page_select();
+		return false;
+	} else {
+		console.log(evt.keyCode)
+		return false;
+	}
+}
+
 function mode_change()
 {
     var item = null;
@@ -756,7 +793,6 @@ $(window).resize(function(){
 	box_w = $(window).width();
 	video_set_by_hw();
 })
-
 
 
 $(function() {
@@ -851,7 +887,7 @@ $(function() {
 						download_info = ""
 						var index = data.lastIndexOf(".");
 						var suffix = data.substring(index+1).toLowerCase();
-						if (suffix == "txt" || suffix == "wav" || suffix == "mp3") {
+						if (suffix == "txt" || suffix == "wav" || suffix == "mp3" || suffix == "epub") {
 							download_info = "download='" + data + "'"
 						} else if (suffix == "rar" || suffix == "zip" || suffix == "7z") {
 							url = '"compressing.html?' + set_serch_url(file_dir + '/' + data, 'file', 1, loop_mode) + '"'
