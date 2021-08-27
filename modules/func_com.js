@@ -12,6 +12,10 @@ function commonCompare (v1, v2) {
     }
 }
 
+function SortByTime(v1, v2) {
+
+}
+
 function SortLikeWin(v1, v2) {
     var a = v1 //.name;
     var b = v2 //.name;
@@ -73,12 +77,21 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
         pre_dir = pre_dir + "/"
     }
     var file = null
+    var tmp_file_list = []
     try {
         var files = fs.readdirSync(search_dir)
     } catch (e) {
         console.log(e);
         return
     }
+    // // 对于视频模式，对文件按照时间新旧顺序排序；
+    // if (browsing_mode == 'video') {
+    //     files.sort(function(a, b) {
+    //         return fs.statSync(search_dir + "/" + b).mtime.getTime() - 
+    //                fs.statSync(search_dir + "/" + a).mtime.getTime();
+    //     });
+    // }
+
     if (files.length != 0) {
         files.forEach(function(data) {
             var stats = null
@@ -90,30 +103,39 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
             }
             // var stats = fs.statSync(search_dir + "/" + data);
             if (stats.isFile()) {
+                // console.log(data)
+                // console.log(stats)
+
+                // console.log(stats.mtime.getTime())
                 if (browsing_mode == 'file') {
-                    file_list.push(pre_dir + data)
+                    // file_list.push(pre_dir + data)
+                    file_list.push({"r" : search_dir + "/" + data, "b" : pre_dir + data})
                 } else if (browsing_mode == 'picture') {
                     //console.log('find pic')
                     var suffixIndex = data.lastIndexOf(".");
                     var suffix = data.substring(suffixIndex + 1).toUpperCase();
                     if (suffix == "BMP" || suffix == "JPG" || suffix == "JPEG" || suffix == "PNG" || suffix == "GIF") {
-                        file_list.push(pre_dir + data)
+                        // file_list.push(pre_dir + data)
+                        file_list.push({"r" : search_dir + "/" + data, "b" : pre_dir + data})
+                        // tmp_file_list.push(data)
                     }
                 } else if (browsing_mode == 'video') {
                     //console.log('find video')
                     var suffixIndex = data.lastIndexOf(".");
                     var suffix = data.substring(suffixIndex + 1).toUpperCase();
-                    if (suffix == "MP4") {
-                        file_list.push(pre_dir + data)
-                    } else if (suffix == "WEBM") {
-                        file_list.push(pre_dir + data)
-                    } 
+                    if (suffix == "MP4" || suffix == "WEBM") {
+                        // file_list.push(pre_dir + data)
+                        file_list.push({"r" : search_dir + "/" + data, "b" : pre_dir + data})
+                        // tmp_file_list.push(data)
+                    }
                 } else if (browsing_mode == 'audio') {
                     //console.log('find audio')
                     var suffixIndex = data.lastIndexOf(".");
                     var suffix = data.substring(suffixIndex + 1).toUpperCase();
                     if (suffix == "MP3") {
-                        file_list.push(pre_dir + data)
+                        // file_list.push(pre_dir + data)
+                        file_list.push({"r" : search_dir + "/" + data, "b" : pre_dir + data})
+                        // tmp_file_list.push(data)
                     }
                 } else if (browsing_mode == 'cartoon') {
                     //console.log('find cartoon')
@@ -130,6 +152,18 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
         //console.log("dir_list.length %d", dir_list.length);
         //console.log("file_list.length %d", file_list.length);
 
+        // // 对于视频模式，对文件按照时间新旧顺序排序；
+        // if (browsing_mode == 'video') {
+        //     tmp_file_list.sort(function(a, b) {
+        //         return fs.statSync(search_dir + "/" + b).mtime.getTime() - 
+        //             fs.statSync(search_dir + "/" + a).mtime.getTime();
+        //     });
+        // }
+
+        // tmp_file_list.forEach(function(data) {
+        //     file_list.push(pre_dir + data)
+        // })
+
         if (pre_dir.length == 0) {
             if (dir_list.length != 0) {
                 dir_list.sort(function(lhs, rhs) {
@@ -141,12 +175,28 @@ function Recursive_dir(Recursive_cnt, search_dir, pre_dir, browsing_mode, dir_li
                 });
             }
 
-            if (file_list.length != 0) {
+            // 对于视频模式，对文件按照时间新旧顺序排序；
+            if (file_list.length != 0 && browsing_mode == 'video') {
+                file_list.sort(function(a, b) {
+                    return fs.statSync(b["r"]).mtime.getTime() - 
+                        fs.statSync(a["r"]).mtime.getTime();
+                });
+            } else if (file_list.length != 0 && browsing_mode != 'video') {
                 file_list.sort(function(lhs, rhs) {
-                    return parseInt(lhs.split('.')[0]) - parseInt(rhs.split('.')[0]);
+                    return parseInt(lhs["b"].split('.')[0]) - parseInt(rhs["b"].split('.')[0]);
                 });
                 //console.log("pic_list.length %d", file_list.length);
             }
+            
+            // var tmp_file_list = []
+
+            file_list.forEach(function(data, index, arr) {
+                arr[index] = data["b"]
+                // data = data['b']
+            })
+
+            // file_list = tmp_file_list
+            // // console.log(file_list)
         }
     }
 }

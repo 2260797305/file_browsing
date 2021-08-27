@@ -419,7 +419,18 @@ app.get('/get_file_list', function(req, res) {
     var querySql = "select * from favorite_list where url='" + file_name + "'";
     console.log(querySql)
     sqliteDB.queryData(querySql, function data_Deal(objects) {
-        console.log(objects.length)
+        // var tmp_file_list = []
+        // file_list.forEach(function(data) {
+        //     tmp_file_list.push(data["b"])
+        //     // data = data['b']
+        // })
+        // file_list = tmp_file_list
+        // console.log(file_list)
+
+        // console.log(dir_list)
+        // console.log(file_list)
+        // console.log(objects.length)
+
         if (objects.length == 0) {
             /**not start */
             res.jsonp({ 'is_star': 0, 'dir_list': dir_list, 'file_list': file_list, 'code': 0 });
