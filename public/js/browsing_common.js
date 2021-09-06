@@ -12,6 +12,8 @@ var file_recursive_cnt = 1;
 var box_w;
 var box_h;
 var size_timer;
+var shuffle_idx = 0;
+var shuffle_offset = 0;
 
 /**规范路径 */
 function filePathFix(file_name) {
@@ -166,7 +168,7 @@ function delete_file() {
 	}
 
 	file_dir += "/" + show_list[cur_page]
-	if(confirm("确定要删除文件？\n" + file_dir) !=true){
+	if(confirm("确定要删除文件？\n" + file_dir) !=true) {
 			return
 	}
     
@@ -372,6 +374,43 @@ function size_change(direct)
 	}
 }
 
+function reset_shuffle_list(set_cur_page)
+{
+	shuffle_idx = 0;
+	console.log("reset_shuffle_list")
+	console.log(set_cur_page);
+
+	show_shuffle_order = new Array(show_list.length);
+
+	for (i = show_list.length - 1; i >= 0; i--) {
+		show_shuffle_order[i] = i;
+	}
+
+	for (i = show_list.length - 1; i >= 0; i--) {
+		shuffle_idx = Math.floor(Math.random() * (i+1));
+		tmp = show_shuffle_order[i]
+		show_shuffle_order[i] = show_shuffle_order[shuffle_idx]
+		show_shuffle_order[shuffle_idx] = tmp
+	}
+
+	if (set_cur_page != -1) {
+		// 固定将洗牌后的结果，当前播放的设定为第一个。目标是当随机列表遍历完成时，再重新洗牌；
+		for (i = 0; i < show_shuffle_order.length; i++) {
+			if (show_shuffle_order[i] == cur_page) {
+				tmp = show_shuffle_order[i];
+				show_shuffle_order[i] = show_shuffle_order[0];
+				show_shuffle_order[0] = tmp;
+				break;
+			}
+		}
+	}
+	shuffle_idx = 0;
+	shuffle_offset = 0;
+	cur_page = show_shuffle_order[0];
+	console.log(show_shuffle_order)
+}
+
+
 function size_timer_clear(){
 	console.log("clear timer");
 	clearInterval(size_timer);
@@ -386,6 +425,7 @@ function loop_mode_change()
 		loop_mode = "file_loop"
 	} else if (loop_mode == "file_loop") {
 		loop_mode = "file_shuffle"
+		reset_shuffle_list(cur_page);
 	} else if (loop_mode == "file_shuffle") {
 		loop_mode = "dir_order"
 	} else {
@@ -395,6 +435,9 @@ function loop_mode_change()
 }
 
 function shwo_cur_pic(page) {
+	console.log("cur_page = " + page)
+	// console.log(show_list)
+
 	var file_dir = getQueryString('file_dir');
 	var pic_info = "<txt>【" + (cur_page+1) + "/" + show_list.length + "】: " + show_list[page] + "</txt>"
     //document.getElementById("demo").innerHTML = "Hello javascript!";
@@ -509,12 +552,10 @@ function start_show()
 	}
 
 	is_show_pic = 1;
-	// 记录随机顺序，貌似没啥必要
-	// for (var i = 0; i < show_list.length; i++) {
-	// 	show_shuffle_order[i] = i
-	// }
-	// show_shuffle_order.sort(function(){return Math.random()>0.5?-1:1;})
-	// console.log(show_shuffle_order);
+
+	if (loop_mode == "file_shuffle") {
+		reset_shuffle_list(-1);
+	}
 
 	shwo_cur_pic(cur_page);
 }
@@ -562,8 +603,21 @@ function prev_img(obj) {
 	} else if (loop_mode == "file_loop") {
 		cur_page = cur_page;
 	} else if (loop_mode == "file_shuffle"){
-		// cur_page = (int)(Math.random() * show_list.length);
-		cur_page = Math.floor(Math.random()*show_list.length); 
+		shuffle_offset -= 1;
+
+		if (Math.abs(shuffle_offset) >= show_shuffle_order.length) {
+			reset_shuffle_list(-1);
+		} else {
+			if (shuffle_idx == 0) {
+				shuffle_idx = show_shuffle_order.length - 1
+				// reset_shuffle_list(-1);
+				// shuffle_idx = 0;
+			} else {
+				shuffle_idx -= 1;
+			}
+		}
+
+		cur_page = show_shuffle_order[shuffle_idx]
 		console.log(cur_page);
 	} else {
 		return
@@ -590,8 +644,19 @@ function next_img(obj) {
 	} else if (loop_mode == "file_loop") {
 		cur_page = cur_page;
 	} else if (loop_mode == "file_shuffle"){
-		// cur_page = (int)(Math.random() * show_list.length);
-		cur_page = Math.floor(Math.random()*show_list.length); 
+		shuffle_offset += 1;
+		if (Math.abs(shuffle_offset) >= show_shuffle_order.length) {
+			reset_shuffle_list(-1);
+		} else {
+			if (shuffle_idx == (show_shuffle_order.length - 1)) {
+				shuffle_idx = 0
+				// 重新洗牌
+				// reset_shuffle_list(-1);
+			} else {
+				shuffle_idx += 1;
+			}
+		}
+		cur_page = show_shuffle_order[shuffle_idx]
 	} else {
 		return
 	}
