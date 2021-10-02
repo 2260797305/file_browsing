@@ -12,8 +12,12 @@ var file_recursive_cnt = 1;
 var box_w;
 var box_h;
 var size_timer;
+var show_list_timer;
 var shuffle_idx = 0;
 var shuffle_offset = 0;
+
+var start_list = new Array()
+var favorite_talbe_list = new Array()
 
 /**规范路径 */
 function filePathFix(file_name) {
@@ -83,13 +87,46 @@ function show_icon_by_loop_mode(loop_mode) {
 	$("#loop_mode").append(txt);
 }
 
-function show_star(is_star) {
-	// console.log(is_star);
-	if (is_star == 1) {
-		$("#start_div").attr("style","color: yellow;");
-	} else {
-		$("#start_div").attr("style","color: black;");
-	}
+function show_star() {
+	// // console.log(is_star);
+	// if (is_star == 1) {
+	// 	$("#start_div").attr("style","color: yellow;");
+	// } else {
+	// 	$("#start_div").attr("style","color: black;");
+	// }
+	console.log(start_list)
+	console.log(favorite_talbe_list)
+
+	$("#ctr_favorite_from").find("div").remove();
+	$("#show_favorite_from").find("div").remove();
+
+	favorite_talbe_list.forEach(function(data, index, arr) {
+		var ctr_list = $('#ctr_favorite_from');
+		var show_list = $('#show_favorite_from');
+
+		var url1 = '<div class= "from_option"><label><input name="start_item" type="radio" value="'
+		url1 = url1 + data + '"/><span style="'
+
+		if (start_list[index] == 1) {
+			url1 = url1 + 'color: black; background-color: yellow;">'
+		} else {
+			url1 = url1 + 'color: #b5ffe0;">'
+		}
+
+		url1 = url1 +  data + '</span></label> </div>'
+		
+		var url = '<div class= "from_option"><label><input name="shwo_item" type="radio" value="'
+		url = url + data + '"/><span style="color: #b5ffe0;">'+ data +'</span></label> </div>'
+
+		ctr_list.append(url1)
+		show_list.append(url)
+	})
+
+	selete_m = document.getElementById('ctr_favorite_from')
+	selete_m.addEventListener('change', set_start_file, false);
+
+	selete_m = document.getElementById('show_favorite_from')
+	selete_m.addEventListener('change', show_start_file, false);
 }
 
 
@@ -113,16 +150,17 @@ function goto_favorite() {
 
 
 function find_cur_is_star(file) {
-    set_serch_url(file, browsing_mode, file_recursive_cnt)
-	request_url = '/is_start_file?' + set_serch_url(file, browsing_mode, file_recursive_cnt, loop_mode)
-	// console.log(request_url);
+	request_url = '/is_start_file?' + "file_dir=" + file
+	console.log(request_url);
 	$.getJSON(request_url, function(data) {
 		// console.log(data);
 		if (data["code"] != 0) {
-			show_star(0);
-			is_star = 0;
+			// show_star(0);
+			// is_star = 0;
 			return;
 		} else {
+			start_list = data['is_star']
+			favorite_talbe_list = data['favorite_talbe_list']
 			show_star(1);
 			is_star = 1;
 		}
@@ -150,6 +188,34 @@ function dir_copy() {
 	})
 }
 
+
+function show_ctr_favorite_list(){
+	$("#ctr_favorite_from").attr("style","display:;width:80px;");
+	my_list=document.getElementById("start_div");
+	my_list.style.height=38 * favorite_talbe_list.length + 'px'
+	// my_list.style.width=80+'px'
+}
+
+function hide_ctr_favorite_list(){
+	my_list=document.getElementById("start_div");
+	my_list.style.height=30 + 'px'
+	$("#ctr_favorite_from").attr("style","display:none;");
+}
+
+function show_favorite_content(){
+	// $("#show_favorite_from").attr("style","height:80px;display:");
+
+	$("#show_favorite_from").attr("style","display:;width:80px;");
+	my_list=document.getElementById("show_start");
+	my_list.style.height=38 * favorite_talbe_list.length + 'px'
+
+}
+
+function hide_favorite_content(){
+	my_list=document.getElementById("show_start");
+	my_list.style.height=30 + 'px'
+	$("#show_favorite_from").attr("style","display:none;");
+}
 
 function delete_file() {
 	if (browsing_mode == 'file') {
@@ -198,40 +264,6 @@ function delete_file() {
 	});
 }
 
-function dir_star() {
-	var file_dir = getQueryString('file_dir');
-	if (file_dir == null) {
-        file_dir = "/"
-    }
-    if (browsing_mode != 'file') {
-        file_dir = file_dir + '/' +  show_list[cur_page]
-    }
-	var request_url = new String();
-    request_url = set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
-	if (is_star == 0) {
-		request_url = '/set_favorite_list?' + request_url
-		$.getJSON(request_url, function(data) {
-			if (data["code"] != 0) {
-				alert("收藏失败");
-				return;
-			}
-			show_star(1);
-			is_star = 1;
-			alert("收藏成功")
-		});
-	} else  {
-		request_url = '/del_favorite_list?' + request_url
-		$.getJSON(request_url, function(data) {
-			if (data["code"] != 0) {
-				alert("取消收藏失败");
-				return;
-			}
-			show_star(0);
-			is_star = 0;
-			alert("取消收藏成功")
-		});
-	}
- }
 
 function jujed_play_next(ojb) {
 	if (need_play_next == 1) {
@@ -410,11 +442,6 @@ function reset_shuffle_list(set_cur_page)
 	console.log(show_shuffle_order)
 }
 
-
-function size_timer_clear(){
-	console.log("clear timer");
-	clearInterval(size_timer);
-  }
 
 function loop_mode_change()
 {
@@ -831,6 +858,86 @@ function input_key_func(event)
 	}
 }
 
+function set_start_file()
+{
+	var item = null;
+    var obj = document.getElementById('ctr_favorite_from')
+    for (var i = 0; i < obj.length; i++) { //遍历Radio 
+        if (obj[i].checked) {
+            item = obj[i].value;
+            break;              
+        }
+    }
+    if (!item) {
+        return
+    }
+
+	console.log(item)
+
+	var file_dir = getQueryString('file_dir');
+	if (file_dir == null) {
+        file_dir = "/"
+    }
+    if (browsing_mode != 'file') {
+        file_dir = file_dir + '/' +  show_list[cur_page]
+    }
+	var request_url = new String();
+    // request_url = set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
+	// request_url = request_url + '&Favorites_name='+ item
+	request_url = request_url + "file_dir=" + file_dir + '&Favorites_name='+ item
+
+	for (var index = 0; index < favorite_talbe_list.length; index++) {
+		data = favorite_talbe_list[index]
+		if (data == item) {
+			if (start_list[index] == 0) {
+				request_url = '/set_favorite_content?' + request_url
+				console.log(request_url)
+
+				$.getJSON(request_url, function(data) {
+					if (data["code"] != 0) {
+						alert("收藏失败");
+						return;
+					}
+					find_cur_is_star(file_dir)
+					alert("收藏成功")
+				});
+			} else {	
+				request_url = '/del_favorite_content?' + request_url
+				$.getJSON(request_url, function(data) {
+					if (data["code"] != 0) {
+						alert("取消收藏失败");
+						return;
+					}
+					find_cur_is_star(file_dir)
+					alert("取消收藏成功")
+				});
+			}
+			break
+		}
+	}
+}
+
+function show_start_file()
+{
+	var item = null;
+    var obj = document.getElementById('show_favorite_from')
+    for (var i = 0; i < obj.length; i++) { //遍历Radio 
+        if (obj[i].checked) {
+            item = obj[i].value;
+            break;              
+        }
+    }
+    if (!item) {
+        return
+    }
+
+	console.log(item)
+
+    url = "favorite.html?" + set_serch_url("", 'file', 1, loop_mode) + '&Favorites_name='+ item
+	window.location.replace(url)
+}
+
+
 function mode_change()
 {
     var item = null;
@@ -849,7 +956,9 @@ function mode_change()
     browsing_mode = item
     file_dir = getQueryString('file_dir');
     file_recursive_cnt = getQueryString('recursive_cnt');
+	Favorites_name = getQueryString('Favorites_name');
     new_url = old_url + "?"+ set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode)
+	new_url = new_url + "&Favorites_name=" + Favorites_name
     location.href = new_url
 }
 
@@ -910,6 +1019,10 @@ $(function() {
     // file_dir = path_dir_cvt(file_dir)
     req_url = get_load_callback_str() +  set_serch_url(file_dir, browsing_mode, file_recursive_cnt, loop_mode);
     //$('#file-title').html(dir_path);
+	var Favorites_name = getQueryString('Favorites_name');
+	if (Favorites_name != null) {
+        req_url += '&Favorites_name=' + Favorites_name
+	}
     console.log(req_url);
 	$.getJSON(req_url, function(data) {
 		if (data['code'] != 0 &&  data['code'] != 1) {
@@ -940,7 +1053,9 @@ $(function() {
 			$("#dir_contex").attr("style","display:none;");
 			$("#file_contex").attr("style","width:90%;");
 		}
-		// console.log(show_list);
+		console.log(show_list);
+		console.log(browsing_mode)
+		$("#file_contex").attr("style","width:90%;display:");
 		if (show_list.length != 0) {
 			if (browsing_mode != 'file') {
 				start_show();
@@ -1004,6 +1119,12 @@ $(function() {
                 }
             }
         }
+
+		if (browsing_mode == 'file') {
+			if (Favorites_name == null) {
+				find_cur_is_star(file_dir)
+			}
+		}
 		//var s = len.toString();
 		//alert(s); //将输出 String
      });

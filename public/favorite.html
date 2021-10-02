@@ -29,78 +29,74 @@
 
 	<div class = "max_div">
 		<div id="menu">
-			<div class="menu_func" id="start_div" onclick="javascript:dir_star();" style="color: black;">
+			<div class="menu_func" id="start_div" onmouseover="javascript:show_ctr_favorite_list();" onmouseout="javascript:hide_ctr_favorite_list();" style="color: black;">
 				<span></span>
-			</div>
-			<!-- /*onclick="javascript:size_increase();"*/ -->
-			<div class="menu_func" id="size_increase" onmousedown="size_change(1)"  onmouseup="size_timer_clear()" style="color: black;">
-				<span></span>
-			</div>
-			<!-- onclick="javascript:size_decrease();"  -->
-			<div class="menu_func" id="size_decrease" onmousedown="size_change(0)"  onmouseup="size_timer_clear()" style="color: black;">
-				<span></span>
-			</div>
-			<div class="menu_func" id="loop_mode" onclick="javascript:loop_mode_change();" style="color: black;">
-				<span></span>
-			</div>
-
-			<div id="jump">
-				<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="if(event.keyCode==13) {page_select()}">
-			</div>
-
-			<div id="func_option">
-				<form action="" method="" id = "browsing_mode"> 
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
-					</div>
+				<form action="" method="" id = "ctr_favorite_from"  style="width:80px;display:none;"> 
 				</form> 
 			</div>
-
-			<div id="func_option">
-				<form action="" method="" id = "browsing_mode"> 
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
-					</div>
-					<div class= "from_option">
-						<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
-					</div>
-				</form> 
+			<div class="menu_func" onclick="javascript:delete_file();" style="color: black;">
+				<span></span>
 			</div>
+		<div class="menu_func" id="show_start" onmouseover="javascript:show_favorite_content();" onmouseout="javascript:hide_favorite_content();" style="color: yellow;">
+			<span></span>
+			<form action="" method="" id = "show_favorite_from"  style="width:80px;display:none;"> 
+			</form> 
+		</div>
+		<!-- /*onclick="javascript:size_increase();"*/ -->
+		<div class="menu_func" id="size_increase" onmousedown="size_change(1)"  onmouseup="size_timer_clear()" style="color: black;">
+			<span></span>
+		</div>
+		<!-- onclick="javascript:size_decrease();"  -->
+		<div class="menu_func" id="size_decrease" onmousedown="size_change(0)"  onmouseup="size_timer_clear()" style="color: black;">
+			<span></span>
+		</div>
+		<div class="menu_func" id="loop_mode" onclick="javascript:loop_mode_change();" style="color: black;">
+			<span></span>
 		</div>
 
-		<div id="max_ctx">
-			<div class="picinfo" id = "picinfo" style="display:none;">
-				<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
-				<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
-				
-				<div id="number">[0/0]</div>
-				
-				<div style="margin:30px auto;" id="center_box"">
-				</div>
-			</div>
+		<div id="jump">
+			<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="javascript:input_key_func()">
+		</div>
 
-			<div id="dir_contex">
-				<h3> 目录</h3>
-				<ul class="listview list-type-tiles"  id='dir_list'> </ul>
-			</div>
+		<div id="func_option">
+			<form action="" method="" id = "browsing_mode"> 
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
+				</div>
+			</form> 
 		</div>
 	</div>
+
+	<div id="max_ctx">
+		<div class="picinfo" id = "picinfo" style="display:none;">
+			<cur id = "pre_evt" class="img_land_prev" onclick="prev_img()"></cur>
+			<cur id = "nxt_evt" class="img_land_next" onclick="next_img()"></cur>
+			
+			<div id="number">[0/0]</div>
+			
+			<div style="margin:30px auto;" id="center_box"">
+			</div>
+		</div>
+
+		<div id="dir_contex">
+			<h3> 目录</h3>
+			<ul class="listview list-type-tiles"  id='dir_list'> </ul>
+		</div>
+		<div id="file_contex">
+			<h3> 文件</h3>
+			<ul class="listview list-type-tiles"  id='file_list'>  </ul>
+		</div>
+	</div>
+
 </body>
 </html>

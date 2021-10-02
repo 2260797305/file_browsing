@@ -1,7 +1,7 @@
 
 function get_load_callback_str()
 {
-	req_url = '/get_favorite_list?'
+	req_url = '/get_favorite_content?'
 	return req_url
 }
 

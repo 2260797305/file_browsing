@@ -345,10 +345,30 @@ ul li:nth-of-type(2n + 1) {
     overflow: hidden;
 }
 
+#ctr_favorite_from, #show_favorite_from {
+    text-align: left;
+    line-height: 25px;
+    padding-left: 2px;
+}
+
 #start_div {
     cursor: pointer;
     /* background-color: yellow; */
     color: white;
+}
+
+#ctr_favorite_list, #goto_favorite_list{
+    padding-top: 4px;
+    cursor: pointer;
+    color: white;
+    list-style: none;
+    transition: all 0.4s;
+    transition: all 0.4s ease-in;
+    transition: all 0.4s ease-out;
+    -webkit-transition: all 0.4s ease-out;
+    -moz-transition: all 0.4s ease-out;
+    -ms-transition: all 0.4s ease-out;
+    -o-transition: all 0.4s ease-out;
 }
 
 span {

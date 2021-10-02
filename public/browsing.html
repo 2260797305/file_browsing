@@ -29,14 +29,18 @@
 
 	<div class = "max_div">
 		<div id="menu">
-			<div class="menu_func" id="start_div" onclick="javascript:dir_star();" style="color: black;">
+			<div class="menu_func" id="start_div" onmouseover="javascript:show_ctr_favorite_list();" onmouseout="javascript:hide_ctr_favorite_list();" style="color: black;">
 				<span></span>
+				<form action="" method="" id = "ctr_favorite_from"  style="width:80px;display:none;"> 
+				</form> 
 			</div>
 			<div class="menu_func" onclick="javascript:delete_file();" style="color: black;">
 				<span></span>
 			</div>
-			<div class="menu_func" onclick="javascript:goto_favorite();" style="color: yellow;">
+			<div class="menu_func" id="show_start" onmouseover="javascript:show_favorite_content();" onmouseout="javascript:hide_favorite_content();" style="color: yellow;">
 				<span></span>
+				<form action="" method="" id = "show_favorite_from"  style="width:80px;display:none;"> 
+				</form> 
 			</div>
 			<!-- /*onclick="javascript:size_increase();"*/ -->
 			<div class="menu_func" id="size_increase" onmousedown="size_change(1)"  onmouseup="size_timer_clear()" style="color: black;">
