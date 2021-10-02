@@ -396,7 +396,6 @@ function size_change(direct)
 	console.log(direct);
 	if (direct > 0) {
 		size_timer = setInterval(function(){
-			console.log("timeout");
 			size_increase()
 		}, 10);
 	} else {
@@ -441,6 +440,11 @@ function reset_shuffle_list(set_cur_page)
 	cur_page = show_shuffle_order[0];
 	console.log(show_shuffle_order)
 }
+
+function size_timer_clear(){
+	console.log("clear timer");
+	clearInterval(size_timer);
+  }
 
 
 function loop_mode_change()
