@@ -37,73 +37,52 @@ var createTableSql = "create table if not exists FavoritesList(name KEY NOT NULL
 console.log(createTableSql)
 sqliteDB.createTable(createTableSql);
 
-createTableSql = "create table if not exists Dir(url KEY NOT NULL);";
-console.log(createTableSql)
-sqliteDB.createTable(createTableSql);
 
-var sql_cmd = "select * from " + FavoritesList +  " where name='Dir'";
-console.log(sql_cmd)
-sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
-    if (!(objects && objects.length > 0)) {
-        var inquirytFavSql = "insert into " + FavoritesList +  "(name) values(?)";
-        var tileData = [
-            ['Dir']
-        ];
-        sqliteDB.insertData(inquirytFavSql, tileData);
-    } else {
-        console.log(objects.length)
-    }
 
-    sql_cmd = 'select * from ' + FavoritesList;
-    sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
-        if (!objects) {
-            return
-        }
-        console.log(objects.length);
-        for (var i = 0; i < objects.length; ++i) {
-            var table = objects[i]["name"]
-            favorite_talbe_list.push(table)
-        }
-        console.log(favorite_talbe_list)
-    });
-});
 
-// var querySql = 'select * from ' + FavoritesList;
-// var favorite_talbe_list = new Array()
+// if 0
+// var new_table = "mv"
+// // var delFavSql = "delete from " + FavoritesList +  " where name='" + new_table + "'";
+// // sqliteDB.executeSql(delFavSql);
 
-// console.log(querySql);
-// sqliteDB.queryData(querySql, function data_Deal(objects) {
-//     if (!objects) {
-//         return
+// createTableSql = "create table if not exists " + new_table + "(url KEY NOT NULL);";
+// console.log(createTableSql)
+// sqliteDB.createTable(createTableSql);
+
+
+// var sql_cmd = "select * from " + FavoritesList +  " where name='" + new_table + "'";
+// console.log(sql_cmd)
+// sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
+//     if (!(objects && objects.length > 0)) {
+//         var inquirytFavSql = "insert into " + FavoritesList +  "(name) values(?)";
+//         var tileData = [
+//             [new_table]
+//         ];
+//         sqliteDB.insertData(inquirytFavSql, tileData);
+//     } else {
+//         console.log(objects.length)
 //     }
-//     console.log(objects.length);
-//     for (var i = 0; i < objects.length; ++i) {
-//         var table = objects[i]["name"]
-//         favorite_talbe_list.push(table)
-//     }
-//     console.log(favorite_talbe_list)
 // });
+// #endif
 
 
-// createTableSql = "create table if not exists history_list(url KEY NOT NULL);";
-// console.log(createTableSql)
-// sqliteDB.createTable(createTableSql);
+// if 0
+var sql_cmd = 'select * from ' + FavoritesList;
+sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
+    if (!objects) {
+        return
+    }
+    console.log(objects.length);
+    for (var i = 0; i < objects.length; ++i) {
+        var table = objects[i]["name"]
+        favorite_talbe_list.push(table)
+    }
+    console.log(favorite_talbe_list)
+});
+// endif
 
-// createTableSql = "create table if not exists favorite_picture(url KEY NOT NULL);";
-// console.log(createTableSql)
-// sqliteDB.createTable(createTableSql);
-
-// createTableSql = "create table if not exists favorite_video(url KEY NOT NULL);";
-// console.log(createTableSql)
-// sqliteDB.createTable(createTableSql);
-
-// createTableSql = "create table if not exists favorite_music(url KEY NOT NULL);";
-// console.log(createTableSql)
-// sqliteDB.createTable(createTableSql);
 
 var __dirname = process.cwd();
-// var querySql = 'select * from favorite_list';
-// sqliteDB.queryData(querySql, dataDeal);
 var static_path = __dirname + '/public/store/'
 func_com.setPrePath(static_path)
 
@@ -407,6 +386,7 @@ app.get('/set_favorite_list', function(req, res) {
             var tileData = [
                 [file_name]
             ];
+            console.log(inquirytFavSql)
             sqliteDB.insertData(inquirytFavSql, tileData);
             res.jsonp({ 'code': 0 });
         } else {

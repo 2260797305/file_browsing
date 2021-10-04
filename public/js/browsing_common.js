@@ -192,7 +192,7 @@ function dir_copy() {
 function show_ctr_favorite_list(){
 	$("#ctr_favorite_from").attr("style","display:;width:80px;");
 	my_list=document.getElementById("start_div");
-	my_list.style.height=38 * favorite_talbe_list.length + 'px'
+	my_list.style.height=(30 + 28 * favorite_talbe_list.length) + 'px'
 	// my_list.style.width=80+'px'
 }
 
@@ -207,7 +207,7 @@ function show_favorite_content(){
 
 	$("#show_favorite_from").attr("style","display:;width:80px;");
 	my_list=document.getElementById("show_start");
-	my_list.style.height=38 * favorite_talbe_list.length + 'px'
+	my_list.style.height=(30 + 28 * favorite_talbe_list.length) + 'px'
 
 }
 
@@ -900,20 +900,33 @@ function set_start_file()
 				$.getJSON(request_url, function(data) {
 					if (data["code"] != 0) {
 						alert("收藏失败");
+						var my_list=document.getElementById("start_div");
+						my_list.style.height=30 + 'px'
+						$("#ctr_favorite_from").attr("style","display:none;");
 						return;
 					}
 					find_cur_is_star(file_dir)
 					alert("收藏成功")
+
+					var my_list=document.getElementById("start_div");
+					my_list.style.height=30 + 'px'
+					$("#ctr_favorite_from").attr("style","display:none;");
 				});
 			} else {	
 				request_url = '/del_favorite_content?' + request_url
 				$.getJSON(request_url, function(data) {
 					if (data["code"] != 0) {
 						alert("取消收藏失败");
+						var my_list=document.getElementById("start_div");
+						my_list.style.height=30 + 'px'
+						$("#ctr_favorite_from").attr("style","display:none;");
 						return;
 					}
 					find_cur_is_star(file_dir)
 					alert("取消收藏成功")
+					var my_list=document.getElementById("start_div");
+					my_list.style.height=30 + 'px'
+					$("#ctr_favorite_from").attr("style","display:none;");
 				});
 			}
 			break
@@ -1125,7 +1138,7 @@ $(function() {
         }
 
 		if (browsing_mode == 'file') {
-			if (Favorites_name == null) {
+			if (Favorites_name == null || 1) {
 				find_cur_is_star(file_dir)
 			}
 		}
