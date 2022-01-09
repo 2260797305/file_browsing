@@ -20,7 +20,7 @@
 	<div id="output">
 		<div class="containerT">
 			<h1>用户登录</h1>
-			<form class="form" id="entry_form" action="/login" method="post" enctype="text/plain" validate>
+			<form class="form" id="entry_form" enctype="text/plain" validate>
 				<input type="text" placeholder="用户名" id="entry_name" value="" required>
 				<input type="password" placeholder="密码" id="entry_password" required>
 				<button type="submit" id="entry_btn">登录</button>
@@ -56,6 +56,12 @@
             var username = $("#entry_name").val();
             var password = $("#entry_password").val();
             var data = {"uname":username,"upwd":password};
+
+            // alert(username)
+            // alert(password)
+
+            // alert(data)
+
             $.ajax({ 
                 url:'/login',
                 type:'post',
@@ -66,13 +72,13 @@
                     } else {
                         alert("账户或者密码错误，请重试！")
                         // location.href = data["url"];
-                        location.reload()
+                        // location.reload()
 					}
                 },
                 error: function(data,status){ 
                     if(status == 'error'){ 
                         // location.href = '/index.html';
-                        location.reload()
+                        // location.reload()
                         // location.href = data["url"];//'login';
                     }
                 }

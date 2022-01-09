@@ -5,9 +5,12 @@
   "main": "file_browsing.js",
   "type": "module",
   "dependencies": {
+    "crypto": "^1.0.1",
     "express": "4.x",
     "express-session": "^1.17.1",
     "node-unar": "^1.0.6",
+    "response": "^0.18.0",
+    "silly-datetime": "^0.1.2",
     "sqlite3": "4.x"
   },
   "scripts": {

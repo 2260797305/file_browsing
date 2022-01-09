@@ -6,6 +6,8 @@ import express from 'express';
 // var querystring = require('querystring');
 import querystring from 'querystring';
 import { list, unpack } from 'node-unar';
+import sd from 'silly-datetime';
+import crypto  from 'crypto';
 
 
 // var session = require('express-session')
@@ -16,6 +18,8 @@ import SqliteDB from './modules/sqlite.js';
 
 // var func_com = require('./modules/func_com')
 import func_com from './modules/func_com.js';
+import pkg from 'response'
+const { cookie } = pkg;
 
 var HOST = "192.168.31.151"; // 请改成实际的ip地址
 // 后面的图片的URL会使用这个变量来构造
@@ -29,6 +33,9 @@ app.use('/', express.static('public'));
 // You're mixing up a warning and an error that have nothing in common from this log. 
 // The actual error is you don't have write permissions to the destination folder. 
 // If you are running as root, try adding --unsafe-perm
+
+console.log(sd.format(new Date(), 'YYYY-MM-DD HH:mm'));
+
 
 
 var sqliteDB = new SqliteDB(db_file)
@@ -136,6 +143,30 @@ function checkParam(param) {
     return /^[^\.\\\/]+$/.test(param);
 }
 
+function checkCooke(req) {
+    console.log(req.headers.cookie)
+
+    if (req.headers.cookie == undefined) {
+        return false
+    } 
+
+    let cookies = req.headers.cookie.split(',')
+
+    if (cookies.length != 3) {
+        return false
+    }
+    let cookie = crypto.createHash('md5').update(cookies[0]+cookies[1]).digest("hex")
+
+    console.log(cookie)
+    console.log(cookies[2])
+
+    if (cookie === cookies[2]) {
+        return true
+    }
+    return false
+}
+
+
 //  POST 注册
 app.post('/register', function(req, res) {
     res.jsonp({ 'status': "error", 'url': "/index.html" });
@@ -154,11 +185,13 @@ app.post('/login', function(req, res) {
     // 通过req的data事件监听函数，每当接受到请求体的数据，就累加到post变量
     req.on('data', function(data) {
         reqBody += data;
+        console.log("reqBody: "+ reqBody)
     });
     // 在end事件触发后，通过querystring.parse将post解析为真正的POST请求格式，然后向客户端返回。
     req.on('end', function() { //用于数据接收完成后再获取
             var name = querystring.parse(reqBody).uname
             var upwd = querystring.parse(reqBody).upwd
+            console.log("reqBody: "+ reqBody)
             console.log(name)
             console.log(upwd)
 
@@ -180,6 +213,9 @@ app.post('/login', function(req, res) {
                         console.log(objects[0]["user_name"])
                         console.log(objects[0]["password"])
                         if (name === objects[0]["user_name"] && upwd === objects[0]["password"]) {
+                            let now = sd.format(new Date(), 'YYYY-MM-DD HH:mm')
+                            var cookie = crypto.createHash('md5').update(name+now).digest("hex")
+                            res.setHeader('Set-Cookie',`${name},${now},${cookie}`)
                             res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
                         } else {
                             console.log("用户或者是密码错误")
@@ -210,6 +246,10 @@ app.post('/recursive_cnt', function(req, res) {
 });
 
 app.get('/process_get', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
 
     // 输出 JSON 格式
     var response = {
@@ -223,6 +263,10 @@ app.get('/process_get', function(req, res) {
 
 // 判断是否被收藏
 app.get('/is_start_file', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var file_name = req.query.file_dir;
     var start_list = new Array()
     var talbe_list = new Array()
@@ -283,6 +327,10 @@ app.get('/is_start_file', function(req, res) {
  * 获取收藏夹的列表
  */
 app.get('/get_favorite_list', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     console.log("获取收藏的路径");
 
     var querySql = 'select * from ' + FavoritesList;
@@ -307,6 +355,10 @@ app.get('/get_favorite_list', function(req, res) {
  * 获取收藏夹的内容
  */
  app.get('/get_favorite_content', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     console.log("获取收藏的路径");
     var Favorites_name = req.query.Favorites_name;
     var browsing_mode = req.query.browsing_mode;
@@ -372,6 +424,10 @@ app.get('/get_favorite_list', function(req, res) {
  * 添加收藏夹
  */
 app.get('/set_favorite_list', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var Favorites_name = req.query.Favorites_name;
     console.log("获添加的收藏夹: " + Favorites_name);
     if (Favorites_name.length == 0) {
@@ -401,6 +457,10 @@ app.get('/set_favorite_list', function(req, res) {
  * 添加收藏夹里面的内容
  */
  app.get('/set_favorite_content', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var file_name = req.query.file_dir;
     var Favorites_name = req.query.Favorites_name;
     console.log("获添加的收藏路径: " + file_name);
@@ -434,6 +494,10 @@ app.get('/set_favorite_list', function(req, res) {
  * 删除收藏夹
  */
 app.get('/del_favorite_list', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var Favorites_name = req.query.Favorites_name;
 
     if (file_name.Favorites_name == 0) {
@@ -454,6 +518,10 @@ app.get('/del_favorite_list', function(req, res) {
  * 删除收藏内容
  */
  app.get('/del_favorite_content', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var file_name = req.query.file_dir;
     var Favorites_name = req.query.Favorites_name;
 
@@ -474,9 +542,14 @@ app.get('/del_favorite_list', function(req, res) {
 
 
 
+
 // 删除文件
 
 app.get('/delete_file', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var dir = req.query.file_dir;
 
     if (dir.length == 0 || dir == "/") {
@@ -510,6 +583,10 @@ app.get('/delete_file', function(req, res) {
  * 获取漫画的上一章节
  */
 app.get('/get_prev_dir', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     console.log("获取上一个章节");
     var file_name = req.query.file_dir;
     var new_dir = func_com.get_select_dir(file_name, 'pre');
@@ -521,6 +598,10 @@ app.get('/get_prev_dir', function(req, res) {
  * 获取漫画的下一章节
  */
 app.get('/get_next_dir', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
     var file_name = req.query.file_dir;
     var new_dir = func_com.get_select_dir(file_name, 'next');
     console.log("获取下一个章节");
@@ -532,9 +613,17 @@ app.get('/get_next_dir', function(req, res) {
  * 获取漫画列表
  */
 app.get('/get_file_list', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
+
     var file_name = req.query.file_dir;
     var recursive_cnt = req.query.recursive_cnt
     var browsing_mode = req.query.browsing_mode;
+
+    console.log(req.headers.cookie)
+
     if (!file_name) {
         file_name = ""
     }
@@ -584,6 +673,12 @@ app.get('/get_file_list', function(req, res) {
  * 添加收藏目录
  */
 app.get('/compressing_dir', function(req, res) {
+
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
+
     console.log("compressing_dir");
     var file_name = req.query.file_dir;
     var browsing_mode = req.query.browsing_mode;
@@ -631,6 +726,7 @@ app.get('/compressing_dir', function(req, res) {
         res.jsonp({ 'code': -1 });
     });
 });
+
 
 
 
