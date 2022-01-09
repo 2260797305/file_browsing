@@ -38,6 +38,15 @@ console.log(createTableSql)
 sqliteDB.createTable(createTableSql);
 
 
+var createTableSql = "create table if not exists user_table(user_name KEY NOT NULL, password);";
+console.log(createTableSql)
+sqliteDB.createTable(createTableSql);
+
+// var inquirytFavSql = "insert into user_table (user_name, password) values(?, ?)";
+// var tileData = [
+//     ["1","1"]
+// ];
+// sqliteDB.insertData(inquirytFavSql, tileData);
 
 
 // if 0
@@ -127,6 +136,12 @@ function checkParam(param) {
     return /^[^\.\\\/]+$/.test(param);
 }
 
+//  POST 注册
+app.post('/register', function(req, res) {
+    res.jsonp({ 'status': "error", 'url': "/index.html" });
+});
+
+
 //  POST 请求
 app.post('/login', function(req, res) {
     //post
@@ -147,15 +162,32 @@ app.post('/login', function(req, res) {
             console.log(name)
             console.log(upwd)
 
-            if (name === "kkk" && upwd === "kkk") {
-                res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
-                // res.send('400');
-                // return
-            } else {
+            if (name == undefined || upwd == undefined) {
                 res.jsonp({ 'status': "error", 'url': "/index.html" });
-                // return
-            }
+            } else {
+                console.log(name.length)
+                console.log(upwd.length)
 
+                var querySql = "select * from user_table where user_name='" + name + "'"
+                console.log(querySql)
+                sqliteDB.queryData(querySql, function data_Deal(objects) {
+                    if (!objects || objects.length == 0) {
+                        console.log("没有指定的用户")
+                        res.jsonp({ 'status': "error", 'url': "/index.html" });
+                    } else {
+                        console.log(objects)
+                        console.log(objects.length)
+                        console.log(objects[0]["user_name"])
+                        console.log(objects[0]["password"])
+                        if (name === objects[0]["user_name"] && upwd === objects[0]["password"]) {
+                            res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
+                        } else {
+                            console.log("用户或者是密码错误")
+                            res.jsonp({ 'status': "error", 'url': "/index.html" });
+                        }
+                    }
+                });
+            }
         })
         //res.send('200');
 });
@@ -193,6 +225,7 @@ app.get('/process_get', function(req, res) {
 app.get('/is_start_file', function(req, res) {
     var file_name = req.query.file_dir;
     var start_list = new Array()
+    var talbe_list = new Array()
 
     if (file_name.length == 0 || file_name == "/") {
         favorite_talbe_list.forEach(function(data){
@@ -218,6 +251,7 @@ app.get('/is_start_file', function(req, res) {
         console.log(querySql)
         sqliteDB.queryData(querySql, function data_Deal(objects) {
             console.log(objects)
+            talbe_list.push(data)
             if (!objects || objects.length == 0) {
                 /**not start */
                 start_list.push(0)
@@ -237,7 +271,7 @@ app.get('/is_start_file', function(req, res) {
                 // console.log(favorite_talbe_list[0])
                 // console.log(start_list)
                 console.log("return")
-                res.jsonp({'favorite_talbe_list':favorite_talbe_list, 'is_star': start_list, 'code': 0 });
+                res.jsonp({'favorite_talbe_list':talbe_list, 'is_star': start_list, 'code': 0 });
                 return
             }
         });
