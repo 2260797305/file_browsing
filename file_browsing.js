@@ -197,6 +197,7 @@ app.post('/login', function(req, res) {
 
             if (name == undefined || upwd == undefined) {
                 res.jsonp({ 'status': "error", 'url': "/index.html" });
+                res.end()
             } else {
                 console.log(name.length)
                 console.log(upwd.length)
@@ -207,6 +208,7 @@ app.post('/login', function(req, res) {
                     if (!objects || objects.length == 0) {
                         console.log("没有指定的用户")
                         res.jsonp({ 'status': "error", 'url': "/index.html" });
+                        res.end()
                     } else {
                         console.log(objects)
                         console.log(objects.length)
@@ -216,10 +218,13 @@ app.post('/login', function(req, res) {
                             let now = sd.format(new Date(), 'YYYY-MM-DD HH:mm')
                             var cookie = crypto.createHash('md5').update(name+now).digest("hex")
                             res.setHeader('Set-Cookie',`${name},${now},${cookie}`)
+                            console.log("登录成功")
                             res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
+                            res.end()
                         } else {
                             console.log("用户或者是密码错误")
                             res.jsonp({ 'status': "error", 'url': "/index.html" });
+                            res.end()
                         }
                     }
                 });
