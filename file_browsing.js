@@ -150,17 +150,18 @@ function checkCooke(req) {
         return false
     } 
 
-    let cookies = req.headers.cookie.split(',')
-
-    if (cookies.length != 3) {
+    let cookies = req.headers.cookie.split('; ')
+    cookies = cookies[cookies.length-1].split(',')
+    if (cookies.length < 3) {
         return false
     }
-    let cookie = crypto.createHash('md5').update(cookies[0]+cookies[1]).digest("hex")
+    console.log(cookies)
+    let cookie = crypto.createHash('md5').update(cookies[cookies.length-3]+cookies[cookies.length-2]).digest("hex")
 
     console.log(cookie)
-    console.log(cookies[2])
+    console.log(cookies[cookies.length-1])
 
-    if (cookie === cookies[2]) {
+    if (cookie === cookies[cookies.length-1]) {
         return true
     }
     return false
@@ -216,6 +217,7 @@ app.post('/login', function(req, res) {
                         console.log(objects[0]["password"])
                         if (name === objects[0]["user_name"] && upwd === objects[0]["password"]) {
                             let now = sd.format(new Date(), 'YYYY-MM-DD HH:mm')
+                            console.log(name+now)
                             var cookie = crypto.createHash('md5').update(name+now).digest("hex")
                             res.setHeader('Set-Cookie',`${name},${now},${cookie}`)
                             console.log("登录成功")
