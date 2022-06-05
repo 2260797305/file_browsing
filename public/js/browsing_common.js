@@ -958,7 +958,7 @@ function show_start_file()
 	console.log(item)
 
 	if (item ==obj[obj.length-1].value) {
-		window.location.replace("favorite_list.html")
+		window.location.href = "favorite_list.html"
 	} else {
 		url = "favorite.html?" + set_serch_url("", 'file', 1, loop_mode) + '&Favorites_name='+ item
 		window.location.replace(url)
