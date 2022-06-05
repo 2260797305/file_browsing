@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" name="File Browsing" content="简单的本地文件浏览器" http-equiv="refresh" content="30">
+    <meta http-equiv="Expirse" content="0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-control" content="no-cache">
+	<meta http-equiv="Cache" content="no-cache">
+
+	<link rel="shortcut icon" href="img/title.ico">
+	<!-- <link rel="stylesheet" type="text/css" href="index/css/style.css"> -->
+
+	<title>File Browsing</title>
+	<link href="css/metro.min.css" rel="stylesheet" media="screen">
+	<link href="css/index.css" rel="stylesheet" type="text/css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/metro.min.js"></script>
+	<script src="js/lazeload.js"></script>
+	<script src="js/util.js"></script>
+    <script src="js/favorite_list.js"></script>
+
+	<script type="text/javascript" src="index/js/jquery.min.js"></script>
+	<script type="text/javascript" src="index/js/vector.js"></script>
+</head>
+
+<body>
+	<h2 id="file-title" style="margin: 3px auto 3px 3px;"></h2>
+
+	<div class = "max_div">
+		<div id="menu">
+			<div class="menu_func" id="start_div" onmouseover="javascript:show_ctr_favorite_list();" onmouseout="javascript:hide_ctr_favorite_list();" style="color: black;">
+				<span></span>
+				<form action="" method="" id = "ctr_favorite_from"  style="width:80px;display:none;"> 
+				</form> 
+			</div>
+			<div class="menu_func" onclick="javascript:delete_file();" style="color: black;">
+				<span></span>
+			</div>
+		<div class="menu_func" id="show_start" onmouseover="javascript:show_favorite_content();" onmouseout="javascript:hide_favorite_content();" style="color: yellow;">
+			<span></span>
+			<form action="" method="" id = "show_favorite_from"  style="width:80px;display:none;"> 
+			</form> 
+		</div>
+		<!-- /*onclick="javascript:size_increase();"*/ -->
+		<div class="menu_func" id="size_increase" onmousedown="size_change(1)"  onmouseup="size_timer_clear()" style="color: black;">
+			<span></span>
+		</div>
+		<!-- onclick="javascript:size_decrease();"  -->
+		<div class="menu_func" id="size_decrease" onmousedown="size_change(0)"  onmouseup="size_timer_clear()" style="color: black;">
+			<span></span>
+		</div>
+		<div class="menu_func" id="loop_mode" onclick="javascript:loop_mode_change();" style="color: black;">
+			<span></span>
+		</div>
+
+		<div id="jump">
+			<input name="jump" autocomplete="off" placeholder='跳转' id="page_input" type="number"  onkeydown="javascript:input_key_func()">
+		</div>
+
+		<div id="func_option">
+			<form action="" method="" id = "browsing_mode"> 
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="file"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="picture"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="video"/><span style="color: #b5ffe0;"></span></label> 
+				</div>
+				<div class= "from_option">
+					<label><input name="browsing_mode" type="radio" value="music"/><span style="color: #b5ffe0;"></span> </label> 
+				</div>
+			</form> 
+		</div>
+	</div>
+
+	<div id="max_ctx">
+		<div id="favorite_list">
+			<h3> list</h3>
+
+			<form action="" method="" id = "favorite_list_from"> 
+			</form> 
+
+			<input name="create_fav" autocomplete="off" placeholder='收藏夹名' id="create_fav_input" type="text"  onkeydown="javascript:create_fav_key_func()">
+			<button type="submit" id="create_fav_button"> 创建 </button>
+            
+
+		</div>
+	</div>
+
+</body>
+</html>

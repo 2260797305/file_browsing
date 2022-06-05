@@ -57,32 +57,6 @@ sqliteDB.createTable(createTableSql);
 
 
 // if 0
-// var new_table = "mv"
-// // var delFavSql = "delete from " + FavoritesList +  " where name='" + new_table + "'";
-// // sqliteDB.executeSql(delFavSql);
-
-// createTableSql = "create table if not exists " + new_table + "(url KEY NOT NULL);";
-// console.log(createTableSql)
-// sqliteDB.createTable(createTableSql);
-
-
-// var sql_cmd = "select * from " + FavoritesList +  " where name='" + new_table + "'";
-// console.log(sql_cmd)
-// sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
-//     if (!(objects && objects.length > 0)) {
-//         var inquirytFavSql = "insert into " + FavoritesList +  "(name) values(?)";
-//         var tileData = [
-//             [new_table]
-//         ];
-//         sqliteDB.insertData(inquirytFavSql, tileData);
-//     } else {
-//         console.log(objects.length)
-//     }
-// });
-// #endif
-
-
-// if 0
 var sql_cmd = 'select * from ' + FavoritesList;
 sqliteDB.queryData(sql_cmd, function data_Deal(objects) {
     if (!objects) {
@@ -427,41 +401,9 @@ app.get('/get_favorite_list', function(req, res) {
 });
 
 
-/**
- * 添加收藏夹
- */
-app.get('/set_favorite_list', function(req, res) {
-    if (checkCooke(req) == false) {
-        res.jsonp({ 'code': 403});
-        return
-    }
-    var Favorites_name = req.query.Favorites_name;
-    console.log("获添加的收藏夹: " + Favorites_name);
-    if (Favorites_name.length == 0) {
-        res.jsonp({ 'code': 0 });
-    }
-
-    var querySql = "select * from " + FavoritesList +  " where name='" + Favorites_name + "'";
-    console.log(querySql)
-    sqliteDB.queryData(querySql, function data_Deal(objects) {
-        console.log(objects.length)
-        if (objects.length == 0) {
-            var inquirytFavSql = "insert into " + FavoritesList +  "(name) values(?)";
-            var tileData = [
-                [Favorites_name]
-            ];
-            sqliteDB.insertData(inquirytFavSql, tileData);
-            favorite_talbe_list.push(Favorites_name)
-            res.jsonp({ 'code': 0 });
-        } else {
-            res.jsonp({ 'code': -1 });
-        }
-    });
-});
-
 
 /**
- * 添加收藏夹里面的内容
+ * 往已经存在的收藏夹里添加内容
  */
  app.get('/set_favorite_content', function(req, res) {
     if (checkCooke(req) == false) {
@@ -498,7 +440,41 @@ app.get('/set_favorite_list', function(req, res) {
 
 
 /**
- * 删除收藏夹
+ * 新创建一个收藏夹
+ */
+ app.get('/add_favorite_list', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
+    var Favorites_name = req.query.Favorites_name;
+    console.log("获添加的收藏夹: " + Favorites_name);
+    if (Favorites_name.length == 0) {
+        res.jsonp({ 'code': 0 });
+    }
+
+    var querySql = "select * from " + FavoritesList +  " where name='" + Favorites_name + "'";
+    console.log(querySql)
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        console.log(objects.length)
+        if (objects.length == 0) {
+            var inquirytFavSql = "insert into " + FavoritesList +  "(name) values(?)";
+            var tileData = [
+                [Favorites_name]
+            ];
+            sqliteDB.insertData(inquirytFavSql, tileData);
+            favorite_talbe_list.push(Favorites_name)
+            console.log(favorite_talbe_list)
+            res.jsonp({ 'code': 0 });
+        } else {
+            res.jsonp({ 'code': -1 });
+        }
+    });
+});
+
+
+/**
+ * 删除已经存在的收藏夹
  */
 app.get('/del_favorite_list', function(req, res) {
     if (checkCooke(req) == false) {
@@ -507,7 +483,7 @@ app.get('/del_favorite_list', function(req, res) {
     }
     var Favorites_name = req.query.Favorites_name;
 
-    if (file_name.Favorites_name == 0) {
+    if (Favorites_name.length == 0) {
         res.jsonp({ 'code': 0 });
     }
     // console.log("是否有代理：" + req.headers['x-forwarded-for'])
@@ -517,12 +493,28 @@ app.get('/del_favorite_list', function(req, res) {
     console.log("删除的收藏路径: " + Favorites_name);
     var delFavSql = "delete from " + FavoritesList +  " where name='" + Favorites_name + "'";
     sqliteDB.executeSql(delFavSql);
+
+    var new_table_list = new Array()
+
+    // js 中居然没有直接删除元素的方法，mmp。
+    console.log(favorite_talbe_list)
+    
+    favorite_talbe_list.forEach(function(data, index, arr) {
+        console.log(data)
+        if (data != Favorites_name) {
+            console.log(data)
+            new_table_list.push(data)
+        }
+    })
+
+    favorite_talbe_list = new_table_list
+
     res.jsonp({ 'code': 0 });
 });
 
 
 /**
- * 删除收藏内容
+ * 删除已经存在的收藏夹里面的内容
  */
  app.get('/del_favorite_content', function(req, res) {
     if (checkCooke(req) == false) {
@@ -544,14 +536,12 @@ app.get('/del_favorite_list', function(req, res) {
     console.log("删除的收藏路径: " + file_name);
     var delFavSql = "delete from " + Favorites_name +  " where url='" + file_name + "'";
     sqliteDB.executeSql(delFavSql);
+
     res.jsonp({ 'code': 0 });
 });
 
 
-
-
 // 删除文件
-
 app.get('/delete_file', function(req, res) {
     if (checkCooke(req) == false) {
         res.jsonp({ 'code': 403});

@@ -100,10 +100,10 @@ function show_star() {
 	$("#ctr_favorite_from").find("div").remove();
 	$("#show_favorite_from").find("div").remove();
 
-	favorite_talbe_list.forEach(function(data, index, arr) {
-		var ctr_list = $('#ctr_favorite_from');
-		var show_list = $('#show_favorite_from');
+	var ctr_list = $('#ctr_favorite_from');
+	var show_list = $('#show_favorite_from');
 
+	favorite_talbe_list.forEach(function(data, index, arr) {
 		var url1 = '<div class= "from_option"><label><input name="start_item" type="radio" value="'
 		url1 = url1 + data + '"/><span style="'
 
@@ -121,6 +121,12 @@ function show_star() {
 		ctr_list.append(url1)
 		show_list.append(url)
 	})
+
+	// 追加最后一个 item，作为收藏夹列表的管理。
+	var url = '<div class= "from_option"><label><input name="shwo_item" type="radio" value="'
+	url = url + "list_manager" + '"/><span style="color: #e3b5ff;">'+ "list" +'</span></label> </div>'
+
+	show_list.append(url)
 
 	selete_m = document.getElementById('ctr_favorite_from')
 	selete_m.addEventListener('change', set_start_file, false);
@@ -207,7 +213,7 @@ function show_favorite_content(){
 
 	$("#show_favorite_from").attr("style","display:;width:80px;");
 	my_list=document.getElementById("show_start");
-	my_list.style.height=(30 + 28 * favorite_talbe_list.length) + 'px'
+	my_list.style.height=(55 + 28 * favorite_talbe_list.length) + 'px'
 
 }
 
@@ -948,10 +954,15 @@ function show_start_file()
         return
     }
 
+
 	console.log(item)
 
-    url = "favorite.html?" + set_serch_url("", 'file', 1, loop_mode) + '&Favorites_name='+ item
-	window.location.replace(url)
+	if (item ==obj[obj.length-1].value) {
+		window.location.replace("favorite_list.html")
+	} else {
+		url = "favorite.html?" + set_serch_url("", 'file', 1, loop_mode) + '&Favorites_name='+ item
+		window.location.replace(url)
+	}
 }
 
 
