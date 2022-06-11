@@ -36,11 +36,13 @@ a=`date "+%Y-%m-%d_%H_%M_%S"`
 # nohup supervisor $process_name 1>./log/$a.log 2>&1 &
 # npm install -g supervisor
 export PATH=/home/k-yuki/work/node-v12.19.0-linux-x64/bin:$PATH
+export FZ_PORT=9089
+export FZ_IP=`ifconfig eth0 | grep 'inet ' | awk '{print $2}'` 
+
 nohup node $process_name 1>./log/$a.log 2>&1 &
 sync
+
 #echo "startup over"
-
 #sleep 5
-
 #nohup /home/k-yuki/restart.sh 1>/dev/null  2>&1 &
 #nohup /home/k-yuki/run_test.sh 1>/dev/null  2>&1 &

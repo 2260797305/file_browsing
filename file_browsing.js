@@ -21,9 +21,9 @@ import func_com from './modules/func_com.js';
 import pkg from 'response'
 const { cookie } = pkg;
 
-var HOST = "192.168.31.151"; // 请改成实际的ip地址
+var HOST = process.env.FZ_IP; // 请改成实际的ip地址
 // 后面的图片的URL会使用这个变量来构造
-var PORT = 9089;
+var PORT = process.env.FZ_PORT;
 var db_file = "./data/FileB.db";
 var app = express();
 var favorite_talbe_list = new Array()
@@ -195,7 +195,7 @@ app.post('/login', function(req, res) {
                             var cookie = crypto.createHash('md5').update(name+now).digest("hex")
                             res.setHeader('Set-Cookie',`${name},${now},${cookie}`)
                             console.log("登录成功")
-                            res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=windows&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
+                            res.jsonp({ 'status': "success", 'url': "/browsing.html?file_dir=&browsing_mode=file&recursive_cnt=1&loop_mode=dir_order" });
                             res.end()
                         } else {
                             console.log("用户或者是密码错误")
@@ -452,6 +452,10 @@ app.get('/get_favorite_list', function(req, res) {
     if (Favorites_name.length == 0) {
         res.jsonp({ 'code': 0 });
     }
+
+    var createTableSql = "create table if not exists " + Favorites_name + "(url KEY NOT NULL);";
+    console.log(createTableSql)
+    sqliteDB.createTable(createTableSql);
 
     var querySql = "select * from " + FavoritesList +  " where name='" + Favorites_name + "'";
     console.log(querySql)
