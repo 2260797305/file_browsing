@@ -383,16 +383,9 @@ app.get('/get_favorite_list', function(req, res) {
                 } else {
                     console.log(url + " 文件不存在");
                 }
-                // else if (browsing_mode != 'file' && stats.isDirectory()) {
-                //     var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
-                //     sqliteDB.executeSql(delFavSql);
-                // }
+
             } catch (e) {
                 console.log(e);
-                console.log(url + " 文件不存在, 从数据库");
-                // var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
-                // sqliteDB.executeSql(delFavSql);
-                // console.log(e);
                 continue;
             }
         }
@@ -539,6 +532,7 @@ app.get('/del_favorite_list', function(req, res) {
 
     console.log("删除的收藏路径: " + file_name);
     var delFavSql = "delete from " + Favorites_name +  " where url='" + file_name + "'";
+    console.log(delFavSql);
     sqliteDB.executeSql(delFavSql);
 
     res.jsonp({ 'code': 0 });
@@ -741,3 +735,80 @@ function dataDeal(objects) {
         console.log(objects[i]);
     }
 }
+
+/**
+ * 删除收藏夹中无效的文件的记录
+ */
+ app.get('/clear_invalid_item', function(req, res) {
+    if (checkCooke(req) == false) {
+        res.jsonp({ 'code': 403});
+        return
+    }
+    console.log("删除收藏夹中无效的文件的记录")
+    /** 1. 获取所有的收藏夹列表 */
+    var querySql = 'select * from ' + FavoritesList;
+    var all_item_cnt = 0
+    var remove_cnt = 0
+    var Favorites_cnt = 0
+
+    console.log(querySql);
+    sqliteDB.queryData(querySql, function data_Deal(objects) {
+        if (!objects) {
+            res.jsonp({'reson':"收藏夹为空", 'code': -1 });
+            return
+        }
+        console.log(objects.length);
+
+        if (objects.length == 0) {
+            res.jsonp({'reson':"收藏夹为空", 'code': -1 });
+            return
+        }
+
+        /** 2. 遍历每一个收藏夹的成员 */
+        objects.forEach(function(data) {
+            var dbname = data["name"]
+            var querySql = 'select * from ' + dbname;
+            
+            console.log(querySql);
+            sqliteDB.queryData(querySql, function data_Deal(item_list) {
+                if (item_list) {
+                    console.log(item_list.length);
+                    all_item_cnt += item_list.length
+                    for (var i = 0; i < item_list.length; ++i) {
+                        var url = item_list[i]["url"]
+                        var complete_url = static_path + url.replace('"', "'")
+                        console.log(dbname + ": " + complete_url);
+
+                        /** 3. 判断成员是否存在 */
+                        try {
+                            var stats = fs.statSync(complete_url)
+                            if (!stats.isDirectory() && !stats.isFile()) {
+                                console.log(url + " 文件不存在, 从数据库移除");
+                                var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
+                                console.log(delFavSql)
+                                sqliteDB.executeSql(delFavSql);
+                                remove_cnt++;
+                                // console.log("移除成功，共 " + remove_cnt)
+                            }
+                        } catch (e) {
+                            // console.log(e);
+                            console.log(url + " 文件不存在, 从数据库移除");
+                            var delFavSql = "delete from " + dbname +  " where url='" + url + "'";
+                            console.log(delFavSql)
+                            sqliteDB.executeSql(delFavSql);
+                            remove_cnt++;
+                            // console.log("移除成功，共 " + remove_cnt)
+                        }
+                    }
+                }
+                Favorites_cnt++;
+                if (Favorites_cnt == objects.length) {
+                    var str = "遍历 " + Favorites_cnt + " 个收藏夹，共有 "
+                    str = str + all_item_cnt + " 项记录， 移除 " + remove_cnt + "项记录"
+                    console.log(str )
+                    res.jsonp({'Fav': Favorites_cnt, 'item_cnt': all_item_cnt, 'invalid_cnt': remove_cnt, 'code': 0 });
+                }
+            });
+        })
+    });
+});

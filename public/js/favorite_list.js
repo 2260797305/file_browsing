@@ -99,3 +99,20 @@ function delete_fav()
         location.reload()
 	});
 }
+
+function remove_invalid_item() {
+	if(confirm("确定要移除收藏夹中无效的记录吗?") !=true) {
+			return
+	}
+	request_url = '/clear_invalid_item'
+	$.getJSON(request_url, function(data) {
+		if (data["code"] != 0) {
+			alert("移除失败" + data['reson']);
+			return;
+		}
+
+        var str = "遍历 " + data['Fav'] + " 个收藏夹，共有 "
+        str = str + data['item_cnt'] + " 项记录， 移除 " + data['invalid_cnt'] + "项记录"
+		alert(str)
+	});
+}
