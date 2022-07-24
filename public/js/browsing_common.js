@@ -760,7 +760,7 @@ function page_select() {
 	if (!page) {
 		return
 	}
-	if (is_show_pic != 0 && cur_page != page) {
+	if (is_show_pic != 0 && cur_page != (page - 1)) {
 		if (page <= 0 && page >= show_list.length) {
 			return;
 		}
