@@ -406,8 +406,9 @@ app.get('/get_favorite_list', function(req, res) {
     var file_name = req.query.file_dir;
     var Favorites_name = req.query.Favorites_name;
     console.log("获添加的收藏路径: " + file_name);
-    if (file_name.length == 0 || file_name == "/") {
+    if (file_name.length == 0 || file_name == "/" || file_name == "") {
         res.jsonp({ 'code': 0 });
+        return
     }
 
     file_name = func_com.filePathFix(file_name);

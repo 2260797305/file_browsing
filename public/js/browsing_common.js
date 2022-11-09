@@ -89,11 +89,11 @@ function show_icon_by_loop_mode(loop_mode) {
 
 function show_star() {
 	// // console.log(is_star);
-	// if (is_star == 1) {
-	// 	$("#start_div").attr("style","color: yellow;");
-	// } else {
-	// 	$("#start_div").attr("style","color: black;");
-	// }
+	if (is_star == 1) {
+		$("#start_div").attr("style","color: yellow;");
+	} else {
+		$("#start_div").attr("style","color: black;");
+	}
 	console.log(start_list)
 	console.log(favorite_talbe_list)
 
@@ -165,10 +165,36 @@ function find_cur_is_star(file) {
 			// is_star = 0;
 			return;
 		} else {
-			start_list = data['is_star']
-			favorite_talbe_list = data['favorite_talbe_list']
+			is_star = 0
+			start_list = new Array(data['is_star'].length)
+			favorite_talbe_list = new Array(data['favorite_talbe_list'].length)
+			// console.log(data['is_star'])
+			// console.log(data['favorite_talbe_list'])
+			data['favorite_talbe_list'].forEach(function(data1, i) {
+				favorite_talbe_list[i] = data1
+			})
+			favorite_talbe_list.sort()
+			// console.log(favorite_talbe_list)
+			// console.log(data['favorite_talbe_list'])
+
+			favorite_talbe_list.forEach(function(data0, idx0) {
+				data['favorite_talbe_list'].forEach(function(data1, idx1) {
+					if (data0 == data1) {
+						// console.log(data['is_star'][idx1])
+						// console.log(idx0)
+						// console.log(idx1)
+						// console.log(data0)
+						// console.log(data1)
+						start_list[idx0] = data['is_star'][idx1]
+						if (start_list[idx0] == 1) {
+							is_star = 1
+						}
+					}
+				})
+			}) 
+			// console.log(start_list)
 			show_star(1);
-			is_star = 1;
+			// is_star = 1;
 		}
 	})
 }
