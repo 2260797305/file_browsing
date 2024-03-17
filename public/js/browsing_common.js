@@ -770,13 +770,23 @@ $(document).keydown(function(event){
 			console.log("right");
 			console.log(myVid.duration);
 			console.log(myVid.currentTime);
-		} else if (event.keyCode == 70 /*f*/) {
+		} else if (event.keyCode == 69 /*e*/) {
 			step = myVid.duration/10; // 快进单位： 1/10 duration
 
 			if (myVid.duration - myVid.currentTime > step) {
 				myVid.currentTime += step;
+			} else if (myVid.duration - myVid.currentTime > step/4) {
+				myVid.currentTime = (myVid.duration - step/4);
 			} else {
 				next_img()
+			}
+		} else if (event.keyCode == 81 /*q*/) {
+			step = myVid.duration/10; // 快退单位： 1/10 duration
+
+			if (myVid.duration > step) {
+				myVid.currentTime -= step;
+			} else {
+				myVid.duration = 0
 			}
 		}
 		return true
