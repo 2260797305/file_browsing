@@ -739,8 +739,8 @@ $(document).keydown(function(event){
 	} else if (event.keyCode == 68 /*d*/) {
 		next_img(null);
 		return
-	}
-	if (browsing_mode == 'video') {
+	} 
+		if (browsing_mode == 'video') {
 		myVid=document.getElementById("video1");
 		golbol_volume = myVid.volume;
 		time = 1 /**1 秒变化 */
@@ -770,6 +770,14 @@ $(document).keydown(function(event){
 			console.log("right");
 			console.log(myVid.duration);
 			console.log(myVid.currentTime);
+		} else if (event.keyCode == 70 /*f*/) {
+			step = myVid.duration/10; // 快进单位： 1/10 duration
+
+			if (myVid.duration - myVid.currentTime > step) {
+				myVid.currentTime += step;
+			} else {
+				next_img()
+			}
 		}
 		return true
 	} else if (browsing_mode == 'picture') {
